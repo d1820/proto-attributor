@@ -1,3 +1,4 @@
+using EnvDTE;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using System;
@@ -28,6 +29,7 @@ namespace ProtoAttributor
         /// VS Package that provides this command, not null.
         /// </summary>
         private readonly AsyncPackage package;
+        private readonly SDTE _SDTEService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProtoAddAttrCommand"/> class.
@@ -35,10 +37,11 @@ namespace ProtoAttributor
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
         /// <param name="commandService">Command service to add command to, not null.</param>
-        private ProtoAddAttrCommand(AsyncPackage package, OleMenuCommandService commandService)
+        private ProtoAddAttrCommand(AsyncPackage package, OleMenuCommandService commandService, SDTE SDTEService)
         {
             this.package = package ?? throw new ArgumentNullException(nameof(package));
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
+            _SDTEService = SDTEService;
 
             var menuCommandID = new CommandID(CommandSet, CommandId);
             var menuItem = new MenuCommand(this.Execute, menuCommandID);
@@ -76,7 +79,8 @@ namespace ProtoAttributor
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
 
             OleMenuCommandService commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
-            Instance = new ProtoAddAttrCommand(package, commandService);
+            SDTE SDTE = await package.GetServiceAsync(typeof(SDTE)) as SDTE;
+            Instance = new ProtoAddAttrCommand(package, commandService, SDTE);
         }
 
         /// <summary>
@@ -89,17 +93,42 @@ namespace ProtoAttributor
         private void Execute(object sender, EventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            string message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()", this.GetType().FullName);
-            string title = "ProtoCommand";
+            //string message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()", this.GetType().FullName);
+            //string title = "ProtoCommand";
 
-            // Show a message box to prove we were here
-            VsShellUtilities.ShowMessageBox(
-                this.package,
-                message,
-                title,
-                OLEMSGICON.OLEMSGICON_INFO,
-                OLEMSGBUTTON.OLEMSGBUTTON_OK,
-                OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+            //// Show a message box to prove we were here
+            //VsShellUtilities.ShowMessageBox(
+            //    this.package,
+            //    message,
+            //    title,
+            //    OLEMSGICON.OLEMSGICON_INFO,
+            //    OLEMSGBUTTON.OLEMSGBUTTON_OK,
+            //    OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+
+            //https://github.com/GregTrevellick/AutoFindReplace/blob/master/AutoFindReplace/VSPackage.cs
+
+
+            var dte = _SDTEService as DTE;
+
+            if (dte.SelectedItems.Count <= 0) return;
+
+            foreach (SelectedItem selectedItem in dte.SelectedItems)
+            {
+                if (selectedItem.ProjectItem == null) return;
+                var projectItem = selectedItem.ProjectItem;
+                var fullPathProperty = projectItem.Properties.Item("FullPath");
+                if (fullPathProperty == null) return;
+                var fullPath = fullPathProperty.Value.ToString();
+                Console.WriteLine(fullPath);
+                //VsShellUtilities.ShowMessageBox(
+                //    this.package,
+                //    message,
+                //    title,
+                //    OLEMSGICON.OLEMSGICON_INFO,
+                //    OLEMSGBUTTON.OLEMSGBUTTON_OK,
+                //    OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+            }
+
         }
     }
 }
