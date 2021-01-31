@@ -24,28 +24,14 @@
       This section uses a Guid to identify the package that provides the command defined inside it. -->
     <Commands package="guidProtoAttributorPackage">
 
-
-
-        <!-- Inside this section we have different sub-sections: one for the menus, another
-    for the menu groups, one for the buttons (the actual commands), one for the combos
-    and the last one for the bitmaps used. Each element is identified by a command id that
-    is a unique pair of guid and numeric identifier; the guid part of the identifier is usually
-    called "command set" and is used to group different command inside a logically related
-    group; your package should define its own command set in order to avoid collisions
-    with command ids defined by other packages. -->
-
-        <!-- In this section you can define new menu groups. A menu group is a container for
-         other menus or buttons (commands); from a visual point of view you can see the
-         group as the part of a menu contained between two lines. The parent of a group
-         must be a menu. -->
         <Groups>
             <Group guid="guidProtoAttributorPackageCmdSet" id="ProtoMenuGroup" priority="0x0600">
                 <Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_TOOLS"/>
             </Group>
-            <Group guid="guidProtoAttributorPackageCmdSet" id="ProtoMenuGroup" priority="0x0600">
+            <Group guid="guidProtoAttributorPackageCmdSet" id="ProtoContextMenuGroup" priority="0x0600">
                 <Parent  guid="guidSHLMainMenu" id="IDM_VS_CTXT_ITEMNODE"/>
             </Group>
-            <Group guid="guidProtoAttributorPackageCmdSet" id="ProtoMenuGroup" priority="0x0600">
+            <Group guid="guidProtoAttributorPackageCmdSet" id="ProtoContextMenuGroup" priority="0x0600">
                 <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_FOLDERNODE"/>
             </Group>
 
@@ -53,13 +39,8 @@
                 <Parent guid="guidProtoAttributorPackageCmdSet" id="ProtoMenu"/>
             </Group>
 
-            <Group guid="guidSHLMainMenu" id="IDM_VS_CTXT_ITEMNODE">
-                <Menu guid="guidMyExtensionCmdSet" id="myExtensionSubMenu" priority="0x0000" type="Menu">
-                    <Group guid="guidMyExtensionCmdSet" id="myExtensionSubMenuGroup" priority="0x0600">
-                        <Button guid="guidMyExtensionCmdSet" id="cmdidGenerateIni" priority="0x0100" type="Button">
-                        </Button>
-                    </Group>
-                </Menu>
+            <Group guid="guidProtoAttributorPackageCmdSet" id="ProtoContextSubMenuGroup" priority="0x0600">
+                <Parent guid="guidProtoAttributorPackageCmdSet" id="ProtoContextMenu"/>
             </Group>
 
         </Groups>
@@ -67,57 +48,70 @@
         <Menus>
             <Menu guid="guidProtoAttributorPackageCmdSet" id="ProtoMenu" priority="0x0100" type="Menu">
                 <Parent guid="guidProtoAttributorPackageCmdSet" id="ProtoMenuGroup"/>
+
+                <Strings>
+                    <ButtonText>Proto Attributor</ButtonText>
+                </Strings>
+            </Menu>
+
+            <Menu guid="guidProtoAttributorPackageCmdSet" id="ProtoContextMenu" priority="0x0100" type="Menu">
+                <Parent guid="guidProtoAttributorPackageCmdSet" id="ProtoContextMenuGroup"/>
+                <CommandFlag>DefaultInvisible</CommandFlag>
+                <CommandFlag>DynamicVisibility</CommandFlag>
                 <Strings>
                     <ButtonText>Proto Attributor</ButtonText>
                 </Strings>
             </Menu>
         </Menus>
 
-
-        <!--Buttons section. -->
-        <!--This section defines the elements the user can interact with, like a menu command or a button
-        or combo box in a toolbar. -->
         <Buttons>
-            <!--To define a menu group you have to specify its ID, the parent menu and its display priority.
-          The command is visible and enabled by default. If you need to change the visibility, status, etc, you can use
-          the CommandFlag node.
-          You can add more than one CommandFlag node e.g.:
-              <CommandFlag>DefaultInvisible</CommandFlag>
-              <CommandFlag>DynamicVisibility</CommandFlag>
-          If you do not want an image next to your command, remove the Icon node /> -->
-
+            <!--MENU ITEMS-->
             <Button guid="guidProtoAttributorPackageCmdSet" id="ProtoAddAttrCommandId" priority="0x0100" type="Button">
                 <Parent guid="guidProtoAttributorPackageCmdSet" id="ProtoSubMenuGroup" />
-                <Icon guid="guidImages" id="bmpPic1" />
-                <!--<CommandFlag>DefaultInvisible</CommandFlag>
-                <CommandFlag>DynamicVisibility</CommandFlag>-->
                 <Strings>
                     <ButtonText>Add ProtoMember Attributes</ButtonText>
                 </Strings>
             </Button>
             <Button guid="guidProtoAttributorPackageCmdSet" id="ProtoRenumberAttrCommandId" priority="0x0100" type="Button">
                 <Parent guid="guidProtoAttributorPackageCmdSet" id="ProtoSubMenuGroup" />
-                <Icon guid="guidImages" id="bmpPic1" />
-                <!--<CommandFlag>DefaultInvisible</CommandFlag>
-                <CommandFlag>DynamicVisibility</CommandFlag>-->
                 <Strings>
                     <ButtonText>ReOrder ProtoMember  Attributes</ButtonText>
                 </Strings>
             </Button>
             <Button guid="guidProtoAttributorPackageCmdSet" id="DataAnnoAddAttrCommandId" priority="0x0100" type="Button">
                 <Parent guid="guidProtoAttributorPackageCmdSet" id="ProtoSubMenuGroup" />
-                <Icon guid="guidImages" id="bmpPic1" />
-                <!--<CommandFlag>DefaultInvisible</CommandFlag>
-                <CommandFlag>DynamicVisibility</CommandFlag>-->
                 <Strings>
                     <ButtonText>Add DataMember Attributes</ButtonText>
                 </Strings>
             </Button>
             <Button guid="guidProtoAttributorPackageCmdSet" id="DataAnnoRenumberAttrCommandId" priority="0x0100" type="Button">
                 <Parent guid="guidProtoAttributorPackageCmdSet" id="ProtoSubMenuGroup" />
-                <Icon guid="guidImages" id="bmpPic1" />
-                <!--<CommandFlag>DefaultInvisible</CommandFlag>
-                <CommandFlag>DynamicVisibility</CommandFlag>-->
+                <Strings>
+                    <ButtonText>ReOrder DataMember Attributes</ButtonText>
+                </Strings>
+            </Button>
+
+            <!--CONTEXT ITEMS-->
+            <Button guid="guidProtoAttributorPackageCmdSet" id="ProtoContextAddAttrCommandId" priority="0x0100" type="Button">
+                <Parent guid="guidProtoAttributorPackageCmdSet" id="ProtoContextSubMenuGroup" />
+                <Strings>
+                    <ButtonText>Add ProtoMember Attributes</ButtonText>
+                </Strings>
+            </Button>
+            <Button guid="guidProtoAttributorPackageCmdSet" id="ProtoContextRenumberAttrCommandId" priority="0x0100" type="Button">
+                <Parent guid="guidProtoAttributorPackageCmdSet" id="ProtoContextSubMenuGroup" />
+                <Strings>
+                    <ButtonText>ReOrder ProtoMember  Attributes</ButtonText>
+                </Strings>
+            </Button>
+            <Button guid="guidProtoAttributorPackageCmdSet" id="DataAnnoContextAddAttrCommandId" priority="0x0100" type="Button">
+                <Parent guid="guidProtoAttributorPackageCmdSet" id="ProtoContextSubMenuGroup" />
+                <Strings>
+                    <ButtonText>Add DataMember Attributes</ButtonText>
+                </Strings>
+            </Button>
+            <Button guid="guidProtoAttributorPackageCmdSet" id="DataAnnoContextRenumberAttrCommandId" priority="0x0100" type="Button">
+                <Parent guid="guidProtoAttributorPackageCmdSet" id="ProtoContextSubMenuGroup" />
                 <Strings>
                     <ButtonText>ReOrder DataMember Attributes</ButtonText>
                 </Strings>
@@ -144,9 +138,6 @@
     </VisibilityConstraints>
     <Symbols>
 
-
-
-
         <!-- This is the package guid. -->
         <GuidSymbol name="guidProtoAttributorPackage" value="{4ae69a22-8f3b-4af7-8478-4029546ad807}" />
 
@@ -159,6 +150,15 @@
             <IDSymbol name="ProtoRenumberAttrCommandId" value="14"/>
             <IDSymbol name="DataAnnoAddAttrCommandId" value="15"/>
             <IDSymbol name="DataAnnoRenumberAttrCommandId" value="16"/>
+
+            <IDSymbol name="ProtoContext" value="20"/>
+            <IDSymbol name="ProtoContextSubMenuGroup" value="21" />
+            <IDSymbol name="ProtoContextMenuGroup" value="22" />
+            <IDSymbol name="ProtoContextAddAttrCommandId" value="23"/>
+            <IDSymbol name="ProtoContextRenumberAttrCommandId" value="24"/>
+            <IDSymbol name="DataAnnoContextAddAttrCommandId" value="25"/>
+            <IDSymbol name="DataAnnoContextRenumberAttrCommandId" value="26"/>
+            <IDSymbol name="ProtoContextMenu" value="27"/>
         </GuidSymbol>
 
         <GuidSymbol name="guidImages" value="{63feeb1d-8d78-4121-a5d7-e6d202f357db}" >

@@ -5,6 +5,13 @@ VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProtoAttributor", "ProtoAttributor\ProtoAttributor.csproj", "{D166A1D7-30C3-4789-8970-FB3CF7DC9097}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProtoAttributor.Tests", "ProtoAttributor.Tests\ProtoAttributor.Tests.csproj", "{EF3B9FF1-5273-4A23-83CE-BA15AA9B1FA3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E511682C-865B-4625-8B1C-0BB01AC3232F}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +22,10 @@ Global
 		{D166A1D7-30C3-4789-8970-FB3CF7DC9097}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D166A1D7-30C3-4789-8970-FB3CF7DC9097}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D166A1D7-30C3-4789-8970-FB3CF7DC9097}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF3B9FF1-5273-4A23-83CE-BA15AA9B1FA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF3B9FF1-5273-4A23-83CE-BA15AA9B1FA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF3B9FF1-5273-4A23-83CE-BA15AA9B1FA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF3B9FF1-5273-4A23-83CE-BA15AA9B1FA3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
