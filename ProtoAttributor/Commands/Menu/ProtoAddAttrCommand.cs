@@ -4,6 +4,7 @@ using EnvDTE;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using ProtoAttributor.Services;
 using Task = System.Threading.Tasks.Task;
 
 namespace ProtoAttributor.Commands.Menu
@@ -21,6 +22,7 @@ namespace ProtoAttributor.Commands.Menu
         private readonly AsyncPackage package;
 
         private readonly SDTE _SDTEService;
+        private readonly IAttributeService _attributeService;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ProtoAddAttrCommand" /> class. Adds our command handlers
@@ -28,7 +30,7 @@ namespace ProtoAttributor.Commands.Menu
         /// </summary>
         /// <param name="package"> Owner package, not null. </param>
         /// <param name="commandService"> Command service to add command to, not null. </param>
-        private ProtoAddAttrCommand(AsyncPackage package, OleMenuCommandService commandService, SDTE SDTEService)
+        private ProtoAddAttrCommand(AsyncPackage package, OleMenuCommandService commandService, SDTE SDTEService, IAttributeService attributeService)
         {
             this.package = package ?? throw new ArgumentNullException(nameof(package));
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
@@ -37,6 +39,7 @@ namespace ProtoAttributor.Commands.Menu
             var menuCommandID = new CommandID(CommandSet, CommandId);
             var menuItem = new MenuCommand(Execute, menuCommandID);
             commandService.AddCommand(menuItem);
+            _attributeService = attributeService;
         }
 
         /// <summary> Gets the instance of the command. </summary>
@@ -63,8 +66,9 @@ namespace ProtoAttributor.Commands.Menu
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
 
             var commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
+            var attributeService = await package.GetServiceAsync(typeof(IAttributeService)) as IAttributeService;
             var SDTE = await package.GetServiceAsync(typeof(SDTE)) as SDTE;
-            Instance = new ProtoAddAttrCommand(package, commandService, SDTE);
+            Instance = new ProtoAddAttrCommand(package, commandService, SDTE, attributeService);
         }
 
         /// <summary>
@@ -77,17 +81,6 @@ namespace ProtoAttributor.Commands.Menu
         private void Execute(object sender, EventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            //string message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()", this.GetType().FullName);
-            //string title = "ProtoCommand";
-
-            //// Show a message box to prove we were here
-            //VsShellUtilities.ShowMessageBox(
-            //    this.package,
-            //    message,
-            //    title,
-            //    OLEMSGICON.OLEMSGICON_INFO,
-            //    OLEMSGBUTTON.OLEMSGBUTTON_OK,
-            //    OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
 
             //https://github.com/GregTrevellick/AutoFindReplace/blob/master/AutoFindReplace/VSPackage.cs
 
@@ -95,28 +88,24 @@ namespace ProtoAttributor.Commands.Menu
 
             //var formattedRoot = Formatter.Format(newRoot, Formatter.Annotation, document.Project.Workspace);
 
-
+            //_attributeService.Hello();
 
             var dte = _SDTEService as DTE;
-
-            if (dte.SelectedItems.Count <= 0) return;
-
-            foreach (SelectedItem selectedItem in dte.SelectedItems)
+            if(dte.ActiveDocument != null)
             {
-                if (selectedItem.ProjectItem == null) return;
-                var projectItem = selectedItem.ProjectItem;
-                var fullPathProperty = projectItem.Properties.Item("FullPath");
-                if (fullPathProperty == null) return;
-                var fullPath = fullPathProperty.Value.ToString();
-                Console.WriteLine(fullPath);
-                //VsShellUtilities.ShowMessageBox(
-                //    this.package,
-                //    message,
-                //    title,
-                //    OLEMSGICON.OLEMSGICON_INFO,
-                //    OLEMSGBUTTON.OLEMSGBUTTON_OK,
-                //    OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+                var textSelection = (TextSelection)dte.ActiveDocument.Selection;
+                textSelection.GotoLine(1, true);
+                textSelection.SelectAll();
+                var contents = textSelection.Text;
+                var changedTxt = _attributeService.AddAttributes(contents);
+                textSelection.Insert(changedTxt);
+                //textSelection.Text = changedTxt;
+                textSelection.SmartFormat();
+               // var formattedRoot = Formatter.Format(newRoot, Formatter.Annotation, document.Project.Workspace);
             }
+
+
+
         }
     }
 }

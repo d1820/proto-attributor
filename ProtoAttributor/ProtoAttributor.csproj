@@ -61,7 +61,7 @@
     <Compile Include="Parsers\NodeHelper.cs" />
     <Compile Include="Parsers\ProtoAttributeReader.cs" />
     <Compile Include="Parsers\ProtoAttributeRewriter.cs" />
-    <Compile Include="Services\AttributeService.cs" />
+    <Compile Include="Services\ProtoAttributeService.cs" />
     <Compile Include="Services\IAttributeService.cs" />
   </ItemGroup>
   <ItemGroup>

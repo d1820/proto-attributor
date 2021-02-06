@@ -77,8 +77,9 @@ namespace ProtoAttributor.Services
 
             node = node.WithAttributeLists(newAttributes);
 
-            //Append the leading trivia to the method
-            node = node.WithLeadingTrivia(leadTriv);
+            var leadsToKeep = leadTriv.Where(w => w.Kind() != SyntaxKind.EndOfLineTrivia);
+            node = node.WithLeadingTrivia(SyntaxFactory.TriviaList(leadsToKeep));
+
             node = node.WithTrailingTrivia(trailTriv);
             return node;
 

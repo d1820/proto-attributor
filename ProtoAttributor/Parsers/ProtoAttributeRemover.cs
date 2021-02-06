@@ -44,7 +44,8 @@ namespace ProtoAttributor.Services
                 var newAttributeLists = new SyntaxList<AttributeListSyntax>();
                 foreach (var attributeList in node.AttributeLists)
                 {
-                    var nodesToRemove = attributeList.Attributes.Where(attribute => NodeHelper.AttributeNameMatches(attribute, _classAttributeName)).ToArray();
+                    var nodesToRemove = attributeList.Attributes.Where(attribute => NodeHelper.AttributeNameMatches(attribute, _classAttributeName)
+                                                                                    || NodeHelper.AttributeNameMatches(attribute, "ProtoInclude")).ToArray();
 
                     // If the lists are the same length, we are removing all attributes and can just avoid populating newAttributes.
                     if (nodesToRemove.Length != attributeList.Attributes.Count)

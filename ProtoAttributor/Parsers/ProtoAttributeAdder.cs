@@ -29,6 +29,7 @@ namespace ProtoAttributor.Services
                 var name = SyntaxFactory.ParseName(_propertyAttributeName);
                 var arguments = SyntaxFactory.ParseAttributeArgumentList($"({_startIndex})");
                 var attribute = SyntaxFactory.Attribute(name, arguments); //ProtoMember("1")
+
                 var newAttributes = BuildAttribute(attribute, node.AttributeLists);
                 node = NodeHelper.AddNewPropertyAttribute(newAttributes, node);
                 _startIndex++;

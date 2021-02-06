@@ -22,12 +22,16 @@ namespace ProtoAttributor.Services
             _usingStatement = usingStatement;
         }
 
-        public SyntaxList<AttributeListSyntax> BuildAttribute(AttributeSyntax attribute, SyntaxList<AttributeListSyntax> attributeLists)
+        public SyntaxList<AttributeListSyntax> BuildAttribute(AttributeSyntax attribute,
+                                                                SyntaxList<AttributeListSyntax> attributeLists)
         {
-            var asl = NodeHelper.BuildAttributeList(attribute);
-            var newAttribute = (AttributeListSyntax)VisitAttributeList(asl);
-            newAttribute = newAttribute.WithTrailingTrivia(SyntaxFactory.CarriageReturnLineFeed);
-            newAttribute = newAttribute.WithAdditionalAnnotations(Formatter.Annotation, Simplifier.Annotation);
+            var newAttribute = NodeHelper.BuildAttributeList(attribute);
+
+            var l = newAttribute.GetLeadingTrivia();
+            var t = newAttribute.GetTrailingTrivia();
+            newAttribute = (AttributeListSyntax)VisitAttributeList(newAttribute);
+            newAttribute = newAttribute.WithTrailingTrivia(SyntaxFactory.CarriageReturn);
+            newAttribute = newAttribute.WithAdditionalAnnotations(Formatter.Annotation);
             return attributeLists.Add(newAttribute);
         }
 
@@ -50,13 +54,15 @@ namespace ProtoAttributor.Services
                 var newAttributes = BuildAttribute(attribute, node.AttributeLists);
                 //Get the leading trivia (the newlines and comments)
                 var leadTriv = node.GetLeadingTrivia();
-                //var trailTriv = node.GetTrailingTrivia();
+                var trailTriv = node.GetTrailingTrivia();
+
                 node = node.WithAttributeLists(newAttributes).WithAdditionalAnnotations(Formatter.Annotation);
 
                 //Append the leading trivia to the method
-                node = node.WithLeadingTrivia(leadTriv);
-                //node = node.WithTrailingTrivia(trailTriv);
-
+                var leadsToKeep = leadTriv.Where(w => w.Kind() != SyntaxKind.EndOfLineTrivia);
+                node = node.WithLeadingTrivia(SyntaxFactory.TriviaList(leadsToKeep));
+                node = node.WithTrailingTrivia(trailTriv);
+                return node;
             }
 
             return base.VisitClassDeclaration(node);

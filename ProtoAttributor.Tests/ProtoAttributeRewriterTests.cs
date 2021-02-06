@@ -33,7 +33,7 @@ namespace ProtoAttributor.Tests
 
 
         [Fact]
-        public void AddsAttributesWithCorrectOrderWhenAttributesAlreadyExists()
+        public void RewritesAttributesWithCorrectOrderWhenAttributesAlreadyExists()
         {
             var tree = CSharpSyntaxTree.ParseText(codeWithAttributes);
             var rewriter = new ProtoAttributeRewriter("ProtoMember", "ProtoContract", "ProtoBuf");
@@ -48,6 +48,24 @@ namespace ProtoAttributor.Tests
             output.Should().Contain("[ProtoMember(2)]");
             output.Should().Contain("[ProtoMember(3)]");
             output.Should().Contain("[ProtoMember(4)]");
+        }
+
+        [Fact]
+        public void RewritesAttributesWithCorrectOrderStartingAtProvidedIndexWhenAttributesAlreadyExists()
+        {
+            var tree = CSharpSyntaxTree.ParseText(codeWithAttributes);
+            var rewriter = new ProtoAttributeRewriter("ProtoMember", "ProtoContract", "ProtoBuf");
+
+            var rewrittenRoot = rewriter.Visit(tree.GetRoot(), 100);
+
+            var output = rewrittenRoot.GetText().ToString();
+
+            output.Should().Contain("ProtoBuf");
+            output.Should().Contain("[ProtoContract]");
+            output.Should().Contain(@"[ProtoMember(100, Name=""Test"")]");
+            output.Should().Contain("[ProtoMember(101)]");
+            output.Should().Contain("[ProtoMember(102)]");
+            output.Should().Contain("[ProtoMember(103)]");
         }
     }
 

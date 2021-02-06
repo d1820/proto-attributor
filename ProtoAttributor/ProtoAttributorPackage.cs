@@ -24,7 +24,7 @@ namespace ProtoAttributor
     ///         ...&gt; in .vsixmanifest file.
     ///     </para>
     /// </remarks>
-    [ProvideService(typeof(IAttributeService))]
+    [ProvideService(typeof(IAttributeService), IsAsyncQueryable = true)]
     [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
     [Guid(ProtoAttributorPackage.PackageGuidString)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
@@ -34,6 +34,13 @@ namespace ProtoAttributor
         public const string PackageGuidString = "4ae69a22-8f3b-4af7-8478-4029546ad807";
 
         #region Package Members
+
+        private object CreateService(IServiceContainer container, Type serviceType)
+        {
+            if (typeof(IAttributeService) == serviceType)
+                return new ProtoAttributeService(this);
+            return null;
+        }
 
         /// <summary>
         ///     Initialization of the package; this method is called right after the package is sited, so this is the
@@ -49,14 +56,14 @@ namespace ProtoAttributor
         /// </returns>
         protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
         {
-            var callback = new ServiceCreatorCallback((IServiceContainer container, Type serviceType) =>
+            var callback = new AsyncServiceCreatorCallback(async (IAsyncServiceContainer container, CancellationToken ct, Type serviceType) =>
             {
                 if (typeof(IAttributeService) == serviceType)
-                    return new AttributeService(this);
+                    return new ProtoAttributeService(this);
                 return null;
             });
 
-            ((IServiceContainer)this).AddService(typeof(IAttributeService), callback);
+            this.AddService(typeof(IAttributeService), callback, true);
 
             // When initialized asynchronously, the current thread may be a background thread at this point. Do any
             // initialization that requires the UI thread after switching to the UI thread.

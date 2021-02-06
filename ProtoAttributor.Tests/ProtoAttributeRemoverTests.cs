@@ -17,6 +17,8 @@ namespace ProtoAttributor.Tests
                         {
                             [Required]
                             [ProtoContract]
+                            [ProtoInclude]
+                            [ProtoInclude]
                             public class Test
                                 {
                                     [Required]
@@ -45,6 +47,7 @@ namespace ProtoAttributor.Tests
 
             output.Should().NotContain("ProtoBuf");
             output.Should().NotContain("[ProtoContract]");
+            output.Should().NotContain("[ProtoInclude]");
             output.Should().NotContain(@"[ProtoMember(1, Name=""Test"")]");
             output.Should().NotContain("[ProtoMember(2)]");
         }

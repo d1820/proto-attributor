@@ -2,8 +2,11 @@ namespace ProtoAttributor.Services
 {
     public interface IAttributeService
     {
-        void Hello();
+        string AddAttributes(string fileContents);
 
-        string Goodbye();
+        string RemoveAttributes(string fileContents);
+
+        string ReorderAttributes(string fileContents, int startingIndex = 1);
+
     }
 }
