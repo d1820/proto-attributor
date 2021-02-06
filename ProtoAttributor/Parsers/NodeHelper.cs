@@ -1,6 +1,9 @@
 using System.Linq;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Formatting;
+using Microsoft.CodeAnalysis.Simplification;
 
 namespace ProtoAttributor.Services
 {
@@ -34,16 +37,7 @@ namespace ProtoAttributor.Services
             {
                 foreach (var attributeList in attributeLists)
                 {
-                    var matches =
-                        attributeList
-                        .Attributes
-                        .Where(
-                            attribute =>
-                                AttributeNameMatches(attribute, matchName)
-                                )
-                        .ToArray();
-
-                    if (matches.Length > 0)
+                    if (attributeList.Attributes.Any(attribute => AttributeNameMatches(attribute, matchName)))
                     {
                         return true;
                     }
@@ -51,5 +45,45 @@ namespace ProtoAttributor.Services
             }
             return false;
         }
+
+        public static AttributeListSyntax BuildAttributeList(AttributeSyntax attribute)
+        {
+            var attributeList = new SeparatedSyntaxList<AttributeSyntax>();
+            attributeList = attributeList.Add(attribute);
+
+            return SyntaxFactory.AttributeList(attributeList);
+        }
+
+        public static CompilationUnitSyntax AddUsing(CompilationUnitSyntax node, string usingStatement)
+        {
+            var hasUsing = node.Usings.Any(a => a.Name.ToString() == usingStatement);
+
+            if (!hasUsing)
+            {
+                var name = SyntaxFactory.ParseName($" {usingStatement}");
+                var usingDir = SyntaxFactory.UsingDirective(name);
+                usingDir = usingDir.WithAdditionalAnnotations(Formatter.Annotation, Simplifier.Annotation);
+                usingDir = usingDir.WithTrailingTrivia(SyntaxFactory.CarriageReturnLineFeed);
+                node = node.AddUsings(usingDir);
+            }
+            return node;
+        }
+
+        public static PropertyDeclarationSyntax AddNewPropertyAttribute(SyntaxList<AttributeListSyntax> newAttributes, PropertyDeclarationSyntax node)
+        {
+            //Get the leading trivia (the newlines and comments)
+            var leadTriv = node.GetLeadingTrivia();
+            var trailTriv = node.GetTrailingTrivia();
+
+            node = node.WithAttributeLists(newAttributes);
+
+            //Append the leading trivia to the method
+            node = node.WithLeadingTrivia(leadTriv);
+            node = node.WithTrailingTrivia(trailTriv);
+            return node;
+
+        }
+
+
     }
 }

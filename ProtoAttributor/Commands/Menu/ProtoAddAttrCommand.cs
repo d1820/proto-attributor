@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.Design;
 using EnvDTE;
+using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Task = System.Threading.Tasks.Task;
@@ -89,6 +90,12 @@ namespace ProtoAttributor.Commands.Menu
             //    OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
 
             //https://github.com/GregTrevellick/AutoFindReplace/blob/master/AutoFindReplace/VSPackage.cs
+
+
+
+            //var formattedRoot = Formatter.Format(newRoot, Formatter.Annotation, document.Project.Workspace);
+
+
 
             var dte = _SDTEService as DTE;
 

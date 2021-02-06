@@ -1,12 +1,13 @@
 using FluentAssertions;
 using Microsoft.CodeAnalysis.CSharp;
 using ProtoAttributor.Services;
+using ProtoBuf;
 using System;
 using Xunit;
 
 namespace ProtoAttributor.Tests
 {
-    public class AttributeAdderTests
+    public class ProtoAttributeAdderTests
     {
         private string code = @"
                         using System;
@@ -56,13 +57,13 @@ namespace ProtoAttributor.Tests
         public void AddsAttributesForProtBuf()
         {
 			var tree = CSharpSyntaxTree.ParseText(code);
-            var rewriter = new AttributeAdder("ProtoMember", "ProtoContract", "Protobuf.Net");
+            var rewriter = new ProtoAttributeAdder("ProtoMember", "ProtoContract", "ProtoBuf");
 
             var rewrittenRoot = rewriter.Visit(tree.GetRoot(), 1);
 
             var output = rewrittenRoot.GetText().ToString();
 
-            output.Should().Contain("Protobuf.Net");
+            output.Should().Contain("ProtoBuf");
             output.Should().Contain("[ProtoContract]");
             output.Should().Contain("[ProtoMember(1)]");
             output.Should().Contain("[ProtoMember(2)]");
@@ -72,13 +73,13 @@ namespace ProtoAttributor.Tests
         public void AddsUsingWhenNoneExist()
         {
             var tree = CSharpSyntaxTree.ParseText(codeNoUsings);
-            var rewriter = new AttributeAdder("ProtoMember", "ProtoContract", "Protobuf.Net");
+            var rewriter = new ProtoAttributeAdder("ProtoMember", "ProtoContract", "ProtoBuf");
 
             var rewrittenRoot = rewriter.Visit(tree.GetRoot(), 1);
 
             var output = rewrittenRoot.GetText().ToString();
 
-            output.Should().Contain("Protobuf.Net");
+            output.Should().Contain("ProtoBuf");
             output.Should().Contain("[ProtoContract]");
             output.Should().Contain("[ProtoMember(1)]");
             output.Should().Contain("[ProtoMember(2)]");
@@ -88,14 +89,14 @@ namespace ProtoAttributor.Tests
         public void AddsAttributesWithCorrectOrderWhenAttributesAlreadyExists()
         {
             var tree = CSharpSyntaxTree.ParseText(codeWithAttributes);
-            var rewriter = new AttributeAdder("ProtoMember", "ProtoContract", "Protobuf.Net");
+            var rewriter = new ProtoAttributeAdder("ProtoMember", "ProtoContract", "ProtoBuf");
             var protoReader = new ProtoAttributeReader("ProtoMember");
 
             var rewrittenRoot = rewriter.Visit(tree.GetRoot(), protoReader.GetProtoNextId(tree.GetRoot()));
 
             var output = rewrittenRoot.GetText().ToString();
 
-            output.Should().Contain("Protobuf.Net");
+            output.Should().Contain("ProtoBuf");
             output.Should().Contain("[ProtoContract]");
             output.Should().Contain("[ProtoMember(1)]");
             output.Should().Contain("[ProtoMember(2)]");
