@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.Formatting;
 
 namespace ProtoAttributor.Services
 {
-    public class ProtoAttributeRewriter : BaseProtoRewriter
+    public class ProtoAttributeRewriter: BaseProtoRewriter
     {
         public SyntaxNode Visit(SyntaxNode node, int startIndex = 1)
         {
@@ -28,9 +28,7 @@ namespace ProtoAttributor.Services
                 {
                     var newAttributes = BuildAttribute(attribute, innerNode.AttributeLists, wp);
 
-                    innerNode = innerNode.WithAttributeLists(newAttributes).WithAdditionalAnnotations(Formatter.Annotation);
-
-                    return innerNode;
+                    return innerNode.WithAttributeLists(newAttributes).WithAdditionalAnnotations(Formatter.Annotation);
                 });
 
                 _startIndex++;

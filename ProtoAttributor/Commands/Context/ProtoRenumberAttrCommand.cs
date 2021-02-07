@@ -1,6 +1,5 @@
 using System;
 using System.ComponentModel.Design;
-using System.Globalization;
 using EnvDTE;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
@@ -21,6 +20,7 @@ namespace ProtoAttributor.Commands.Context
 
         /// <summary> VS Package that provides this command, not null. </summary>
         private readonly AsyncPackage _package;
+
         private readonly SDTE _sdteService;
         private readonly IAttributeService _attributeService;
         private readonly TextSelectionExecutor _textSelectionExecutor;

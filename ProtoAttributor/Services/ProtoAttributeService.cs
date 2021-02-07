@@ -2,13 +2,13 @@ using Microsoft.CodeAnalysis.CSharp;
 
 namespace ProtoAttributor.Services
 {
-    public class ProtoAttributeService : IAttributeService
+    public class ProtoAttributeService: IAttributeService
     {
-        private Microsoft.VisualStudio.OLE.Interop.IServiceProvider _serviceProvider;
-        private ProtoAttributeAdder _adder;
-        private ProtoAttributeReader _protoReader;
-        private ProtoAttributeRemover _remover;
-        private ProtoAttributeRewriter _rewriter;
+        private readonly Microsoft.VisualStudio.OLE.Interop.IServiceProvider _serviceProvider;
+        private readonly ProtoAttributeAdder _adder;
+        private readonly ProtoAttributeReader _protoReader;
+        private readonly ProtoAttributeRemover _remover;
+        private readonly ProtoAttributeRewriter _rewriter;
 
         public ProtoAttributeService(Microsoft.VisualStudio.OLE.Interop.IServiceProvider sp,
             ProtoAttributeAdder adder, ProtoAttributeReader reader, ProtoAttributeRemover remover, ProtoAttributeRewriter rewriter)

@@ -14,10 +14,10 @@ namespace ProtoAttributor.Commands.Context
         public const int CommandId = 28;
 
         /// <summary> Command menu group (command set GUID). </summary>
-        public static readonly Guid CommandSet = new Guid("389ac0f4-15c7-4b06-b5be-ab2039d45ef2");
+        public static readonly Guid _commandSet = new Guid("389ac0f4-15c7-4b06-b5be-ab2039d45ef2");
 
         /// <summary> VS Package that provides this command, not null. </summary>
-        private readonly AsyncPackage package;
+        private readonly AsyncPackage _package;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="DataAnnoRemoveAttrCommand" /> class. Adds our command
@@ -27,10 +27,10 @@ namespace ProtoAttributor.Commands.Context
         /// <param name="commandService"> Command service to add command to, not null. </param>
         private DataAnnoRemoveAttrCommand(AsyncPackage package, OleMenuCommandService commandService)
         {
-            this.package = package ?? throw new ArgumentNullException(nameof(package));
+            this._package = package ?? throw new ArgumentNullException(nameof(package));
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
 
-            var menuCommandID = new CommandID(CommandSet, CommandId);
+            var menuCommandID = new CommandID(_commandSet, CommandId);
             var menuItem = new MenuCommand(Execute, menuCommandID);
             commandService.AddCommand(menuItem);
         }
@@ -47,7 +47,7 @@ namespace ProtoAttributor.Commands.Context
         {
             get
             {
-                return package;
+                return _package;
             }
         }
 
@@ -77,7 +77,7 @@ namespace ProtoAttributor.Commands.Context
 
             // Show a message box to prove we were here
             VsShellUtilities.ShowMessageBox(
-                package,
+                _package,
                 message,
                 title,
                 OLEMSGICON.OLEMSGICON_INFO,

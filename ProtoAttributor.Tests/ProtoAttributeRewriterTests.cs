@@ -18,7 +18,7 @@ namespace ProtoAttributor.Tests
             _fixture = fixture;
         }
 
-        private string _codeWithAttributes = @"
+        private readonly string _codeWithAttributes = @"
                         using System;
                         using Xunit;
                         namespace ProtoAttributor.Tests

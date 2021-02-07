@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel.Design;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Microsoft.VisualStudio.Shell;
@@ -28,7 +27,7 @@ namespace ProtoAttributor
     [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
     [Guid(ProtoAttributorPackage.PackageGuidString)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
-    public sealed class ProtoAttributorPackage : AsyncPackage
+    public sealed class ProtoAttributorPackage: AsyncPackage
     {
         /// <summary> ProtoAttributorPackage GUID string. </summary>
         public const string PackageGuidString = "4ae69a22-8f3b-4af7-8478-4029546ad807";

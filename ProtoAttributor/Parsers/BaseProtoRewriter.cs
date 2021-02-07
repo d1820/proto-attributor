@@ -5,10 +5,9 @@ using Microsoft.CodeAnalysis.Formatting;
 
 namespace ProtoAttributor.Services
 {
-    public class BaseProtoRewriter : CSharpSyntaxRewriter
+    public class BaseProtoRewriter: CSharpSyntaxRewriter
     {
         internal int _startIndex;
-
 
         public SyntaxList<AttributeListSyntax> BuildAttribute(AttributeSyntax attribute,
                                                                 SyntaxList<AttributeListSyntax> attributeLists,
@@ -18,7 +17,17 @@ namespace ProtoAttributor.Services
 
             newAttribute = (AttributeListSyntax)VisitAttributeList(newAttribute);
 
-            newAttribute = newAttribute.WithTrailingTrivia(SyntaxFactory.CarriageReturnLineFeed, trailingWhitspace);
+            if (attributeLists.Count > 0)
+            {
+                //Existing attribute cause the alignment to be off, this is the adjustment
+                newAttribute = newAttribute.WithLeadingTrivia(trailingWhitspace);
+                newAttribute = newAttribute.WithTrailingTrivia(SyntaxFactory.CarriageReturnLineFeed);
+            }
+            else
+            {
+                newAttribute = newAttribute.WithTrailingTrivia(SyntaxFactory.CarriageReturnLineFeed, trailingWhitspace);
+            }
+
             newAttribute = newAttribute.WithAdditionalAnnotations(Formatter.Annotation);
             return attributeLists.Add(newAttribute);
         }
@@ -31,6 +40,7 @@ namespace ProtoAttributor.Services
 
         public override SyntaxNode VisitClassDeclaration(ClassDeclarationSyntax node)
         {
+            _startIndex = 1;
             var hasMatch = NodeHelper.HasMatch(node.AttributeLists, Constants.Proto.CLASS_ATTRIBUTE_NAME);
 
             if (!hasMatch)
@@ -42,9 +52,7 @@ namespace ProtoAttributor.Services
                 {
                     var newAttributes = BuildAttribute(attribute, innerNode.AttributeLists, wp);
 
-                    innerNode = innerNode.WithAttributeLists(newAttributes).WithAdditionalAnnotations(Formatter.Annotation);
-
-                    return innerNode;
+                    return innerNode.WithAttributeLists(newAttributes).WithAdditionalAnnotations(Formatter.Annotation);
                 });
             }
 

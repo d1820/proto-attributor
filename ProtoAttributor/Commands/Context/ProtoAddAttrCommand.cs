@@ -1,6 +1,5 @@
 using System;
 using System.ComponentModel.Design;
-using System.IO;
 using System.Threading;
 using EnvDTE;
 using Microsoft.VisualStudio;
@@ -118,12 +117,11 @@ namespace ProtoAttributor.Commands.Context
             var cts = new CancellationTokenSource();
 
             if (dialog == null ||
-                dialog.StartWaitDialogWithPercentageProgress("Attributing Files", $"{currentCount} of {totalCount} Processed",
-                "", null, "Attributing", true, 0, totalCount, currentCount) != VSConstants.S_OK)
+                dialog.StartWaitDialogWithPercentageProgress("Proto Attributor: Attributing Progress", "", $"{currentCount} of {totalCount} Processed",
+                 null, "Attributing", true, 0, totalCount, currentCount) != VSConstants.S_OK)
             {
                 dialog = null;
             }
-
 
             foreach (SelectedItem selectedItem in dte.SelectedItems)
             {
@@ -137,11 +135,19 @@ namespace ProtoAttributor.Commands.Context
                 {
                     continue;
                 }
-                ProcessProjectItem(selectedItem.ProjectItem, cts.Token, () =>
+                ProcessProjectItem(selectedItem.ProjectItem, cts.Token, (fileName) =>
                 {
                     ThreadHelper.ThrowIfNotOnUIThread();
                     currentCount++;
-                    dialog?.UpdateProgress($"{currentCount} of {totalCount} Processed", "", "Attributing", currentCount, totalCount, false, out cancelProcessing);
+                    dialog?.UpdateProgress($"Annotating: {fileName}", $"{currentCount} of {totalCount} Processed", "Attributing", currentCount, totalCount, false, out cancelProcessing);
+                    if (cancelProcessing)
+                    {
+                        cts.Cancel();
+                    }
+                }, (fileName) =>
+                {
+                    ThreadHelper.ThrowIfNotOnUIThread();
+                    dialog?.UpdateProgress($"Annotating: {fileName}", $"{currentCount} of {totalCount} Processed", "Attributing", currentCount, totalCount, false, out cancelProcessing);
                     if (cancelProcessing)
                     {
                         cts.Cancel();
@@ -150,7 +156,6 @@ namespace ProtoAttributor.Commands.Context
             }
 
             dialog?.EndWaitDialog(out var usercancel);
-
         }
 
         private void GetTotalItemCount(ProjectItem projectItem, ref int count)
@@ -174,7 +179,7 @@ namespace ProtoAttributor.Commands.Context
             }
         }
 
-        private void ProcessProjectItem(ProjectItem projectItem, CancellationToken token, Action progressCallback)
+        private void ProcessProjectItem(ProjectItem projectItem, CancellationToken token, Action<string> progressCallback, Action<string> processItemCallback)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
             if (token.IsCancellationRequested)
@@ -187,7 +192,7 @@ namespace ProtoAttributor.Commands.Context
                 {
                     foreach (ProjectItem item in projectItem.ProjectItems)
                     {
-                        ProcessProjectItem(item, token, progressCallback);
+                        ProcessProjectItem(item, token, progressCallback, processItemCallback);
                     }
                 }
                 return;
@@ -195,6 +200,8 @@ namespace ProtoAttributor.Commands.Context
             if (projectItem.Kind == EnvDTE.Constants.vsProjectItemKindPhysicalFile)
             {
                 var fullPath = projectItem.Properties.Item("FullPath")?.Value?.ToString();
+                var name = projectItem.Name;
+                processItemCallback?.Invoke(name);
                 var isOpen = projectItem.IsOpen[EnvDTE.Constants.vsViewKindTextView];
                 if (!isOpen)
                 {
@@ -208,7 +215,7 @@ namespace ProtoAttributor.Commands.Context
                             projectItem.Document.Activate();
                             _textSelectionExecutor.Execute((TextSelection)projectItem.Document.Selection, (contents) => _attributeService.AddAttributes(contents));
                         }
-                        progressCallback?.Invoke();
+                        progressCallback?.Invoke(name);
                     }
                 }
                 else if (fullPath?.EndsWith(".cs") == true)
@@ -219,7 +226,7 @@ namespace ProtoAttributor.Commands.Context
                         projectItem.Document.Activate();
                         _textSelectionExecutor.Execute((TextSelection)projectItem.Document.Selection, (contents) => _attributeService.AddAttributes(contents));
                     }
-                    progressCallback?.Invoke();
+                    progressCallback?.Invoke(name);
                 }
             }
         }
@@ -275,6 +282,5 @@ namespace ProtoAttributor.Commands.Context
 
             return sResult;
         }
-
     }
 }

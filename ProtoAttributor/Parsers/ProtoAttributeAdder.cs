@@ -5,9 +5,9 @@ using Microsoft.CodeAnalysis.Formatting;
 
 namespace ProtoAttributor.Services
 {
-    public class ProtoAttributeAdder : BaseProtoRewriter
+    public class ProtoAttributeAdder: BaseProtoRewriter
     {
-        public SyntaxNode Visit(SyntaxNode node, int startIndex)
+        public SyntaxNode Visit(SyntaxNode node, int startIndex = 1)
         {
             _startIndex = startIndex;
             return base.Visit(node);
@@ -28,9 +28,7 @@ namespace ProtoAttributor.Services
                 {
                     var newAttributes = BuildAttribute(attribute, innerNode.AttributeLists, wp);
 
-                    innerNode = innerNode.WithAttributeLists(newAttributes).WithAdditionalAnnotations(Formatter.Annotation);
-
-                    return innerNode;
+                    return innerNode.WithAttributeLists(newAttributes).WithAdditionalAnnotations(Formatter.Annotation);
                 });
                 _startIndex++;
             }

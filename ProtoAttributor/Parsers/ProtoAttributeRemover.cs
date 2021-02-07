@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace ProtoAttributor.Services
 {
-    public class ProtoAttributeRemover : CSharpSyntaxRewriter
+    public class ProtoAttributeRemover: CSharpSyntaxRewriter
     {
         public ProtoAttributeRemover()
         {
@@ -33,7 +33,7 @@ namespace ProtoAttributor.Services
                 var newAttributeLists = new SyntaxList<AttributeListSyntax>();
                 foreach (var attributeList in node.AttributeLists)
                 {
-                    var nodesToRemove = attributeList.Attributes.Where(attribute => NodeHelper.AttributeNameMatches(attribute, Constants.Proto._BASE_PROP_NAME)).ToArray();
+                    var nodesToRemove = attributeList.Attributes.Where(attribute => NodeHelper.AttributeNameMatches(attribute, Constants.Proto.BASE_PROP_NAME)).ToArray();
 
                     // If the lists are the same length, we are removing all attributes and can just avoid populating newAttributes.
                     if (nodesToRemove.Length != attributeList.Attributes.Count)
@@ -57,7 +57,7 @@ namespace ProtoAttributor.Services
                 var newAttributeLists = new SyntaxList<AttributeListSyntax>();
                 foreach (var attributeList in node.AttributeLists)
                 {
-                    var nodesToRemove = attributeList.Attributes.Where(attribute => NodeHelper.AttributeNameMatches(attribute, Constants.Proto._BASE_PROP_NAME)).ToArray();
+                    var nodesToRemove = attributeList.Attributes.Where(attribute => NodeHelper.AttributeNameMatches(attribute, Constants.Proto.BASE_PROP_NAME)).ToArray();
 
                     // If the lists are the same length, we are removing all attributes and can just avoid populating newAttributes.
                     if (nodesToRemove.Length != attributeList.Attributes.Count)

@@ -5,15 +5,15 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace ProtoAttributor.Services
 {
-    public class ProtoAttributeReader : CSharpSyntaxWalker
+    public class ProtoAttributeReader: CSharpSyntaxWalker
     {
-        private int highestOrder;
+        private int _highestOrder;
 
         public int GetProtoNextId(SyntaxNode node)
         {
-            highestOrder = 0;
+            _highestOrder = 0;
             base.Visit(node);
-            return highestOrder + 1;
+            return _highestOrder + 1;
         }
 
         public override void VisitPropertyDeclaration(PropertyDeclarationSyntax node)
@@ -35,9 +35,9 @@ namespace ProtoAttributor.Services
                     {
                         var value = item.ArgumentList.Arguments.FirstOrDefault();
                         int.TryParse(value.GetText().ToString(), out var order);
-                        if (order > highestOrder)
+                        if (order > _highestOrder)
                         {
-                            highestOrder = order;
+                            _highestOrder = order;
                         }
                     }
                 }
