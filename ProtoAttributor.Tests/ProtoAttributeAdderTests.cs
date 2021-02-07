@@ -4,74 +4,71 @@ using ProtoAttributor.Services;
 using ProtoBuf;
 using System;
 using System.IO;
+using System.Linq;
 using Xunit;
 
 namespace ProtoAttributor.Tests
 {
-    public class ProtoAttributeAdderTests
+    public class ProtoAttributeAdderTests: IClassFixture<TestFixure>
     {
-        private string code = @"
-using System;
-using Xunit;
-namespace ProtoAttributor.Tests
-{
-    public class Test
-    {
-        [Required]
-        public int MyProperty { get; set; }
-        public int MyProperty2 { get; set; }
-    }
-}
-";
+        private readonly TestFixure _fixture;
 
-
-
-
-        private string codeWithAttributes = @"
-using System;
-using Xunit;
-namespace ProtoAttributor.Tests
-{
-    [ProtoContract]
-    public class Test
+        public ProtoAttributeAdderTests(TestFixure fixture)
         {
-            [Required]
-            [ProtoMember(1)]
-            public int MyProperty { get; set; }
-            [ProtoMember(2)]
-            public int MyProperty2 { get; set; }
-            public int MyProperty3 { get; set; }
-            public int MyProperty4 { get; set; }
-        }
-}
-";
-        private string _location;
-        private string _dirPath;
-
-        public string LoadTestFile(string relativePath)
-        {
-            return File.ReadAllText(relativePath);
+            _fixture = fixture;
         }
         [Fact]
         public void AddsAttributesForProtBuf()
         {
-			var tree = CSharpSyntaxTree.ParseText(code);
+			var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestClassPlain.cs"));
             var rewriter = new ProtoAttributeAdder("ProtoMember", "ProtoContract", "ProtoBuf");
 
             var rewrittenRoot = rewriter.Visit(tree.GetRoot(), 1);
 
             var output = rewrittenRoot.GetText().ToString();
 
+            var source = output.Split(new string[] { " " , "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+
             output.Should().Contain("ProtoBuf");
             output.Should().Contain("[ProtoContract]");
+            output.Should().Contain("[Required]");
             output.Should().Contain("[ProtoMember(1)]");
             output.Should().Contain("[ProtoMember(2)]");
+
+            _fixture.AssertOutputContainsCount(source, "ProtoMember", 2);
+            _fixture.AssertOutputContainsCount(source, "Required", 1);
+
+        }
+
+        [Fact]
+        public void AddsAttributesForProtBufWherePropDontHaveProtoIgnore()
+        {
+            var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestCodeWithAttributesAndProtoIgnore.cs"));
+            var rewriter = new ProtoAttributeAdder("ProtoMember", "ProtoContract", "ProtoBuf");
+            var protoReader = new ProtoAttributeReader("ProtoMember");
+            var rewrittenRoot = rewriter.Visit(tree.GetRoot(), protoReader.GetProtoNextId(tree.GetRoot()));
+
+            var output = rewrittenRoot.GetText().ToString();
+
+            var source = output.Split(new string[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+            output.Should().Contain("ProtoBuf");
+            output.Should().Contain("[ProtoContract]");
+            output.Should().Contain("[Required]");
+            output.Should().Contain("[ProtoMember(1)]");
+            output.Should().Contain("[ProtoMember(2)]");
+            output.Should().Contain("[ProtoMember(3)]");
+
+            _fixture.AssertOutputContainsCount(source, "[ProtoMember", 3);
+            _fixture.AssertOutputContainsCount(source, "[Required]", 1);
+            _fixture.AssertOutputContainsCount(source, "[ProtoIgnore]", 1);
+
         }
 
         [Fact]
         public void AddsAttributesAndKeepCommentsInTack()
         {
-            var tree = CSharpSyntaxTree.ParseText(LoadTestFile(@"./Mocks/TestClassWithComments.cs"));
+            var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestClassWithComments.cs"));
             var rewriter = new ProtoAttributeAdder("ProtoMember", "ProtoContract", "ProtoBuf");
 
             var rewrittenRoot = rewriter.Visit(tree.GetRoot(), 1);
@@ -82,12 +79,28 @@ namespace ProtoAttributor.Tests
             output.Should().Contain("[ProtoContract]");
             output.Should().Contain("[ProtoMember(1)]");
             output.Should().Contain("[ProtoMember(2)]");
+
+            output.Should().Contain("        /// </value>");
+            output.Should().Contain("        [ProtoMember(1)]");
+            output.Should().Contain("        public int MyProperty { get; set; }");
+
+            //This verifies spacing is correct
+            output.Should().Contain(@"
+        /// <summary>
+        /// Gets or sets my property.
+        /// </summary>
+        /// <value>
+        /// My property.
+        /// </value>
+        [ProtoMember(1)]
+        public int MyProperty { get; set; }");
+
         }
 
         [Fact]
         public void AddsUsingWhenNoneExist()
         {
-            var tree = CSharpSyntaxTree.ParseText(LoadTestFile(@"./Mocks/TestClassNoUsings.cs"));
+            var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestClassNoUsings.cs"));
             var rewriter = new ProtoAttributeAdder("ProtoMember", "ProtoContract", "ProtoBuf");
 
             var rewrittenRoot = rewriter.Visit(tree.GetRoot(), 1);
@@ -103,7 +116,7 @@ namespace ProtoAttributor.Tests
         [Fact]
         public void AddsAttributesWithCorrectOrderWhenAttributesAlreadyExists()
         {
-            var tree = CSharpSyntaxTree.ParseText(codeWithAttributes);
+            var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestCodeWithAttributes.cs"));
             var rewriter = new ProtoAttributeAdder("ProtoMember", "ProtoContract", "ProtoBuf");
             var protoReader = new ProtoAttributeReader("ProtoMember");
 

@@ -69,22 +69,5 @@ namespace ProtoAttributor.Services
             return node;
         }
 
-        public static PropertyDeclarationSyntax AddNewPropertyAttribute(SyntaxList<AttributeListSyntax> newAttributes, PropertyDeclarationSyntax node)
-        {
-            //Get the leading trivia (the newlines and comments)
-            var leadTriv = node.GetLeadingTrivia();
-            var trailTriv = node.GetTrailingTrivia();
-
-            node = node.WithAttributeLists(newAttributes);
-
-            var leadsToKeep = leadTriv.Where(w => w.Kind() != SyntaxKind.EndOfLineTrivia);
-            node = node.WithLeadingTrivia(SyntaxFactory.TriviaList(leadsToKeep));
-
-            node = node.WithTrailingTrivia(trailTriv);
-            return node;
-
-        }
-
-
     }
 }

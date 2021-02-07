@@ -9,15 +9,11 @@ namespace ProtoAttributor.Services
 
     public class ProtoAttributeRemover : CSharpSyntaxRewriter
     {
-        internal readonly string _propertyAttributeName;
-        internal int _startIndex;
-        internal readonly string _classAttributeName;
         internal readonly string _usingStatement;
+        private readonly string PARTIAL_SEARCH_TERM = "Proto";
 
-        public ProtoAttributeRemover(string attributeName, string classAttributeName, string usingStatement)
+        public ProtoAttributeRemover(string usingStatement)
         {
-            _propertyAttributeName = attributeName;
-            _classAttributeName = classAttributeName;
             _usingStatement = usingStatement;
         }
 
@@ -44,8 +40,7 @@ namespace ProtoAttributor.Services
                 var newAttributeLists = new SyntaxList<AttributeListSyntax>();
                 foreach (var attributeList in node.AttributeLists)
                 {
-                    var nodesToRemove = attributeList.Attributes.Where(attribute => NodeHelper.AttributeNameMatches(attribute, _classAttributeName)
-                                                                                    || NodeHelper.AttributeNameMatches(attribute, "ProtoInclude")).ToArray();
+                    var nodesToRemove = attributeList.Attributes.Where(attribute => NodeHelper.AttributeNameMatches(attribute, PARTIAL_SEARCH_TERM)).ToArray();
 
                     // If the lists are the same length, we are removing all attributes and can just avoid populating newAttributes.
                     if (nodesToRemove.Length != attributeList.Attributes.Count)
@@ -69,7 +64,7 @@ namespace ProtoAttributor.Services
                 var newAttributeLists = new SyntaxList<AttributeListSyntax>();
                 foreach (var attributeList in node.AttributeLists)
                 {
-                    var nodesToRemove = attributeList.Attributes.Where(attribute => NodeHelper.AttributeNameMatches(attribute, _propertyAttributeName)).ToArray();
+                    var nodesToRemove = attributeList.Attributes.Where(attribute => NodeHelper.AttributeNameMatches(attribute, PARTIAL_SEARCH_TERM)).ToArray();
 
                     // If the lists are the same length, we are removing all attributes and can just avoid populating newAttributes.
                     if (nodesToRemove.Length != attributeList.Attributes.Count)

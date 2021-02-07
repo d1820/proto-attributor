@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Formatting;
 
 namespace ProtoAttributor.Services
 {
@@ -28,8 +29,18 @@ namespace ProtoAttributor.Services
                 var name = SyntaxFactory.ParseName(_propertyAttributeName);
                 var arguments = SyntaxFactory.ParseAttributeArgumentList($"({_startIndex})");
                 var attribute = SyntaxFactory.Attribute(name, arguments); //ProtoMember("1")
-                var newAttributes = BuildAttribute(attribute, node.AttributeLists);
-                node = NodeHelper.AddNewPropertyAttribute(newAttributes, node);
+
+
+                node = TriviaMaintainer.Apply(node, (innerNode, wp) =>
+                {
+                    var newAttributes = BuildAttribute(attribute, innerNode.AttributeLists, wp);
+
+                    innerNode = innerNode.WithAttributeLists(newAttributes).WithAdditionalAnnotations(Formatter.Annotation);
+
+                    return innerNode;
+
+                });
+
                 _startIndex++;
             }
             else

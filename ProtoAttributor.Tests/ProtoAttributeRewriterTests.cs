@@ -8,8 +8,16 @@ namespace ProtoAttributor.Tests
 {
 
 
-    public class ProtoAttributeRewriterTests
+    public class ProtoAttributeRewriterTests: IClassFixture<TestFixure>
     {
+
+        private readonly TestFixure _fixture;
+
+        public ProtoAttributeRewriterTests(TestFixure fixture)
+        {
+            _fixture = fixture;
+        }
+
         private string codeWithAttributes = @"
                         using System;
                         using Xunit;

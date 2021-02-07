@@ -51,6 +51,7 @@
     <Compile Include="Commands\Menu\ProtoRenumberAttrCommand.cs" />
     <Compile Include="Parsers\BaseRewriter.cs" />
     <Compile Include="Parsers\ProtoAttributeRemover.cs" />
+    <Compile Include="Parsers\TriviaMaintainer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Commands\Context\DataAnnoRenumberAttrCommand.cs" />
     <Compile Include="Commands\Context\DataAnnoAddAttrCommand.cs" />

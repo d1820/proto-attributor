@@ -29,7 +29,7 @@ namespace ProtoAttributor.Services
         public string RemoveAttributes(string fileContents)
         {
             var tree = CSharpSyntaxTree.ParseText(fileContents);
-            var rewriter = new ProtoAttributeRemover(ATTRIBUTE_NAME, CLASS_NAME, USING_STATEMENT);
+            var rewriter = new ProtoAttributeRemover(USING_STATEMENT);
 
             var rewrittenRoot = rewriter.Visit(tree.GetRoot());
             return rewrittenRoot.GetText().ToString();

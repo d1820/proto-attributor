@@ -7,28 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Mocks\TestClassNoUsings.cs" />
-    <Compile Remove="Mocks\TestClassWithComments - Copy (2).cs" />
-    <Compile Remove="Mocks\TestClassWithComments - Copy (3).cs" />
-    <Compile Remove="Mocks\TestClassWithComments.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Mocks\TestClassWithComments - Copy (2).cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Mocks\TestClassWithComments - Copy (3).cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Mocks\TestClassNoUsings.cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Mocks\TestClassWithComments.cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.8.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
@@ -46,6 +24,27 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ProtoAttributor\ProtoAttributor.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Mocks\TestClassNoUsings.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Mocks\TestClassPlain.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Mocks\TestClassWithComments.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Mocks\TestCodeWithAttributes.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Mocks\TestCodeWithAttributesAndProtoIgnore.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Mocks\TestRemoveAttributes.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
   </ItemGroup>
 
 </Project>
