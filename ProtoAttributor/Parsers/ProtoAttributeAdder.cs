@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -10,9 +8,8 @@ namespace ProtoAttributor.Services
     public class ProtoAttributeAdder : BaseRewriter
     {
         public ProtoAttributeAdder(string attributeName, string classAttributeName, string usingStatement)
-            :base(attributeName, classAttributeName, usingStatement)
+            : base(attributeName, classAttributeName, usingStatement)
         {
-
         }
 
         public SyntaxNode Visit(SyntaxNode node, int startIndex)
@@ -39,13 +36,11 @@ namespace ProtoAttributor.Services
                     innerNode = innerNode.WithAttributeLists(newAttributes).WithAdditionalAnnotations(Formatter.Annotation);
 
                     return innerNode;
-
                 });
                 _startIndex++;
             }
 
             return base.VisitPropertyDeclaration(node);
         }
-
     }
 }

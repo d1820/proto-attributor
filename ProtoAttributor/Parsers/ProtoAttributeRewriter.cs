@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -30,7 +29,6 @@ namespace ProtoAttributor.Services
                 var arguments = SyntaxFactory.ParseAttributeArgumentList($"({_startIndex})");
                 var attribute = SyntaxFactory.Attribute(name, arguments); //ProtoMember("1")
 
-
                 node = TriviaMaintainer.Apply(node, (innerNode, wp) =>
                 {
                     var newAttributes = BuildAttribute(attribute, innerNode.AttributeLists, wp);
@@ -38,7 +36,6 @@ namespace ProtoAttributor.Services
                     innerNode = innerNode.WithAttributeLists(newAttributes).WithAdditionalAnnotations(Formatter.Annotation);
 
                     return innerNode;
-
                 });
 
                 _startIndex++;

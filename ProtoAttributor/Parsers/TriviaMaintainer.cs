@@ -3,11 +3,9 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Formatting;
 
 namespace ProtoAttributor.Services
 {
-
     public static class TriviaMaintainer
     {
         public static PropertyDeclarationSyntax Apply(PropertyDeclarationSyntax node, Func<PropertyDeclarationSyntax, SyntaxTrivia, PropertyDeclarationSyntax> builder)

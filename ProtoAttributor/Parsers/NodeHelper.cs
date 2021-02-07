@@ -68,6 +68,5 @@ namespace ProtoAttributor.Services
             }
             return node;
         }
-
     }
 }

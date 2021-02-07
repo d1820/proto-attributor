@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -6,7 +5,6 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace ProtoAttributor.Services
 {
-
     public class ProtoAttributeRemover : CSharpSyntaxRewriter
     {
         internal readonly string _usingStatement;
@@ -16,7 +14,6 @@ namespace ProtoAttributor.Services
         {
             _usingStatement = usingStatement;
         }
-
 
         public override SyntaxNode VisitCompilationUnit(CompilationUnitSyntax node)
         {
@@ -69,7 +66,7 @@ namespace ProtoAttributor.Services
                     // If the lists are the same length, we are removing all attributes and can just avoid populating newAttributes.
                     if (nodesToRemove.Length != attributeList.Attributes.Count)
                     {
-                        var newAttribute = (AttributeListSyntax)VisitAttributeList( attributeList.RemoveNodes(nodesToRemove, SyntaxRemoveOptions.KeepNoTrivia));
+                        var newAttribute = (AttributeListSyntax)VisitAttributeList(attributeList.RemoveNodes(nodesToRemove, SyntaxRemoveOptions.KeepNoTrivia));
                         newAttributeLists = newAttributeLists.Add(newAttribute);
                     }
                 }

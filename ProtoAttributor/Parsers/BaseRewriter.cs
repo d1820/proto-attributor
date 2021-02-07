@@ -1,10 +1,7 @@
-using System;
-using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
-using Microsoft.CodeAnalysis.Simplification;
 
 namespace ProtoAttributor.Services
 {
@@ -41,7 +38,6 @@ namespace ProtoAttributor.Services
             return base.VisitCompilationUnit(node);
         }
 
-
         public override SyntaxNode VisitClassDeclaration(ClassDeclarationSyntax node)
         {
             var hasMatch = NodeHelper.HasMatch(node.AttributeLists, _classAttributeName);
@@ -58,7 +54,6 @@ namespace ProtoAttributor.Services
                     innerNode = innerNode.WithAttributeLists(newAttributes).WithAdditionalAnnotations(Formatter.Annotation);
 
                     return innerNode;
-
                 });
             }
 

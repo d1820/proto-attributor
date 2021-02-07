@@ -1,7 +1,6 @@
 using System;
 using System.ComponentModel.Design;
 using EnvDTE;
-using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using ProtoAttributor.Services;
@@ -84,14 +83,12 @@ namespace ProtoAttributor.Commands.Menu
 
             //https://github.com/GregTrevellick/AutoFindReplace/blob/master/AutoFindReplace/VSPackage.cs
 
-
-
             //var formattedRoot = Formatter.Format(newRoot, Formatter.Annotation, document.Project.Workspace);
 
             //_attributeService.Hello();
 
             var dte = _SDTEService as DTE;
-            if(dte.ActiveDocument != null)
+            if (dte.ActiveDocument != null)
             {
                 var textSelection = (TextSelection)dte.ActiveDocument.Selection;
                 textSelection.GotoLine(1, true);
@@ -101,11 +98,8 @@ namespace ProtoAttributor.Commands.Menu
                 textSelection.Insert(changedTxt);
                 //textSelection.Text = changedTxt;
                 textSelection.SmartFormat();
-               // var formattedRoot = Formatter.Format(newRoot, Formatter.Annotation, document.Project.Workspace);
+                // var formattedRoot = Formatter.Format(newRoot, Formatter.Annotation, document.Project.Workspace);
             }
-
-
-
         }
     }
 }

@@ -7,6 +7,5 @@ namespace ProtoAttributor.Services
         string RemoveAttributes(string fileContents);
 
         string ReorderAttributes(string fileContents, int startingIndex = 1);
-
     }
 }
