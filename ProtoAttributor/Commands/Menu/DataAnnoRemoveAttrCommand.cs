@@ -1,52 +1,42 @@
 using System;
 using System.ComponentModel.Design;
 using System.Globalization;
-using EnvDTE;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
-using ProtoAttributor.Executors;
-using ProtoAttributor.Services;
 using Task = System.Threading.Tasks.Task;
 
 namespace ProtoAttributor.Commands.Menu
 {
     /// <summary> Command handler </summary>
-    internal sealed class ProtoRenumberAttrCommand
+    internal sealed class DataAnnoRemoveAttrCommand
     {
         /// <summary> Command ID. </summary>
-        public const int CommandId = 14;
+        public const int CommandId = 17;
 
         /// <summary> Command menu group (command set GUID). </summary>
-        public static readonly Guid _commandSet = new Guid("389ac0f4-15c7-4b06-b5be-ab2039d45ef2");
+        public static readonly Guid CommandSet = new Guid("389ac0f4-15c7-4b06-b5be-ab2039d45ef2");
 
         /// <summary> VS Package that provides this command, not null. </summary>
-        private readonly AsyncPackage _package;
-        private readonly IAttributeService _attributeService;
-        private readonly TextSelectionExecutor _textSelectionExecutor;
-        private readonly SDTE _sdteService;
+        private readonly AsyncPackage package;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="ProtoRenumberAttrCommand" /> class. Adds our command
+        ///     Initializes a new instance of the <see cref="DataAnnoRemoveAttrCommand" /> class. Adds our command
         ///     handlers for menu (commands must exist in the command table file)
         /// </summary>
         /// <param name="package"> Owner package, not null. </param>
         /// <param name="commandService"> Command service to add command to, not null. </param>
-        private ProtoRenumberAttrCommand(AsyncPackage package, OleMenuCommandService commandService, SDTE SDTEService,
-            IAttributeService attributeService, TextSelectionExecutor textSelectionExecutor)
+        private DataAnnoRemoveAttrCommand(AsyncPackage package, OleMenuCommandService commandService)
         {
-            _package = package ?? throw new ArgumentNullException(nameof(package));
-            _attributeService = attributeService;
-            _textSelectionExecutor = textSelectionExecutor;
-            _sdteService = SDTEService;
+            this.package = package ?? throw new ArgumentNullException(nameof(package));
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
 
-            var menuCommandID = new CommandID(_commandSet, CommandId);
+            var menuCommandID = new CommandID(CommandSet, CommandId);
             var menuItem = new MenuCommand(Execute, menuCommandID);
             commandService.AddCommand(menuItem);
         }
 
         /// <summary> Gets the instance of the command. </summary>
-        public static ProtoRenumberAttrCommand Instance
+        public static DataAnnoRemoveAttrCommand Instance
         {
             get;
             private set;
@@ -57,7 +47,7 @@ namespace ProtoAttributor.Commands.Menu
         {
             get
             {
-                return _package;
+                return package;
             }
         }
 
@@ -69,10 +59,7 @@ namespace ProtoAttributor.Commands.Menu
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
 
             var commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
-            var attributeService = await package.GetServiceAsync(typeof(IAttributeService)) as IAttributeService;
-            var SDTE = await package.GetServiceAsync(typeof(SDTE)) as SDTE;
-            var textSelectionExecutor = new TextSelectionExecutor();
-            Instance = new ProtoRenumberAttrCommand(package, commandService, SDTE, attributeService, textSelectionExecutor);
+            Instance = new DataAnnoRemoveAttrCommand(package, commandService);
         }
 
         /// <summary>
@@ -85,11 +72,17 @@ namespace ProtoAttributor.Commands.Menu
         private void Execute(object sender, EventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            var dte = _sdteService as DTE;
-            if (dte.ActiveDocument != null)
-            {
-                _textSelectionExecutor.Execute((TextSelection)dte.ActiveDocument.Selection, (contents) => _attributeService.ReorderAttributes(contents));
-            }
+            var message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()", GetType().FullName);
+            var title = "ProtoCommand";
+
+            // Show a message box to prove we were here
+            VsShellUtilities.ShowMessageBox(
+                package,
+                message,
+                title,
+                OLEMSGICON.OLEMSGICON_INFO,
+                OLEMSGBUTTON.OLEMSGBUTTON_OK,
+                OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
         }
     }
 }

@@ -56,20 +56,41 @@ namespace ProtoAttributor
                 return null;
             });
 
-            this.AddService(typeof(IAttributeService), callback, true);
+            AddService(typeof(IAttributeService), callback, true);
 
             // When initialized asynchronously, the current thread may be a background thread at this point. Do any
             // initialization that requires the UI thread after switching to the UI thread.
             await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
-            await ProtoAddAttrCommand.InitializeAsync(this);
-            await ProtoRenumberAttrCommand.InitializeAsync(this);
-            await DataAnnoAddAttrCommand.InitializeAsync(this);
-            await DataAnnoRenumberAttrCommand.InitializeAsync(this);
 
-            await Commands.Menu.ProtoAddAttrCommand.InitializeAsync(this);
-            await Commands.Menu.ProtoRenumberAttrCommand.InitializeAsync(this);
-            await Commands.Menu.DataAnnoAddAttrCommand.InitializeAsync(this);
-            await Commands.Menu.DataAnnoRenumberAttrCommand.InitializeAsync(this);
+            await Task.WhenAll(
+                    ProtoAddAttrCommand.InitializeAsync(this),
+                    ProtoRenumberAttrCommand.InitializeAsync(this),
+                    ProtoRemoveAttrCommand.InitializeAsync(this),
+                    DataAnnoAddAttrCommand.InitializeAsync(this),
+                    DataAnnoRenumberAttrCommand.InitializeAsync(this),
+                    DataAnnoRemoveAttrCommand.InitializeAsync(this),
+
+                    Commands.Menu.ProtoAddAttrCommand.InitializeAsync(this),
+                    Commands.Menu.ProtoRenumberAttrCommand.InitializeAsync(this),
+                    Commands.Menu.ProtoRemoveAttrCommand.InitializeAsync(this),
+                    Commands.Menu.DataAnnoAddAttrCommand.InitializeAsync(this),
+                    Commands.Menu.DataAnnoRenumberAttrCommand.InitializeAsync(this),
+                    Commands.Menu.DataAnnoRemoveAttrCommand.InitializeAsync(this)
+            );
+
+            //await ProtoAddAttrCommand.InitializeAsync(this);
+            //await ProtoRenumberAttrCommand.InitializeAsync(this);
+            //await ProtoRemoveAttrCommand.InitializeAsync(this);
+            //await DataAnnoAddAttrCommand.InitializeAsync(this);
+            //await DataAnnoRenumberAttrCommand.InitializeAsync(this);
+            //await DataAnnoRemoveAttrCommand.InitializeAsync(this);
+
+            //await Commands.Menu.ProtoAddAttrCommand.InitializeAsync(this);
+            //await Commands.Menu.ProtoRenumberAttrCommand.InitializeAsync(this);
+            //await Commands.Menu.ProtoRemoveAttrCommand.InitializeAsync(this);
+            //await Commands.Menu.DataAnnoAddAttrCommand.InitializeAsync(this);
+            //await Commands.Menu.DataAnnoRenumberAttrCommand.InitializeAsync(this);
+            //await Commands.Menu.DataAnnoRemoveAttrCommand.InitializeAsync(this);
         }
 
         #endregion Package Members

@@ -45,11 +45,16 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Commands\Context\DataAnnoRemoveAttrCommand.cs" />
+    <Compile Include="Commands\Context\ProtoRemoveAttrCommand.cs" />
     <Compile Include="Commands\Menu\DataAnnoAddAttrCommand.cs" />
+    <Compile Include="Commands\Menu\DataAnnoRemoveAttrCommand.cs" />
     <Compile Include="Commands\Menu\DataAnnoRenumberAttrCommand.cs" />
+    <Compile Include="Commands\Menu\ProtoRemoveAttrCommand.cs" />
     <Compile Include="Commands\Menu\ProtoAddAttrCommand.cs" />
     <Compile Include="Commands\Menu\ProtoRenumberAttrCommand.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Executors\TextSelectionExecutor.cs" />
     <Compile Include="Parsers\BaseProtoRewriter.cs" />
     <Compile Include="Parsers\ProtoAttributeRemover.cs" />
     <Compile Include="Parsers\TriviaMaintainer.cs" />

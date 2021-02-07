@@ -1,8 +1,11 @@
 using System;
 using System.ComponentModel.Design;
 using System.Globalization;
+using EnvDTE;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using ProtoAttributor.Executors;
+using ProtoAttributor.Services;
 using Task = System.Threading.Tasks.Task;
 
 namespace ProtoAttributor.Commands.Context
@@ -14,10 +17,13 @@ namespace ProtoAttributor.Commands.Context
         public const int CommandId = 24;
 
         /// <summary> Command menu group (command set GUID). </summary>
-        public static readonly Guid CommandSet = new Guid("389ac0f4-15c7-4b06-b5be-ab2039d45ef2");
+        public static readonly Guid _commandSet = new Guid("389ac0f4-15c7-4b06-b5be-ab2039d45ef2");
 
         /// <summary> VS Package that provides this command, not null. </summary>
-        private readonly AsyncPackage package;
+        private readonly AsyncPackage _package;
+        private readonly SDTE _sdteService;
+        private readonly IAttributeService _attributeService;
+        private readonly TextSelectionExecutor _textSelectionExecutor;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ProtoRenumberAttrCommand" /> class. Adds our command
@@ -25,12 +31,16 @@ namespace ProtoAttributor.Commands.Context
         /// </summary>
         /// <param name="package"> Owner package, not null. </param>
         /// <param name="commandService"> Command service to add command to, not null. </param>
-        private ProtoRenumberAttrCommand(AsyncPackage package, OleMenuCommandService commandService)
+        private ProtoRenumberAttrCommand(AsyncPackage package, OleMenuCommandService commandService, SDTE SDTEService,
+            IAttributeService attributeService, TextSelectionExecutor textSelectionExecutor)
         {
-            this.package = package ?? throw new ArgumentNullException(nameof(package));
+            _package = package ?? throw new ArgumentNullException(nameof(package));
+            _sdteService = SDTEService;
+            _attributeService = attributeService;
+            _textSelectionExecutor = textSelectionExecutor;
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
 
-            var menuCommandID = new CommandID(CommandSet, CommandId);
+            var menuCommandID = new CommandID(_commandSet, CommandId);
             var menuItem = new MenuCommand(Execute, menuCommandID);
             commandService.AddCommand(menuItem);
         }
@@ -47,7 +57,7 @@ namespace ProtoAttributor.Commands.Context
         {
             get
             {
-                return package;
+                return _package;
             }
         }
 
@@ -59,7 +69,10 @@ namespace ProtoAttributor.Commands.Context
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
 
             var commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
-            Instance = new ProtoRenumberAttrCommand(package, commandService);
+            var attributeService = await package.GetServiceAsync(typeof(IAttributeService)) as IAttributeService;
+            var SDTE = await package.GetServiceAsync(typeof(SDTE)) as SDTE;
+            var textSelectionExecutor = new TextSelectionExecutor();
+            Instance = new ProtoRenumberAttrCommand(package, commandService, SDTE, attributeService, textSelectionExecutor);
         }
 
         /// <summary>
@@ -72,17 +85,11 @@ namespace ProtoAttributor.Commands.Context
         private void Execute(object sender, EventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            var message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()", GetType().FullName);
-            var title = "ProtoCommand";
-
-            // Show a message box to prove we were here
-            VsShellUtilities.ShowMessageBox(
-                package,
-                message,
-                title,
-                OLEMSGICON.OLEMSGICON_INFO,
-                OLEMSGBUTTON.OLEMSGBUTTON_OK,
-                OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+            var dte = _sdteService as DTE;
+            if (dte.ActiveDocument != null)
+            {
+                _textSelectionExecutor.Execute((TextSelection)dte.ActiveDocument.Selection, (contents) => _attributeService.ReorderAttributes(contents));
+            }
         }
     }
 }

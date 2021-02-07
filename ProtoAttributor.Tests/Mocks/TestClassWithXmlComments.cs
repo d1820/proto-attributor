@@ -8,7 +8,7 @@ namespace ProtoAttributor.Tests.Mocks
     /// <summary>
     /// TestClass
     /// </summary>
-    public class TestClassWithComments
+    public class TestClassWithXmlComments
     {
         /// <summary>
         /// Gets or sets my property.

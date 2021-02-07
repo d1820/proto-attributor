@@ -68,7 +68,7 @@ namespace ProtoAttributor.Tests
         [Fact]
         public void AddsAttributesAndKeepCommentsInTack()
         {
-            var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestClassWithComments.cs"));
+            var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestClassWithXmlComments.cs"));
             var rewriter = new ProtoAttributeAdder();
 
             var rewrittenRoot = rewriter.Visit(tree.GetRoot(), 1);
@@ -130,6 +130,23 @@ namespace ProtoAttributor.Tests
             output.Should().Contain("[ProtoMember(2)]");
             output.Should().Contain("[ProtoMember(3)]");
             output.Should().Contain("[ProtoMember(4)]");
+        }
+
+        [Fact]
+        public void AddsAttributesWithCorrectOrderWhenFileHasWierdFormatting()
+        {
+            var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestWierdFormatting.cs"));
+            var rewriter = new ProtoAttributeAdder();
+            var protoReader = new ProtoAttributeReader();
+
+            var rewrittenRoot = rewriter.Visit(tree.GetRoot(), protoReader.GetProtoNextId(tree.GetRoot()));
+
+            var output = rewrittenRoot.GetText().ToString();
+
+            output.Should().Contain("ProtoBuf");
+            output.Should().Contain("[ProtoContract]");
+            output.Should().Contain("[ProtoMember(1)]");
+            output.Should().Contain("[ProtoMember(2)]");
         }
     }
 

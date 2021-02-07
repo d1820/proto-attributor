@@ -3,6 +3,7 @@ using System.ComponentModel.Design;
 using EnvDTE;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using ProtoAttributor.Executors;
 using ProtoAttributor.Services;
 using Task = System.Threading.Tasks.Task;
 
@@ -15,13 +16,14 @@ namespace ProtoAttributor.Commands.Menu
         public const int CommandId = 13;
 
         /// <summary> Command menu group (command set GUID). </summary>
-        public static readonly Guid CommandSet = new Guid("389ac0f4-15c7-4b06-b5be-ab2039d45ef2");
+        public static readonly Guid _commandSet = new Guid("389ac0f4-15c7-4b06-b5be-ab2039d45ef2");
 
         /// <summary> VS Package that provides this command, not null. </summary>
-        private readonly AsyncPackage package;
+        private readonly AsyncPackage _package;
 
-        private readonly SDTE _SDTEService;
+        private readonly SDTE _sdteService;
         private readonly IAttributeService _attributeService;
+        private readonly TextSelectionExecutor _textSelectionExecutor;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ProtoAddAttrCommand" /> class. Adds our command handlers
@@ -29,16 +31,18 @@ namespace ProtoAttributor.Commands.Menu
         /// </summary>
         /// <param name="package"> Owner package, not null. </param>
         /// <param name="commandService"> Command service to add command to, not null. </param>
-        private ProtoAddAttrCommand(AsyncPackage package, OleMenuCommandService commandService, SDTE SDTEService, IAttributeService attributeService)
+        private ProtoAddAttrCommand(AsyncPackage package, OleMenuCommandService commandService,
+            SDTE SDTEService, IAttributeService attributeService, TextSelectionExecutor textSelectionExecutor)
         {
-            this.package = package ?? throw new ArgumentNullException(nameof(package));
+            _package = package ?? throw new ArgumentNullException(nameof(package));
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
-            _SDTEService = SDTEService;
+            _sdteService = SDTEService;
 
-            var menuCommandID = new CommandID(CommandSet, CommandId);
+            var menuCommandID = new CommandID(_commandSet, CommandId);
             var menuItem = new MenuCommand(Execute, menuCommandID);
             commandService.AddCommand(menuItem);
             _attributeService = attributeService;
+            _textSelectionExecutor = textSelectionExecutor;
         }
 
         /// <summary> Gets the instance of the command. </summary>
@@ -53,7 +57,7 @@ namespace ProtoAttributor.Commands.Menu
         {
             get
             {
-                return package;
+                return _package;
             }
         }
 
@@ -66,8 +70,9 @@ namespace ProtoAttributor.Commands.Menu
 
             var commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
             var attributeService = await package.GetServiceAsync(typeof(IAttributeService)) as IAttributeService;
+            var textSelectionExecutor = new TextSelectionExecutor();
             var SDTE = await package.GetServiceAsync(typeof(SDTE)) as SDTE;
-            Instance = new ProtoAddAttrCommand(package, commandService, SDTE, attributeService);
+            Instance = new ProtoAddAttrCommand(package, commandService, SDTE, attributeService, textSelectionExecutor);
         }
 
         /// <summary>
@@ -87,18 +92,18 @@ namespace ProtoAttributor.Commands.Menu
 
             //_attributeService.Hello();
 
-            var dte = _SDTEService as DTE;
+            var dte = _sdteService as DTE;
             if (dte.ActiveDocument != null)
             {
-                var textSelection = (TextSelection)dte.ActiveDocument.Selection;
-                textSelection.GotoLine(1, true);
-                textSelection.SelectAll();
-                var contents = textSelection.Text;
-                var changedTxt = _attributeService.AddAttributes(contents);
-                textSelection.Insert(changedTxt);
-                //textSelection.Text = changedTxt;
-                textSelection.SmartFormat();
-                // var formattedRoot = Formatter.Format(newRoot, Formatter.Annotation, document.Project.Workspace);
+                _textSelectionExecutor.Execute((TextSelection)dte.ActiveDocument.Selection, (contents) => _attributeService.AddAttributes(contents));
+                //var textSelection = ;
+                //textSelection.GotoLine(1, true);
+                //textSelection.SelectAll();
+                //var contents = textSelection.Text;
+                //var changedTxt = _attributeService.AddAttributes(contents);
+                //textSelection.Insert(changedTxt);
+                //textSelection.SmartFormat();
+                //textSelection.GotoLine(1, false);
             }
         }
     }

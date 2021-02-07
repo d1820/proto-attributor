@@ -18,7 +18,7 @@ namespace ProtoAttributor.Tests
             _fixture = fixture;
         }
 
-        private string codeWithAttributes = @"
+        private string _codeWithAttributes = @"
                         using System;
                         using Xunit;
                         namespace ProtoAttributor.Tests
@@ -43,7 +43,7 @@ namespace ProtoAttributor.Tests
         [Fact]
         public void RewritesAttributesWithCorrectOrderWhenAttributesAlreadyExists()
         {
-            var tree = CSharpSyntaxTree.ParseText(codeWithAttributes);
+            var tree = CSharpSyntaxTree.ParseText(_codeWithAttributes);
             var rewriter = new ProtoAttributeRewriter();
 
             var rewrittenRoot = rewriter.Visit(tree.GetRoot());
@@ -61,7 +61,7 @@ namespace ProtoAttributor.Tests
         [Fact]
         public void RewritesAttributesWithCorrectOrderStartingAtProvidedIndexWhenAttributesAlreadyExists()
         {
-            var tree = CSharpSyntaxTree.ParseText(codeWithAttributes);
+            var tree = CSharpSyntaxTree.ParseText(_codeWithAttributes);
             var rewriter = new ProtoAttributeRewriter();
 
             var rewrittenRoot = rewriter.Visit(tree.GetRoot(), 100);

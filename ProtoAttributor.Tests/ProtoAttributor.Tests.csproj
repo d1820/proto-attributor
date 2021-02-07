@@ -27,13 +27,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Mocks\TestMultiClassMultiAttribute.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
     <Compile Update="Mocks\TestClassNoUsings.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
     <Compile Update="Mocks\TestClassPlain.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Mocks\TestClassWithComments.cs">
+    <Compile Update="Mocks\TestClassWithXmlComments.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
     <Compile Update="Mocks\TestCodeWithAttributes.cs">
@@ -43,6 +46,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
     <Compile Update="Mocks\TestRemoveAttributes.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Mocks\TestWierdFormatting.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
   </ItemGroup>
