@@ -86,24 +86,10 @@ namespace ProtoAttributor.Commands.Menu
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            //https://github.com/GregTrevellick/AutoFindReplace/blob/master/AutoFindReplace/VSPackage.cs
-
-            //var formattedRoot = Formatter.Format(newRoot, Formatter.Annotation, document.Project.Workspace);
-
-            //_attributeService.Hello();
-
             var dte = _sdteService as DTE;
             if (dte.ActiveDocument != null)
             {
                 _textSelectionExecutor.Execute((TextSelection)dte.ActiveDocument.Selection, (contents) => _attributeService.AddAttributes(contents));
-                //var textSelection = ;
-                //textSelection.GotoLine(1, true);
-                //textSelection.SelectAll();
-                //var contents = textSelection.Text;
-                //var changedTxt = _attributeService.AddAttributes(contents);
-                //textSelection.Insert(changedTxt);
-                //textSelection.SmartFormat();
-                //textSelection.GotoLine(1, false);
             }
         }
     }
