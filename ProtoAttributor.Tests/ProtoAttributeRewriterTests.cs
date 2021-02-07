@@ -44,7 +44,7 @@ namespace ProtoAttributor.Tests
         public void RewritesAttributesWithCorrectOrderWhenAttributesAlreadyExists()
         {
             var tree = CSharpSyntaxTree.ParseText(codeWithAttributes);
-            var rewriter = new ProtoAttributeRewriter("ProtoMember", "ProtoContract", "ProtoBuf");
+            var rewriter = new ProtoAttributeRewriter();
 
             var rewrittenRoot = rewriter.Visit(tree.GetRoot());
 
@@ -62,7 +62,7 @@ namespace ProtoAttributor.Tests
         public void RewritesAttributesWithCorrectOrderStartingAtProvidedIndexWhenAttributesAlreadyExists()
         {
             var tree = CSharpSyntaxTree.ParseText(codeWithAttributes);
-            var rewriter = new ProtoAttributeRewriter("ProtoMember", "ProtoContract", "ProtoBuf");
+            var rewriter = new ProtoAttributeRewriter();
 
             var rewrittenRoot = rewriter.Visit(tree.GetRoot(), 100);
 

@@ -5,13 +5,8 @@ using Microsoft.CodeAnalysis.Formatting;
 
 namespace ProtoAttributor.Services
 {
-    public class ProtoAttributeAdder : BaseRewriter
+    public class ProtoAttributeAdder : BaseProtoRewriter
     {
-        public ProtoAttributeAdder(string attributeName, string classAttributeName, string usingStatement)
-            : base(attributeName, classAttributeName, usingStatement)
-        {
-        }
-
         public SyntaxNode Visit(SyntaxNode node, int startIndex)
         {
             _startIndex = startIndex;
@@ -20,12 +15,12 @@ namespace ProtoAttributor.Services
 
         public override SyntaxNode VisitPropertyDeclaration(PropertyDeclarationSyntax node)
         {
-            var hasMatch = NodeHelper.HasMatch(node.AttributeLists, _propertyAttributeName);
+            var hasMatch = NodeHelper.HasMatch(node.AttributeLists, Constants.Proto.PROPERTY_ATTRIBUTE_NAME);
             var hasMatchIgnore = NodeHelper.HasMatch(node.AttributeLists, "ProtoIgnore");
 
             if (!hasMatch && !hasMatchIgnore)
             {
-                var name = SyntaxFactory.ParseName(_propertyAttributeName);
+                var name = SyntaxFactory.ParseName(Constants.Proto.PROPERTY_ATTRIBUTE_NAME);
                 var arguments = SyntaxFactory.ParseAttributeArgumentList($"({_startIndex})");
                 var attribute = SyntaxFactory.Attribute(name, arguments); //ProtoMember("1")
 

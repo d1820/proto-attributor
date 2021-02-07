@@ -21,7 +21,7 @@ namespace ProtoAttributor.Tests
         public void AddsAttributesForProtBuf()
         {
 			var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestClassPlain.cs"));
-            var rewriter = new ProtoAttributeAdder("ProtoMember", "ProtoContract", "ProtoBuf");
+            var rewriter = new ProtoAttributeAdder();
 
             var rewrittenRoot = rewriter.Visit(tree.GetRoot(), 1);
 
@@ -44,8 +44,8 @@ namespace ProtoAttributor.Tests
         public void AddsAttributesForProtBufWherePropDontHaveProtoIgnore()
         {
             var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestCodeWithAttributesAndProtoIgnore.cs"));
-            var rewriter = new ProtoAttributeAdder("ProtoMember", "ProtoContract", "ProtoBuf");
-            var protoReader = new ProtoAttributeReader("ProtoMember");
+            var rewriter = new ProtoAttributeAdder();
+            var protoReader = new ProtoAttributeReader();
             var rewrittenRoot = rewriter.Visit(tree.GetRoot(), protoReader.GetProtoNextId(tree.GetRoot()));
 
             var output = rewrittenRoot.GetText().ToString();
@@ -69,7 +69,7 @@ namespace ProtoAttributor.Tests
         public void AddsAttributesAndKeepCommentsInTack()
         {
             var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestClassWithComments.cs"));
-            var rewriter = new ProtoAttributeAdder("ProtoMember", "ProtoContract", "ProtoBuf");
+            var rewriter = new ProtoAttributeAdder();
 
             var rewrittenRoot = rewriter.Visit(tree.GetRoot(), 1);
 
@@ -101,7 +101,7 @@ namespace ProtoAttributor.Tests
         public void AddsUsingWhenNoneExist()
         {
             var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestClassNoUsings.cs"));
-            var rewriter = new ProtoAttributeAdder("ProtoMember", "ProtoContract", "ProtoBuf");
+            var rewriter = new ProtoAttributeAdder();
 
             var rewrittenRoot = rewriter.Visit(tree.GetRoot(), 1);
 
@@ -117,8 +117,8 @@ namespace ProtoAttributor.Tests
         public void AddsAttributesWithCorrectOrderWhenAttributesAlreadyExists()
         {
             var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestCodeWithAttributes.cs"));
-            var rewriter = new ProtoAttributeAdder("ProtoMember", "ProtoContract", "ProtoBuf");
-            var protoReader = new ProtoAttributeReader("ProtoMember");
+            var rewriter = new ProtoAttributeAdder();
+            var protoReader = new ProtoAttributeReader();
 
             var rewrittenRoot = rewriter.Visit(tree.GetRoot(), protoReader.GetProtoNextId(tree.GetRoot()));
 

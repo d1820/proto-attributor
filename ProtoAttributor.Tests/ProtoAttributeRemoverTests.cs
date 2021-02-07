@@ -21,7 +21,7 @@ namespace ProtoAttributor.Tests
         public void AddsAttributesWithCorrectOrderWhenAttributesAlreadyExists()
         {
             var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestRemoveAttributes.cs"));
-            var rewriter = new ProtoAttributeRemover("ProtoBuf");
+            var rewriter = new ProtoAttributeRemover();
 
             var rewrittenRoot = rewriter.Visit(tree.GetRoot());
 

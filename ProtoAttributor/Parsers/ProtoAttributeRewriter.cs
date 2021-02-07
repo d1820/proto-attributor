@@ -6,13 +6,8 @@ using Microsoft.CodeAnalysis.Formatting;
 
 namespace ProtoAttributor.Services
 {
-    public class ProtoAttributeRewriter : BaseRewriter
+    public class ProtoAttributeRewriter : BaseProtoRewriter
     {
-        public ProtoAttributeRewriter(string attributeName, string classAttributeName, string usingStatement)
-             : base(attributeName, classAttributeName, usingStatement)
-        {
-        }
-
         public SyntaxNode Visit(SyntaxNode node, int startIndex = 1)
         {
             _startIndex = startIndex;
@@ -21,11 +16,11 @@ namespace ProtoAttributor.Services
 
         public override SyntaxNode VisitPropertyDeclaration(PropertyDeclarationSyntax node)
         {
-            var hasMatch = NodeHelper.HasMatch(node.AttributeLists, _propertyAttributeName);
+            var hasMatch = NodeHelper.HasMatch(node.AttributeLists, Constants.Proto.PROPERTY_ATTRIBUTE_NAME);
 
             if (!hasMatch)
             {
-                var name = SyntaxFactory.ParseName(_propertyAttributeName);
+                var name = SyntaxFactory.ParseName(Constants.Proto.PROPERTY_ATTRIBUTE_NAME);
                 var arguments = SyntaxFactory.ParseAttributeArgumentList($"({_startIndex})");
                 var attribute = SyntaxFactory.Attribute(name, arguments); //ProtoMember("1")
 
@@ -48,7 +43,7 @@ namespace ProtoAttributor.Services
                     var newAttributeLists = new SyntaxList<AttributeListSyntax>();
                     foreach (var attributeList in node.AttributeLists)
                     {
-                        var attributeSyntaxes = attributeList.Attributes.Where(attribute => NodeHelper.AttributeNameMatches(attribute, _propertyAttributeName)).ToArray();
+                        var attributeSyntaxes = attributeList.Attributes.Where(attribute => NodeHelper.AttributeNameMatches(attribute, Constants.Proto.PROPERTY_ATTRIBUTE_NAME)).ToArray();
 
                         var modifiedAttributeList = attributeList.Attributes;
                         foreach (var attributeSyntax in attributeSyntaxes)

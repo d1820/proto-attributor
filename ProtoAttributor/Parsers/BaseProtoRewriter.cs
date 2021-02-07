@@ -5,19 +5,10 @@ using Microsoft.CodeAnalysis.Formatting;
 
 namespace ProtoAttributor.Services
 {
-    public class BaseRewriter : CSharpSyntaxRewriter
+    public class BaseProtoRewriter : CSharpSyntaxRewriter
     {
-        internal readonly string _propertyAttributeName;
         internal int _startIndex;
-        internal readonly string _classAttributeName;
-        internal readonly string _usingStatement;
 
-        public BaseRewriter(string attributeName, string classAttributeName, string usingStatement)
-        {
-            _propertyAttributeName = attributeName;
-            _classAttributeName = classAttributeName;
-            _usingStatement = usingStatement;
-        }
 
         public SyntaxList<AttributeListSyntax> BuildAttribute(AttributeSyntax attribute,
                                                                 SyntaxList<AttributeListSyntax> attributeLists,
@@ -34,17 +25,17 @@ namespace ProtoAttributor.Services
 
         public override SyntaxNode VisitCompilationUnit(CompilationUnitSyntax node)
         {
-            node = NodeHelper.AddUsing(node, _usingStatement);
+            node = NodeHelper.AddUsing(node, Constants.Proto.USING_STATEMENT);
             return base.VisitCompilationUnit(node);
         }
 
         public override SyntaxNode VisitClassDeclaration(ClassDeclarationSyntax node)
         {
-            var hasMatch = NodeHelper.HasMatch(node.AttributeLists, _classAttributeName);
+            var hasMatch = NodeHelper.HasMatch(node.AttributeLists, Constants.Proto.CLASS_ATTRIBUTE_NAME);
 
             if (!hasMatch)
             {
-                var name = SyntaxFactory.ParseName(_classAttributeName);
+                var name = SyntaxFactory.ParseName(Constants.Proto.CLASS_ATTRIBUTE_NAME);
                 var attribute = SyntaxFactory.Attribute(name);
 
                 node = TriviaMaintainer.Apply(node, (innerNode, wp) =>

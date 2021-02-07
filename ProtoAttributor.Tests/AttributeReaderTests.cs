@@ -19,7 +19,7 @@ namespace ProtoAttributor.Tests
         public void GetsNextIdForProtoMember()
         {
             var tree = CSharpSyntaxTree.ParseText(LoadTestFile(@"./Mocks/TestCodeWithAttributes.cs"));
-            var protoReader = new ProtoAttributeReader("ProtoMember");
+            var protoReader = new ProtoAttributeReader();
 
             var output = protoReader.GetProtoNextId(tree.GetRoot());
 

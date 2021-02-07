@@ -7,13 +7,7 @@ namespace ProtoAttributor.Services
 {
     public class ProtoAttributeReader : CSharpSyntaxWalker
     {
-        private readonly string _propertyAttributeName;
         private int highestOrder;
-
-        public ProtoAttributeReader(string attributeName)
-        {
-            _propertyAttributeName = attributeName;
-        }
 
         public int GetProtoNextId(SyntaxNode node)
         {
@@ -33,7 +27,7 @@ namespace ProtoAttributor.Services
                         .Attributes
                         .Where(
                             attribute =>
-                                NodeHelper.AttributeNameMatches(attribute, _propertyAttributeName)
+                                NodeHelper.AttributeNameMatches(attribute, Constants.Proto.PROPERTY_ATTRIBUTE_NAME)
                                 )
                         .ToArray();
 

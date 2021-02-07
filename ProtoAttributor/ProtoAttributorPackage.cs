@@ -35,13 +35,6 @@ namespace ProtoAttributor
 
         #region Package Members
 
-        private object CreateService(IServiceContainer container, Type serviceType)
-        {
-            if (typeof(IAttributeService) == serviceType)
-                return new ProtoAttributeService(this);
-            return null;
-        }
-
         /// <summary>
         ///     Initialization of the package; this method is called right after the package is sited, so this is the
         ///     place where you can put all the initialization code that rely on services provided by VisualStudio.
@@ -59,7 +52,7 @@ namespace ProtoAttributor
             var callback = new AsyncServiceCreatorCallback(async (IAsyncServiceContainer container, CancellationToken ct, Type serviceType) =>
             {
                 if (typeof(IAttributeService) == serviceType)
-                    return new ProtoAttributeService(this);
+                    return new ProtoAttributeService(this, new ProtoAttributeAdder(), new ProtoAttributeReader(), new ProtoAttributeRemover(), new ProtoAttributeRewriter());
                 return null;
             });
 
