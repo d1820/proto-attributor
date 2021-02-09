@@ -8,15 +8,14 @@ namespace ProtoAttributor.Services
 {
     public class ProtoAttributeRewriter: BaseProtoRewriter
     {
-        public SyntaxNode Visit(SyntaxNode node, int startIndex = 1)
+        public override int CalculateStartingIndex(SyntaxNode node)
         {
-            _startIndex = startIndex;
-            return base.Visit(node);
+            return 1;
         }
 
         public override SyntaxNode VisitPropertyDeclaration(PropertyDeclarationSyntax node)
         {
-            var hasMatch = NodeHelper.HasMatch(node.AttributeLists, Constants.Proto.PROPERTY_ATTRIBUTE_NAME);
+            var hasMatch = NodeHelper.HasMatch(node.AttributeLists, Constants.Proto.PROPERTY_ATTRIBUTE_NAME, Constants.Proto.PROPERTY_IGNORE_ATTRIBUTE_NAME);
 
             if (!hasMatch)
             {

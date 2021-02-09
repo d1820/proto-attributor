@@ -1,3 +1,4 @@
+using System;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -5,9 +6,11 @@ using Microsoft.CodeAnalysis.Formatting;
 
 namespace ProtoAttributor.Services
 {
-    public class BaseProtoRewriter: CSharpSyntaxRewriter
+    public abstract class BaseProtoRewriter: CSharpSyntaxRewriter
     {
         internal int _startIndex;
+
+        public abstract int CalculateStartingIndex(SyntaxNode node);
 
         public SyntaxList<AttributeListSyntax> BuildAttribute(AttributeSyntax attribute,
                                                                 SyntaxList<AttributeListSyntax> attributeLists,
@@ -40,7 +43,8 @@ namespace ProtoAttributor.Services
 
         public override SyntaxNode VisitClassDeclaration(ClassDeclarationSyntax node)
         {
-            _startIndex = 1;
+            //each class needs to restat with the
+            _startIndex = CalculateStartingIndex(node);
             var hasMatch = NodeHelper.HasMatch(node.AttributeLists, Constants.Proto.CLASS_ATTRIBUTE_NAME);
 
             if (!hasMatch)

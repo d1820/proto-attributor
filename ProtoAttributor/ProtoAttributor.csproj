@@ -54,6 +54,8 @@
     <Compile Include="Commands\Menu\ProtoAddAttrCommand.cs" />
     <Compile Include="Commands\Menu\ProtoRenumberAttrCommand.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Executors\AttributeExecutor.cs" />
+    <Compile Include="Executors\SelectedItemCountExecutor.cs" />
     <Compile Include="Executors\TextSelectionExecutor.cs" />
     <Compile Include="Parsers\BaseProtoRewriter.cs" />
     <Compile Include="Parsers\ProtoAttributeRemover.cs" />
@@ -68,6 +70,7 @@
     <Compile Include="Parsers\NodeHelper.cs" />
     <Compile Include="Parsers\ProtoAttributeReader.cs" />
     <Compile Include="Parsers\ProtoAttributeRewriter.cs" />
+    <Compile Include="Services\DataAnnoAttributeService.cs" />
     <Compile Include="Services\ProtoAttributeService.cs" />
     <Compile Include="Services\IAttributeService.cs" />
   </ItemGroup>

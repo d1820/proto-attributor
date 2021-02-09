@@ -23,7 +23,8 @@ namespace ProtoAttributor
     ///         ...&gt; in .vsixmanifest file.
     ///     </para>
     /// </remarks>
-    [ProvideService(typeof(IAttributeService), IsAsyncQueryable = true)]
+    [ProvideService(typeof(IProtoAttributeService), IsAsyncQueryable = true)]
+    [ProvideService(typeof(IDataAnnoAttributeService), IsAsyncQueryable = true)]
     [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
     [Guid(ProtoAttributorPackage.PackageGuidString)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
@@ -48,14 +49,22 @@ namespace ProtoAttributor
         /// </returns>
         protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
         {
-            var callback = new AsyncServiceCreatorCallback(async (IAsyncServiceContainer container, CancellationToken ct, Type serviceType) =>
+            var protoCallback = new AsyncServiceCreatorCallback(async (IAsyncServiceContainer container, CancellationToken ct, Type serviceType) =>
             {
-                if (typeof(IAttributeService) == serviceType)
-                    return new ProtoAttributeService(this, new ProtoAttributeAdder(), new ProtoAttributeReader(), new ProtoAttributeRemover(), new ProtoAttributeRewriter());
+                if (typeof(IProtoAttributeService) == serviceType)
+                    return new ProtoAttributeService(this, new ProtoAttributeAdder(), new ProtoAttributeRemover(), new ProtoAttributeRewriter());
                 return null;
             });
 
-            AddService(typeof(IAttributeService), callback, true);
+            AddService(typeof(IProtoAttributeService), protoCallback, true);
+
+            //var datAnnoCallback = new AsyncServiceCreatorCallback(async (IAsyncServiceContainer container, CancellationToken ct, Type serviceType) =>
+            //{
+            //    if (typeof(IDataAnnoAttributeService) == serviceType)
+            //        return new DataAnnoAttributeService(this, new ProtoAttributeAdder(), new ProtoAttributeReader(), new ProtoAttributeRemover(), new ProtoAttributeRewriter());
+            //    return null;
+            //});
+            //AddService(typeof(IDataAnnoAttributeService), datAnnoCallback, true);
 
             // When initialized asynchronously, the current thread may be a background thread at this point. Do any
             // initialization that requires the UI thread after switching to the UI thread.
@@ -65,31 +74,19 @@ namespace ProtoAttributor
                     ProtoAddAttrCommand.InitializeAsync(this),
                     ProtoRenumberAttrCommand.InitializeAsync(this),
                     ProtoRemoveAttrCommand.InitializeAsync(this),
-                    DataAnnoAddAttrCommand.InitializeAsync(this),
-                    DataAnnoRenumberAttrCommand.InitializeAsync(this),
-                    DataAnnoRemoveAttrCommand.InitializeAsync(this),
+                    //DataAnnoAddAttrCommand.InitializeAsync(this),
+                    //DataAnnoRenumberAttrCommand.InitializeAsync(this),
+                    //DataAnnoRemoveAttrCommand.InitializeAsync(this),
 
                     Commands.Menu.ProtoAddAttrCommand.InitializeAsync(this),
                     Commands.Menu.ProtoRenumberAttrCommand.InitializeAsync(this),
-                    Commands.Menu.ProtoRemoveAttrCommand.InitializeAsync(this),
-                    Commands.Menu.DataAnnoAddAttrCommand.InitializeAsync(this),
-                    Commands.Menu.DataAnnoRenumberAttrCommand.InitializeAsync(this),
-                    Commands.Menu.DataAnnoRemoveAttrCommand.InitializeAsync(this)
+                    Commands.Menu.ProtoRemoveAttrCommand.InitializeAsync(this)
+                    //Commands.Menu.DataAnnoAddAttrCommand.InitializeAsync(this),
+                    //Commands.Menu.DataAnnoRenumberAttrCommand.InitializeAsync(this),
+                    //Commands.Menu.DataAnnoRemoveAttrCommand.InitializeAsync(this)
             );
 
-            //await ProtoAddAttrCommand.InitializeAsync(this);
-            //await ProtoRenumberAttrCommand.InitializeAsync(this);
-            //await ProtoRemoveAttrCommand.InitializeAsync(this);
-            //await DataAnnoAddAttrCommand.InitializeAsync(this);
-            //await DataAnnoRenumberAttrCommand.InitializeAsync(this);
-            //await DataAnnoRemoveAttrCommand.InitializeAsync(this);
 
-            //await Commands.Menu.ProtoAddAttrCommand.InitializeAsync(this);
-            //await Commands.Menu.ProtoRenumberAttrCommand.InitializeAsync(this);
-            //await Commands.Menu.ProtoRemoveAttrCommand.InitializeAsync(this);
-            //await Commands.Menu.DataAnnoAddAttrCommand.InitializeAsync(this);
-            //await Commands.Menu.DataAnnoRenumberAttrCommand.InitializeAsync(this);
-            //await Commands.Menu.DataAnnoRemoveAttrCommand.InitializeAsync(this);
         }
 
         #endregion Package Members

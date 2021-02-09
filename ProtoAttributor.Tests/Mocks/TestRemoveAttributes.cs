@@ -28,4 +28,5 @@ namespace ProtoAttributor.Tests.Mocks
 
         public int MyProperty5 { get; set; }
     }
+
 }

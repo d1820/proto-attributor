@@ -7,18 +7,22 @@ namespace ProtoAttributor.Services
 {
     public class ProtoAttributeAdder: BaseProtoRewriter
     {
-        public SyntaxNode Visit(SyntaxNode node, int startIndex = 1)
+        private ProtoAttributeReader _protoReader;
+
+        public ProtoAttributeAdder()
         {
-            _startIndex = startIndex;
-            return base.Visit(node);
+            _protoReader = new ProtoAttributeReader();
+        }
+        public override int CalculateStartingIndex(SyntaxNode node)
+        {
+            return _protoReader.GetProtoNextId(node);
         }
 
         public override SyntaxNode VisitPropertyDeclaration(PropertyDeclarationSyntax node)
         {
-            var hasMatch = NodeHelper.HasMatch(node.AttributeLists, Constants.Proto.PROPERTY_ATTRIBUTE_NAME);
-            var hasMatchIgnore = NodeHelper.HasMatch(node.AttributeLists, "ProtoIgnore");
+            var hasMatch = NodeHelper.HasMatch(node.AttributeLists, Constants.Proto.PROPERTY_ATTRIBUTE_NAME, Constants.Proto.PROPERTY_IGNORE_ATTRIBUTE_NAME);
 
-            if (!hasMatch && !hasMatchIgnore)
+            if (!hasMatch)
             {
                 var name = SyntaxFactory.ParseName(Constants.Proto.PROPERTY_ATTRIBUTE_NAME);
                 var arguments = SyntaxFactory.ParseAttributeArgumentList($"({_startIndex})");

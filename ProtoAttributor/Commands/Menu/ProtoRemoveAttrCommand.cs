@@ -22,7 +22,7 @@ namespace ProtoAttributor.Commands.Menu
         private readonly AsyncPackage _package;
 
         private readonly SDTE _sdteService;
-        private readonly IAttributeService _attributeService;
+        private readonly IProtoAttributeService _attributeService;
         private readonly TextSelectionExecutor _textSelectionExecutor;
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace ProtoAttributor.Commands.Menu
         /// <param name="package"> Owner package, not null. </param>
         /// <param name="commandService"> Command service to add command to, not null. </param>
         private ProtoRemoveAttrCommand(AsyncPackage package, OleMenuCommandService commandService, SDTE SDTEService,
-            IAttributeService attributeService, TextSelectionExecutor textSelectionExecutor)
+            IProtoAttributeService attributeService, TextSelectionExecutor textSelectionExecutor)
         {
             _package = package ?? throw new ArgumentNullException(nameof(package));
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
@@ -69,7 +69,7 @@ namespace ProtoAttributor.Commands.Menu
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
 
             var commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
-            var attributeService = await package.GetServiceAsync(typeof(IAttributeService)) as IAttributeService;
+            var attributeService = await package.GetServiceAsync(typeof(IProtoAttributeService)) as IProtoAttributeService;
             var SDTE = await package.GetServiceAsync(typeof(SDTE)) as SDTE;
             var textSelectionExecutor = new TextSelectionExecutor();
             Instance = new ProtoRemoveAttrCommand(package, commandService, SDTE, attributeService, textSelectionExecutor);

@@ -1,8 +1,12 @@
 using System;
 using System.ComponentModel.Design;
-using System.Globalization;
+using System.Threading;
+using EnvDTE;
+using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using ProtoAttributor.Executors;
+using ProtoAttributor.Services;
 using Task = System.Threading.Tasks.Task;
 
 namespace ProtoAttributor.Commands.Context
@@ -19,17 +23,33 @@ namespace ProtoAttributor.Commands.Context
         /// <summary> VS Package that provides this command, not null. </summary>
         private readonly AsyncPackage _package;
 
+        private readonly SDTE _sdteService;
+        private readonly IProtoAttributeService _attributeService;
+        private readonly TextSelectionExecutor _textSelectionExecutor;
+        private readonly IVsThreadedWaitDialogFactory _dialogFactory;
+        private readonly SelectedItemCountExecutor _selectedItemCountExecutor;
+        private readonly AttributeExecutor _attributeExecutor;
+        private const string DIALOG_ACTION = "Removing Attributesv";
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="DataAnnoRemoveAttrCommand" /> class. Adds our command
         ///     handlers for menu (commands must exist in the command table file)
         /// </summary>
         /// <param name="package"> Owner package, not null. </param>
         /// <param name="commandService"> Command service to add command to, not null. </param>
-        private DataAnnoRemoveAttrCommand(AsyncPackage package, OleMenuCommandService commandService)
+        private DataAnnoRemoveAttrCommand(AsyncPackage package, OleMenuCommandService commandService, SDTE SDTEService,
+            IProtoAttributeService attributeService, TextSelectionExecutor textSelectionExecutor,
+            IVsThreadedWaitDialogFactory dialogFactory, SelectedItemCountExecutor selectedItemCountExecutor,
+            AttributeExecutor attributeExecutor)
         {
-            this._package = package ?? throw new ArgumentNullException(nameof(package));
+            _package = package ?? throw new ArgumentNullException(nameof(package));
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
-
+            _sdteService = SDTEService;
+            _attributeService = attributeService;
+            _textSelectionExecutor = textSelectionExecutor;
+            _dialogFactory = dialogFactory;
+            _selectedItemCountExecutor = selectedItemCountExecutor;
+            _attributeExecutor = attributeExecutor;
             var menuCommandID = new CommandID(_commandSet, CommandId);
             var menuItem = new MenuCommand(Execute, menuCommandID);
             commandService.AddCommand(menuItem);
@@ -59,7 +79,14 @@ namespace ProtoAttributor.Commands.Context
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
 
             var commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
-            Instance = new DataAnnoRemoveAttrCommand(package, commandService);
+            var attributeService = await package.GetServiceAsync(typeof(IProtoAttributeService)) as IProtoAttributeService;
+            var dialogFactory = await package.GetServiceAsync(typeof(SVsThreadedWaitDialogFactory)) as IVsThreadedWaitDialogFactory;
+            var SDTE = await package.GetServiceAsync(typeof(SDTE)) as SDTE;
+            var textSelectionExecutor = new TextSelectionExecutor();
+            var selectedItemCountExecutor = new SelectedItemCountExecutor();
+            var attributeExecutor = new AttributeExecutor();
+            Instance = new DataAnnoRemoveAttrCommand(package, commandService, SDTE, attributeService, textSelectionExecutor,
+                dialogFactory, selectedItemCountExecutor, attributeExecutor);
         }
 
         /// <summary>
@@ -72,17 +99,40 @@ namespace ProtoAttributor.Commands.Context
         private void Execute(object sender, EventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            var message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()", GetType().FullName);
-            var title = "ProtoCommand";
+            var dte = _sdteService as DTE;
 
-            // Show a message box to prove we were here
-            VsShellUtilities.ShowMessageBox(
-                _package,
-                message,
-                title,
-                OLEMSGICON.OLEMSGICON_INFO,
-                OLEMSGBUTTON.OLEMSGBUTTON_OK,
-                OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+            if (dte.SelectedItems.Count <= 0)
+            {
+                return;
+            }
+
+            var totalCount = _selectedItemCountExecutor.Execute(dte.SelectedItems);
+
+            IVsThreadedWaitDialog2 dialog = null;
+            if (totalCount > 1 && _dialogFactory != null)
+            {
+                //https://www.visualstudiogeeks.com/extensions/visualstudio/using-progress-dialog-in-visual-studio-extensions
+                _dialogFactory.CreateInstance(out dialog);
+            }
+
+            var cts = new CancellationTokenSource();
+
+            if (dialog == null ||
+                dialog.StartWaitDialogWithPercentageProgress("Proto Attributor: Attributing Progress", "", $"0 of {totalCount} Processed",
+                 null, DIALOG_ACTION, true, 0, totalCount, 0) != VSConstants.S_OK)
+            {
+                dialog = null;
+            }
+
+            try
+            {
+                _attributeExecutor.Execute(dte.SelectedItems, cts, dialog, totalCount, _textSelectionExecutor,
+                   (content) => _attributeService.RemoveAttributes(content));
+            }
+            finally
+            {
+                dialog?.EndWaitDialog(out var usercancel);
+            }
         }
     }
 }

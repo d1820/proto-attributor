@@ -1,8 +1,10 @@
 using System;
 using System.ComponentModel.Design;
-using System.Globalization;
+using EnvDTE;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using ProtoAttributor.Executors;
+using ProtoAttributor.Services;
 using Task = System.Threading.Tasks.Task;
 
 namespace ProtoAttributor.Commands.Menu
@@ -19,15 +21,23 @@ namespace ProtoAttributor.Commands.Menu
         /// <summary> VS Package that provides this command, not null. </summary>
         private readonly AsyncPackage _package;
 
+        private readonly IDataAnnoAttributeService _attributeService;
+        private readonly TextSelectionExecutor _textSelectionExecutor;
+        private readonly SDTE _sdteService;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="DataAnnoAddAttrCommand" /> class. Adds our command handlers
         ///     for menu (commands must exist in the command table file)
         /// </summary>
         /// <param name="package"> Owner package, not null. </param>
         /// <param name="commandService"> Command service to add command to, not null. </param>
-        private DataAnnoAddAttrCommand(AsyncPackage package, OleMenuCommandService commandService)
+        private DataAnnoAddAttrCommand(AsyncPackage package, OleMenuCommandService commandService,
+            SDTE SDTEService, IDataAnnoAttributeService attributeService, TextSelectionExecutor textSelectionExecutor)
         {
             this._package = package ?? throw new ArgumentNullException(nameof(package));
+            _attributeService = attributeService;
+            _textSelectionExecutor = textSelectionExecutor;
+            _sdteService = SDTEService;
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
 
             var menuCommandID = new CommandID(_commandSet, CommandId);
@@ -59,7 +69,10 @@ namespace ProtoAttributor.Commands.Menu
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
 
             var commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
-            Instance = new DataAnnoAddAttrCommand(package, commandService);
+            var attributeService = await package.GetServiceAsync(typeof(IDataAnnoAttributeService)) as IDataAnnoAttributeService;
+            var textSelectionExecutor = new TextSelectionExecutor();
+            var SDTE = await package.GetServiceAsync(typeof(SDTE)) as SDTE;
+            Instance = new DataAnnoAddAttrCommand(package, commandService, SDTE, attributeService, textSelectionExecutor);
         }
 
         /// <summary>
@@ -72,17 +85,11 @@ namespace ProtoAttributor.Commands.Menu
         private void Execute(object sender, EventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            var message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()", GetType().FullName);
-            var title = "ProtoCommand";
-
-            // Show a message box to prove we were here
-            VsShellUtilities.ShowMessageBox(
-                _package,
-                message,
-                title,
-                OLEMSGICON.OLEMSGICON_INFO,
-                OLEMSGBUTTON.OLEMSGBUTTON_OK,
-                OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+            var dte = _sdteService as DTE;
+            if (dte.ActiveDocument != null)
+            {
+                _textSelectionExecutor.Execute((TextSelection)dte.ActiveDocument.Selection, (contents) => _attributeService.AddAttributes(contents));
+            }
         }
     }
 }

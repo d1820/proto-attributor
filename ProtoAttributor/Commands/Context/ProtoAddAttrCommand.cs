@@ -24,9 +24,12 @@ namespace ProtoAttributor.Commands.Context
         private readonly AsyncPackage _package;
 
         private readonly SDTE _sdteService;
-        private readonly IAttributeService _attributeService;
+        private readonly IProtoAttributeService _attributeService;
         private readonly TextSelectionExecutor _textSelectionExecutor;
         private readonly IVsThreadedWaitDialogFactory _dialogFactory;
+        private readonly SelectedItemCountExecutor _selectedItemCountExecutor;
+        private readonly AttributeExecutor _attributeExecutor;
+        private const string DIALOG_ACTION = "Attributing";
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ProtoAddAttrCommand" /> class. Adds our command handlers
@@ -35,8 +38,9 @@ namespace ProtoAttributor.Commands.Context
         /// <param name="package"> Owner package, not null. </param>
         /// <param name="commandService"> Command service to add command to, not null. </param>
         private ProtoAddAttrCommand(AsyncPackage package, OleMenuCommandService commandService, SDTE SDTEService,
-            IAttributeService attributeService, TextSelectionExecutor textSelectionExecutor,
-            IVsThreadedWaitDialogFactory dialogFactory)
+            IProtoAttributeService attributeService, TextSelectionExecutor textSelectionExecutor,
+            IVsThreadedWaitDialogFactory dialogFactory, SelectedItemCountExecutor selectedItemCountExecutor,
+            AttributeExecutor attributeExecutor)
         {
             _package = package ?? throw new ArgumentNullException(nameof(package));
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
@@ -44,6 +48,8 @@ namespace ProtoAttributor.Commands.Context
             _attributeService = attributeService;
             _textSelectionExecutor = textSelectionExecutor;
             _dialogFactory = dialogFactory;
+            _selectedItemCountExecutor = selectedItemCountExecutor;
+            _attributeExecutor = attributeExecutor;
             var menuCommandID = new CommandID(_commandSet, CommandId);
             var menuItem = new MenuCommand(Execute, menuCommandID);
             commandService.AddCommand(menuItem);
@@ -73,11 +79,14 @@ namespace ProtoAttributor.Commands.Context
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
 
             var commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
-            var attributeService = await package.GetServiceAsync(typeof(IAttributeService)) as IAttributeService;
+            var attributeService = await package.GetServiceAsync(typeof(IProtoAttributeService)) as IProtoAttributeService;
             var dialogFactory = await package.GetServiceAsync(typeof(SVsThreadedWaitDialogFactory)) as IVsThreadedWaitDialogFactory;
             var SDTE = await package.GetServiceAsync(typeof(SDTE)) as SDTE;
             var textSelectionExecutor = new TextSelectionExecutor();
-            Instance = new ProtoAddAttrCommand(package, commandService, SDTE, attributeService, textSelectionExecutor, dialogFactory);
+            var selectedItemCountExecutor = new SelectedItemCountExecutor();
+            var attributeExecutor = new AttributeExecutor();
+            Instance = new ProtoAddAttrCommand(package, commandService, SDTE, attributeService, textSelectionExecutor,
+                dialogFactory, selectedItemCountExecutor, attributeExecutor);
         }
 
         /// <summary>
@@ -93,17 +102,12 @@ namespace ProtoAttributor.Commands.Context
 
             var dte = _sdteService as DTE;
 
-            if (dte.SelectedItems.Count <= 0) return;
-
-            var totalCount = 0;
-            foreach (SelectedItem selectedItem in dte.SelectedItems)
+            if (dte.SelectedItems.Count <= 0)
             {
-                if (selectedItem.ProjectItem == null)
-                {
-                    continue;
-                }
-                GetTotalItemCount(selectedItem.ProjectItem, ref totalCount);
+                return;
             }
+
+            var totalCount = _selectedItemCountExecutor.Execute(dte.SelectedItems);
 
             IVsThreadedWaitDialog2 dialog = null;
             if (totalCount > 1 && _dialogFactory != null)
@@ -112,122 +116,23 @@ namespace ProtoAttributor.Commands.Context
                 _dialogFactory.CreateInstance(out dialog);
             }
 
-            var currentCount = 0;
-            bool cancelProcessing = false;
             var cts = new CancellationTokenSource();
 
             if (dialog == null ||
-                dialog.StartWaitDialogWithPercentageProgress("Proto Attributor: Attributing Progress", "", $"{currentCount} of {totalCount} Processed",
-                 null, "Attributing", true, 0, totalCount, currentCount) != VSConstants.S_OK)
+                dialog.StartWaitDialogWithPercentageProgress("Proto Attributor: Attributing Progress", "", $"0 of {totalCount} Processed",
+                 null, DIALOG_ACTION, true, 0, totalCount, 0) != VSConstants.S_OK)
             {
                 dialog = null;
             }
 
-            foreach (SelectedItem selectedItem in dte.SelectedItems)
+            try
             {
-                dialog?.HasCanceled(out cancelProcessing);
-                if (cancelProcessing)
-                {
-                    cts.Cancel();
-                    break;
-                }
-                if (selectedItem.ProjectItem == null)
-                {
-                    continue;
-                }
-                ProcessProjectItem(selectedItem.ProjectItem, cts.Token, (fileName) =>
-                {
-                    ThreadHelper.ThrowIfNotOnUIThread();
-                    currentCount++;
-                    dialog?.UpdateProgress($"Annotating: {fileName}", $"{currentCount} of {totalCount} Processed", "Attributing", currentCount, totalCount, false, out cancelProcessing);
-                    if (cancelProcessing)
-                    {
-                        cts.Cancel();
-                    }
-                }, (fileName) =>
-                {
-                    ThreadHelper.ThrowIfNotOnUIThread();
-                    dialog?.UpdateProgress($"Annotating: {fileName}", $"{currentCount} of {totalCount} Processed", "Attributing", currentCount, totalCount, false, out cancelProcessing);
-                    if (cancelProcessing)
-                    {
-                        cts.Cancel();
-                    }
-                });
+                _attributeExecutor.Execute(dte.SelectedItems, cts, dialog, totalCount, _textSelectionExecutor,
+                   (content) => _attributeService.AddAttributes(content));
             }
-
-            dialog?.EndWaitDialog(out var usercancel);
-        }
-
-        private void GetTotalItemCount(ProjectItem projectItem, ref int count)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            if (projectItem.Kind == EnvDTE.Constants.vsProjectItemKindPhysicalFile)
+            finally
             {
-                var fullPath = projectItem.Properties.Item("FullPath")?.Value?.ToString();
-                if (fullPath?.EndsWith(".cs") == true)
-                {
-                    count++;
-                }
-            }
-            if (projectItem.Kind == EnvDTE.Constants.vsProjectItemKindPhysicalFolder && projectItem.ProjectItems.Count > 0)
-            {
-                foreach (ProjectItem item in projectItem.ProjectItems)
-                {
-                    GetTotalItemCount(item, ref count);
-                }
-            }
-        }
-
-        private void ProcessProjectItem(ProjectItem projectItem, CancellationToken token, Action<string> progressCallback, Action<string> processItemCallback)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            if (token.IsCancellationRequested)
-            {
-                return;
-            }
-            if (projectItem.Kind == EnvDTE.Constants.vsProjectItemKindPhysicalFolder)
-            {
-                if (projectItem.ProjectItems.Count > 0)
-                {
-                    foreach (ProjectItem item in projectItem.ProjectItems)
-                    {
-                        ProcessProjectItem(item, token, progressCallback, processItemCallback);
-                    }
-                }
-                return;
-            }
-            if (projectItem.Kind == EnvDTE.Constants.vsProjectItemKindPhysicalFile)
-            {
-                var fullPath = projectItem.Properties.Item("FullPath")?.Value?.ToString();
-                var name = projectItem.Name;
-                processItemCallback?.Invoke(name);
-                var isOpen = projectItem.IsOpen[EnvDTE.Constants.vsViewKindTextView];
-                if (!isOpen)
-                {
-                    if (fullPath?.EndsWith(".cs") == true)
-                    {
-                        var window = projectItem.Open(EnvDTE.Constants.vsViewKindTextView);
-                        window.Activate();
-                        //process file
-                        if (projectItem.Document != null)
-                        {
-                            projectItem.Document.Activate();
-                            _textSelectionExecutor.Execute((TextSelection)projectItem.Document.Selection, (contents) => _attributeService.AddAttributes(contents));
-                        }
-                        progressCallback?.Invoke(name);
-                    }
-                }
-                else if (fullPath?.EndsWith(".cs") == true)
-                {
-                    //process file
-                    if (projectItem.Document != null)
-                    {
-                        projectItem.Document.Activate();
-                        _textSelectionExecutor.Execute((TextSelection)projectItem.Document.Selection, (contents) => _attributeService.AddAttributes(contents));
-                    }
-                    progressCallback?.Invoke(name);
-                }
+                dialog?.EndWaitDialog(out var usercancel);
             }
         }
 

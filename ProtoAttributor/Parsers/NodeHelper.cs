@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -31,6 +33,13 @@ namespace ProtoAttributor.Services
                 .StartsWith(startsWith);
         }
 
+        public static bool AttributeNameMatches(AttributeSyntax attribute, params string[] startsWiths)
+        {
+            var attrName = GetSimpleNameFromNode(attribute).Identifier.Text;
+
+            return startsWiths.Contains(attrName, StringComparer.OrdinalIgnoreCase);
+        }
+
         public static bool HasMatch(SyntaxList<AttributeListSyntax> attributeLists, string matchName)
         {
             if (attributeLists.Count > 0)
@@ -38,6 +47,21 @@ namespace ProtoAttributor.Services
                 foreach (var attributeList in attributeLists)
                 {
                     if (attributeList.Attributes.Any(attribute => AttributeNameMatches(attribute, matchName)))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public static bool HasMatch(SyntaxList<AttributeListSyntax> attributeLists, params string[] matchNames)
+        {
+            if (attributeLists.Count > 0)
+            {
+                foreach (var attributeList in attributeLists)
+                {
+                    if (attributeList.Attributes.Any(attribute => AttributeNameMatches(attribute, matchNames)))
                     {
                         return true;
                     }

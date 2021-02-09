@@ -6,6 +6,14 @@ namespace ProtoAttributor.Services
 
         string RemoveAttributes(string fileContents);
 
-        string ReorderAttributes(string fileContents, int startingIndex = 1);
+        string ReorderAttributes(string fileContents);
+    }
+
+    public interface IDataAnnoAttributeService: IAttributeService
+    {
+    }
+
+    public interface IProtoAttributeService: IAttributeService
+    {
     }
 }

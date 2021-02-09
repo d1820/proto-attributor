@@ -23,7 +23,7 @@ namespace ProtoAttributor.Tests
 			var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestClassPlain.cs"));
             var rewriter = new ProtoAttributeAdder();
 
-            var rewrittenRoot = rewriter.Visit(tree.GetRoot(), 1);
+            var rewrittenRoot = rewriter.Visit(tree.GetRoot());
 
             var output = rewrittenRoot.GetText().ToString();
 
@@ -45,8 +45,7 @@ namespace ProtoAttributor.Tests
         {
             var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestCodeWithAttributesAndProtoIgnore.cs"));
             var rewriter = new ProtoAttributeAdder();
-            var protoReader = new ProtoAttributeReader();
-            var rewrittenRoot = rewriter.Visit(tree.GetRoot(), protoReader.GetProtoNextId(tree.GetRoot()));
+            var rewrittenRoot = rewriter.Visit(tree.GetRoot());
 
             var output = rewrittenRoot.GetText().ToString();
 
@@ -71,7 +70,7 @@ namespace ProtoAttributor.Tests
             var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestClassWithXmlComments.cs"));
             var rewriter = new ProtoAttributeAdder();
 
-            var rewrittenRoot = rewriter.Visit(tree.GetRoot(), 1);
+            var rewrittenRoot = rewriter.Visit(tree.GetRoot());
 
             var output = rewrittenRoot.GetText().ToString();
 
@@ -103,7 +102,7 @@ namespace ProtoAttributor.Tests
             var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestClassNoUsings.cs"));
             var rewriter = new ProtoAttributeAdder();
 
-            var rewrittenRoot = rewriter.Visit(tree.GetRoot(), 1);
+            var rewrittenRoot = rewriter.Visit(tree.GetRoot());
 
             var output = rewrittenRoot.GetText().ToString();
 
@@ -118,9 +117,8 @@ namespace ProtoAttributor.Tests
         {
             var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestCodeWithAttributes.cs"));
             var rewriter = new ProtoAttributeAdder();
-            var protoReader = new ProtoAttributeReader();
 
-            var rewrittenRoot = rewriter.Visit(tree.GetRoot(), protoReader.GetProtoNextId(tree.GetRoot()));
+            var rewrittenRoot = rewriter.Visit(tree.GetRoot());
 
             var output = rewrittenRoot.GetText().ToString();
 
@@ -137,9 +135,7 @@ namespace ProtoAttributor.Tests
         {
             var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestWierdFormatting.cs"));
             var rewriter = new ProtoAttributeAdder();
-            var protoReader = new ProtoAttributeReader();
-
-            var rewrittenRoot = rewriter.Visit(tree.GetRoot(), protoReader.GetProtoNextId(tree.GetRoot()));
+            var rewrittenRoot = rewriter.Visit(tree.GetRoot());
 
             var output = rewrittenRoot.GetText().ToString();
 
@@ -147,6 +143,26 @@ namespace ProtoAttributor.Tests
             output.Should().Contain("[ProtoContract]");
             output.Should().Contain("[ProtoMember(1)]");
             output.Should().Contain("[ProtoMember(2)]");
+        }
+
+        [Fact]
+        public void AddsAttributesWithCorrectOrderWhenFileHasProtoIgnores()
+        {
+            var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestProtoIgnore.cs"));
+            var rewriter = new ProtoAttributeAdder();
+            var rewrittenRoot = rewriter.Visit(tree.GetRoot());
+
+            var output = rewrittenRoot.GetText().ToString();
+            var source = output.Split(new string[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+
+            output.Should().Contain("ProtoBuf");
+            output.Should().Contain("[ProtoContract]");
+            output.Should().Contain("[ProtoMember(1)]");
+            output.Should().Contain("[ProtoMember(2)]");
+            output.Should().Contain("[ProtoMember(14)]");
+            output.Should().Contain("[ProtoMember(16)]");
+            _fixture.AssertOutputContainsCount(source, "[ProtoIgnore]", 2);
         }
     }
 

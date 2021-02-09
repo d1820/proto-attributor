@@ -1,6 +1,8 @@
 using System;
+using System.Threading;
 using EnvDTE;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 
 namespace ProtoAttributor.Executors
 {

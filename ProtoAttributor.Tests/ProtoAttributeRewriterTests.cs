@@ -59,22 +59,25 @@ namespace ProtoAttributor.Tests
         }
 
         [Fact]
-        public void RewritesAttributesWithCorrectOrderStartingAtProvidedIndexWhenAttributesAlreadyExists()
+        public void RewritesAttributesWithCorrectOrderWhenFileHasProtoIgnores()
         {
-            var tree = CSharpSyntaxTree.ParseText(_codeWithAttributes);
+            var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestProtoIgnore.cs"));
             var rewriter = new ProtoAttributeRewriter();
-
-            var rewrittenRoot = rewriter.Visit(tree.GetRoot(), 100);
+            var rewrittenRoot = rewriter.Visit(tree.GetRoot());
 
             var output = rewrittenRoot.GetText().ToString();
+            var source = output.Split(new string[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+
 
             output.Should().Contain("ProtoBuf");
             output.Should().Contain("[ProtoContract]");
-            output.Should().Contain(@"[ProtoMember(100, Name=""Test"")]");
-            output.Should().Contain("[ProtoMember(101)]");
-            output.Should().Contain("[ProtoMember(102)]");
-            output.Should().Contain("[ProtoMember(103)]");
+            output.Should().Contain("[ProtoMember(1)]");
+            output.Should().Contain("[ProtoMember(2)]");
+            output.Should().Contain("[ProtoMember(3)]");
+            output.Should().Contain("[ProtoMember(4)]");
+            _fixture.AssertOutputContainsCount(source, "[ProtoIgnore]", 2);
         }
+
     }
 
 }

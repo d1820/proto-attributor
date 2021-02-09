@@ -2,19 +2,22 @@ using Microsoft.CodeAnalysis.CSharp;
 
 namespace ProtoAttributor.Services
 {
-    public class ProtoAttributeService: IProtoAttributeService
+
+    public class DataAnnoAttributeService: IDataAnnoAttributeService
     {
         private readonly Microsoft.VisualStudio.OLE.Interop.IServiceProvider _serviceProvider;
         private readonly ProtoAttributeAdder _adder;
+        private readonly ProtoAttributeReader _protoReader;
         private readonly ProtoAttributeRemover _remover;
         private readonly ProtoAttributeRewriter _rewriter;
 
-        public ProtoAttributeService(Microsoft.VisualStudio.OLE.Interop.IServiceProvider sp,
-            ProtoAttributeAdder adder, ProtoAttributeRemover remover, ProtoAttributeRewriter rewriter)
+        public DataAnnoAttributeService(Microsoft.VisualStudio.OLE.Interop.IServiceProvider sp,
+            ProtoAttributeAdder adder, ProtoAttributeReader reader, ProtoAttributeRemover remover, ProtoAttributeRewriter rewriter)
         {
             _serviceProvider = sp;
             //TODO: move to an injection
             _adder = adder;
+            _protoReader = reader;
             _remover = remover;
             _rewriter = rewriter;
         }
