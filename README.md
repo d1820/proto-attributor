@@ -13,18 +13,18 @@ This is where ProtoAttributor shines. You can Add, Reorder, Remove ProtoBuf attr
 
 ## Adding Attributes
 
-Adding attributes options not only adds the ProtoMember attributes, it will also ensure the class has the ProtoContract attribute and the proper using are applied.
+Adding attributes options not only adds the ProtoMember/DataMember attributes, it will also ensure the class has the ProtoContract/DataContract attributes and the proper using statements are applied.
 
 Have an existing class that is already attributed and numbered, but you need to add new properties and attributes, ProtoAttributor will examine the existing attributes and start numbering at the next highest number ensuring proper backward and forward compatibility for your proto contract.
 
 ## Reordering Attributes
 
-Reordering attributes now becomes a snap. this will restart the index at 1 and reset all the ProtoMembers in proper ascending order.
-This is helpful when contracts have not been releases yet and you want to ensure standarized numbering of your contracts.
+Reordering attributes now becomes a snap. this will restart the index at 1 and reset all the ProtoMembers/DataMembers in proper ascending order.
+This is helpful when contracts have not been releases yet and you want to ensure standardized numbering of your contracts.
 
 ## Removing Attributes
 
-Removing attributes will not only remove the ProtoMember attributes but also includes any attribute or using that is related to [Proto*] family.
+Removing attributes will not only remove the ProtoMember/DataMember attributes but also includes any attribute or using statements that are related to the [Proto*] or [Data*] family.
 
 ## Ways to Use
 
@@ -34,21 +34,17 @@ ProtoAttributor can handle single files already open in Visual Studio from the T
 
 ### Working With ProtoMembers
 
-<video width="320" height="240" controls>
-  <source src="./ProtoAttributor/resources/ProtoContractVideo.mp4" type="video/mp4">
-</video>
+![alt ProtoContractVideo](./ProtoAttributor/resources/ProtoContractVideo.gif "ProtoContractVideo")
 
 ### Working With DataMembers
 
-<video width="320" height="240" controls>
-  <source src="./ProtoAttributor/resources/DataContractVideo.mp4" type="video/mp4">
-</video>
+![alt DataContractVideo](./ProtoAttributor/resources/DataContractVideo.gif "DataContractVideo")
+
 
 ### Working With A Single File
 
-<video width="320" height="240" controls>
-  <source src="./ProtoAttributor/resources/SinglePageProtoActions.mp4" type="video/mp4">
-</video>
+![alt SinglePageProtoActions](./ProtoAttributor/resources/SinglePageProtoActions.gif "SinglePageProtoActions")
+
 
 
 <span style="font-size:10px;">
