@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace ProtoAttributor.Services
+namespace ProtoAttributor.Parsers
 {
     public static class TriviaMaintainer
     {

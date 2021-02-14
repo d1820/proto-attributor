@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Simplification;
 
-namespace ProtoAttributor.Services
+namespace ProtoAttributor.Parsers
 {
     public static class NodeHelper
     {
@@ -33,11 +33,17 @@ namespace ProtoAttributor.Services
                 .StartsWith(startsWith);
         }
 
-        public static bool AttributeNameMatches(AttributeSyntax attribute, params string[] startsWiths)
+        public static bool AttributeNameContains(AttributeSyntax attribute, params string[] startsWiths)
+        {
+            var attrName = GetSimpleNameFromNode(attribute).Identifier.Text;
+            return startsWiths.Any(a => attrName.StartsWith(a, StringComparison.OrdinalIgnoreCase));
+        }
+
+        public static bool AttributeNameMatches(AttributeSyntax attribute, params string[] attributeNames)
         {
             var attrName = GetSimpleNameFromNode(attribute).Identifier.Text;
 
-            return startsWiths.Contains(attrName, StringComparer.OrdinalIgnoreCase);
+            return attributeNames.Contains(attrName, StringComparer.OrdinalIgnoreCase);
         }
 
         public static bool HasMatch(SyntaxList<AttributeListSyntax> attributeLists, string matchName)

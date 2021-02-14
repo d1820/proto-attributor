@@ -1,8 +1,5 @@
-using FluentAssertions;
-using Microsoft.CodeAnalysis.CSharp;
-using System.ComponentModel.DataAnnotations;
 using System;
-using Xunit;
+using System.ComponentModel.DataAnnotations;
 using ProtoBuf;
 
 namespace ProtoAttributor.Tests.Mocks
@@ -13,10 +10,10 @@ namespace ProtoAttributor.Tests.Mocks
     [ProtoInclude(101, typeof(string))]
     public class TestRemoveAttributes
     {
-
         [Required]
         [ProtoMember(10, Name = "test")]
         public int MyProperty { get; set; }
+
         [ProtoMember(20)]
         public int MyProperty2 { get; set; }
 
@@ -28,5 +25,4 @@ namespace ProtoAttributor.Tests.Mocks
 
         public int MyProperty5 { get; set; }
     }
-
 }

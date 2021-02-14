@@ -1,8 +1,3 @@
-using FluentAssertions;
-using Microsoft.CodeAnalysis.CSharp;
-using System;
-using Xunit;
-
 namespace ProtoAttributor.Tests.Mocks
 {
     /// <summary>
@@ -10,12 +5,8 @@ namespace ProtoAttributor.Tests.Mocks
     /// </summary>
     public class TestClassWithXmlComments
     {
-        /// <summary>
-        /// Gets or sets my property.
-        /// </summary>
-        /// <value>
-        /// My property.
-        /// </value>
+        /// <summary> Comments not wrapped </summary>
+        /// <value> My property. </value>
         public int MyProperty { get; set; }
 
         /// <summary>
@@ -25,6 +16,5 @@ namespace ProtoAttributor.Tests.Mocks
         /// My property11.
         /// </value>
         public int MyProperty11 { get; set; }
-
     }
 }

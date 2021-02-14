@@ -42,18 +42,18 @@
                 <Parent guid="guidProtoAttributorPackageCmdSet" id="ProtoMenu"/>
             </Group>
 
-            <!--<Group guid="guidProtoAttributorPackageCmdSet" id="ProtoSubMenuDataAnnoGroup" priority="2">
+            <Group guid="guidProtoAttributorPackageCmdSet" id="ProtoSubMenuDataAnnoGroup" priority="2">
                 <Parent guid="guidProtoAttributorPackageCmdSet" id="ProtoMenu"/>
-            </Group>-->
+            </Group>
 
             <!--This SubGroup Contains the context menu items-->
             <Group guid="guidProtoAttributorPackageCmdSet" id="ProtoContextSubMenuGroup" priority="1">
                 <Parent guid="guidProtoAttributorPackageCmdSet" id="ProtoContextMenu"/>
             </Group>
 
-            <!--<Group guid="guidProtoAttributorPackageCmdSet" id="ProtoContextSubMenuDataAnnoGroup" priority="2">
+            <Group guid="guidProtoAttributorPackageCmdSet" id="ProtoContextSubMenuDataAnnoGroup" priority="2">
                 <Parent guid="guidProtoAttributorPackageCmdSet" id="ProtoContextMenu"/>
-            </Group>-->
+            </Group>
 
         </Groups>
 

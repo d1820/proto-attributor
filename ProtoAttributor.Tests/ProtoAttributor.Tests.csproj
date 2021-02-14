@@ -27,6 +27,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Mocks\TestCodeWithDataMemberAttributes.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Mocks\TestMissingOrderPropertyAndWeirdSpacing.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Mocks\TestIgnoreDataMember.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Mocks\TestCodeWithAttributesAndDataMemberIgnore.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
     <Compile Update="Mocks\TestMultiClassMultiAttribute.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
@@ -39,13 +51,19 @@
     <Compile Update="Mocks\TestClassWithXmlComments.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Mocks\TestCodeWithAttributes.cs">
+    <Compile Update="Mocks\TestCodeWithProtoAttributes.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
     <Compile Update="Mocks\TestCodeWithAttributesAndProtoIgnore.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
+    <Compile Update="Mocks\TestDataIgnore.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
     <Compile Update="Mocks\TestProtoIgnore.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Mocks\TestRemoveDataAttributes.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
     <Compile Update="Mocks\TestRemoveAttributes.cs">
