@@ -1,8 +1,10 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Threading;
+using DataAttributor.Services;
 using Microsoft.VisualStudio.Shell;
 using ProtoAttributor.Commands.Context;
+using ProtoAttributor.Parsers.DataContracts;
 using ProtoAttributor.Parsers.ProtoContracts;
 using ProtoAttributor.Services;
 using Task = System.Threading.Tasks.Task;
@@ -59,13 +61,13 @@ namespace ProtoAttributor
 
             AddService(typeof(IProtoAttributeService), protoCallback, true);
 
-            //var datAnnoCallback = new AsyncServiceCreatorCallback(async (IAsyncServiceContainer container, CancellationToken ct, Type serviceType) =>
-            //{
-            //    if (typeof(IDataAnnoAttributeService) == serviceType)
-            //        return new DataAnnoAttributeService(this, new ProtoAttributeAdder(), new ProtoAttributeReader(), new ProtoAttributeRemover(), new ProtoAttributeRewriter());
-            //    return null;
-            //});
-            //AddService(typeof(IDataAnnoAttributeService), datAnnoCallback, true);
+            var datAnnoCallback = new AsyncServiceCreatorCallback(async (IAsyncServiceContainer container, CancellationToken ct, Type serviceType) =>
+            {
+                if (typeof(IDataAnnoAttributeService) == serviceType)
+                    return new DataAnnoAttributeService(this, new DataAttributeAdder(), new DataAttributeRemover(), new DataAttributeRewriter());
+                return null;
+            });
+            AddService(typeof(IDataAnnoAttributeService), datAnnoCallback, true);
 
             // When initialized asynchronously, the current thread may be a background thread at this point. Do any
             // initialization that requires the UI thread after switching to the UI thread.
@@ -75,16 +77,16 @@ namespace ProtoAttributor
                     ProtoAddAttrCommand.InitializeAsync(this),
                     ProtoRenumberAttrCommand.InitializeAsync(this),
                     ProtoRemoveAttrCommand.InitializeAsync(this),
-                    //DataAnnoAddAttrCommand.InitializeAsync(this),
-                    //DataAnnoRenumberAttrCommand.InitializeAsync(this),
-                    //DataAnnoRemoveAttrCommand.InitializeAsync(this),
+                    DataAnnoAddAttrCommand.InitializeAsync(this),
+                    DataAnnoRenumberAttrCommand.InitializeAsync(this),
+                    DataAnnoRemoveAttrCommand.InitializeAsync(this),
 
                     Commands.Menu.ProtoAddAttrCommand.InitializeAsync(this),
                     Commands.Menu.ProtoRenumberAttrCommand.InitializeAsync(this),
-                    Commands.Menu.ProtoRemoveAttrCommand.InitializeAsync(this)
-                    //Commands.Menu.DataAnnoAddAttrCommand.InitializeAsync(this),
-                    //Commands.Menu.DataAnnoRenumberAttrCommand.InitializeAsync(this),
-                    //Commands.Menu.DataAnnoRemoveAttrCommand.InitializeAsync(this)
+                    Commands.Menu.ProtoRemoveAttrCommand.InitializeAsync(this),
+                    Commands.Menu.DataAnnoAddAttrCommand.InitializeAsync(this),
+                    Commands.Menu.DataAnnoRenumberAttrCommand.InitializeAsync(this),
+                    Commands.Menu.DataAnnoRemoveAttrCommand.InitializeAsync(this)
             );
 
 
