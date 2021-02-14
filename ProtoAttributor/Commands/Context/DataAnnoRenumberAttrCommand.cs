@@ -24,7 +24,7 @@ namespace ProtoAttributor.Commands.Context
         private readonly AsyncPackage _package;
 
         private readonly SDTE _sdteService;
-        private readonly IProtoAttributeService _attributeService;
+        private readonly IDataAnnoAttributeService _attributeService;
         private readonly TextSelectionExecutor _textSelectionExecutor;
         private readonly IVsThreadedWaitDialogFactory _dialogFactory;
         private readonly SelectedItemCountExecutor _selectedItemCountExecutor;
@@ -38,7 +38,7 @@ namespace ProtoAttributor.Commands.Context
         /// <param name="package"> Owner package, not null. </param>
         /// <param name="commandService"> Command service to add command to, not null. </param>
         private DataAnnoRenumberAttrCommand(AsyncPackage package, OleMenuCommandService commandService, SDTE SDTEService,
-            IProtoAttributeService attributeService, TextSelectionExecutor textSelectionExecutor,
+            IDataAnnoAttributeService attributeService, TextSelectionExecutor textSelectionExecutor,
             IVsThreadedWaitDialogFactory dialogFactory, SelectedItemCountExecutor selectedItemCountExecutor,
             AttributeExecutor attributeExecutor)
         {
@@ -79,7 +79,7 @@ namespace ProtoAttributor.Commands.Context
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
 
             var commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
-            var attributeService = await package.GetServiceAsync(typeof(IProtoAttributeService)) as IProtoAttributeService;
+            var attributeService = await package.GetServiceAsync(typeof(IDataAnnoAttributeService)) as IDataAnnoAttributeService;
             var dialogFactory = await package.GetServiceAsync(typeof(SVsThreadedWaitDialogFactory)) as IVsThreadedWaitDialogFactory;
             var SDTE = await package.GetServiceAsync(typeof(SDTE)) as SDTE;
             var textSelectionExecutor = new TextSelectionExecutor();

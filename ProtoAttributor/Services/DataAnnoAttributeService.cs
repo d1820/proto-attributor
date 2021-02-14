@@ -9,17 +9,15 @@ namespace DataAttributor.Services
     {
         private readonly Microsoft.VisualStudio.OLE.Interop.IServiceProvider _serviceProvider;
         private readonly DataAttributeAdder _adder;
-        private readonly DataAttributeReader _protoReader;
         private readonly DataAttributeRemover _remover;
         private readonly DataAttributeRewriter _rewriter;
 
         public DataAnnoAttributeService(Microsoft.VisualStudio.OLE.Interop.IServiceProvider sp,
-            DataAttributeAdder adder, DataAttributeReader reader, DataAttributeRemover remover, DataAttributeRewriter rewriter)
+            DataAttributeAdder adder, DataAttributeRemover remover, DataAttributeRewriter rewriter)
         {
             _serviceProvider = sp;
             //TODO: move to an injection
             _adder = adder;
-            _protoReader = reader;
             _remover = remover;
             _rewriter = rewriter;
         }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="ProtoAttributor.fc16f3d2-4cc4-42ca-a6ca-2e7fb9cb3e5f" Version="1.0" Language="en-US" Publisher="Dan Turco" />
+        <Identity Id="ProtoAttributor.fc16f3d2-4cc4-42ca-a6ca-2e7fb9cb3e5f" Version="1.1" Language="en-US" Publisher="Dan Turco" />
         <DisplayName>ProtoAttributor</DisplayName>
         <Description xml:space="preserve">ProtoAttributor  is an open source Visual Studio extension that can manage the appropriate attributes on a class to support ProtoBuf. It currently supports ProtoContract, ProtoMember, ProtoIgnore attributes. This extension lets you Add, Reorder, and Remove ProtoBuf attributes from a class.</Description>
         <MoreInfo>https://github.com/d1820/proto-attributor</MoreInfo>

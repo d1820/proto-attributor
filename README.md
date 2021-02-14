@@ -30,6 +30,6 @@ Removing attributes will not only remove the ProtoMember attributes but also inc
 ProtoAttributor can handle single files already open in Visual Studio from the Tools menu or it can handle entire directories of files from the solution explorer.
 
 
-<span style=" font-size:10px;">
+<span style="font-size:10px;">
 Special thanks to <a href="https://logomakr.com/">logomakr.com</a> for the logo
 </span>
