@@ -3,30 +3,30 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
 
-namespace ProtoAttributor.Services
+namespace ProtoAttributor.Parsers.DataContracts
 {
-    public class ProtoAttributeAdder: BaseProtoRewriter
+    public class DataAttributeAdder: BaseDataRewriter
     {
-        private ProtoAttributeReader _protoReader;
+        private DataAttributeReader _dataReader;
 
-        public ProtoAttributeAdder()
+        public DataAttributeAdder()
         {
-            _protoReader = new ProtoAttributeReader();
+            _dataReader = new DataAttributeReader();
         }
         public override int CalculateStartingIndex(SyntaxNode node)
         {
-            return _protoReader.GetProtoNextId(node);
+            return _dataReader.GetDataMemberNextId(node);
         }
 
         public override SyntaxNode VisitPropertyDeclaration(PropertyDeclarationSyntax node)
         {
-            var hasMatch = NodeHelper.HasMatch(node.AttributeLists, Constants.Proto.PROPERTY_ATTRIBUTE_NAME, Constants.Proto.PROPERTY_IGNORE_ATTRIBUTE_NAME);
+            var hasMatch = NodeHelper.HasMatch(node.AttributeLists, Constants.Data.PROPERTY_ATTRIBUTE_NAME, Constants.Data.PROPERTY_IGNORE_ATTRIBUTE_NAME);
 
             if (!hasMatch)
             {
-                var name = SyntaxFactory.ParseName(Constants.Proto.PROPERTY_ATTRIBUTE_NAME);
-                var arguments = SyntaxFactory.ParseAttributeArgumentList($"({_startIndex})");
-                var attribute = SyntaxFactory.Attribute(name, arguments); //ProtoMember("1")
+                var name = SyntaxFactory.ParseName(Constants.Data.PROPERTY_ATTRIBUTE_NAME);
+                var arguments = SyntaxFactory.ParseAttributeArgumentList($"(Order = {_startIndex})");
+                var attribute = SyntaxFactory.Attribute(name, arguments); //DataMember(Order = 1)
 
                 node = TriviaMaintainer.Apply(node, (innerNode, wp) =>
                 {

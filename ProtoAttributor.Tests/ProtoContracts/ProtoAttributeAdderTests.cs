@@ -1,13 +1,10 @@
+using System;
 using FluentAssertions;
 using Microsoft.CodeAnalysis.CSharp;
-using ProtoAttributor.Services;
-using ProtoBuf;
-using System;
-using System.IO;
-using System.Linq;
+using ProtoAttributor.Parsers.ProtoContracts;
 using Xunit;
 
-namespace ProtoAttributor.Tests
+namespace ProtoAttributor.Tests.ProtoContracts
 {
     public class ProtoAttributeAdderTests: IClassFixture<TestFixure>
     {
@@ -17,17 +14,18 @@ namespace ProtoAttributor.Tests
         {
             _fixture = fixture;
         }
+
         [Fact]
         public void AddsAttributesForProtBuf()
         {
-			var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestClassPlain.cs"));
+            var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestClassPlain.cs"));
             var rewriter = new ProtoAttributeAdder();
 
             var rewrittenRoot = rewriter.Visit(tree.GetRoot());
 
             var output = rewrittenRoot.GetText().ToString();
 
-            var source = output.Split(new string[] { " " , "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+            var source = output.Split(new string[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
 
             output.Should().Contain("ProtoBuf");
             output.Should().Contain("[ProtoContract]");
@@ -37,7 +35,6 @@ namespace ProtoAttributor.Tests
 
             _fixture.AssertOutputContainsCount(source, "ProtoMember", 2);
             _fixture.AssertOutputContainsCount(source, "Required", 1);
-
         }
 
         [Fact]
@@ -61,7 +58,6 @@ namespace ProtoAttributor.Tests
             _fixture.AssertOutputContainsCount(source, "[ProtoMember", 3);
             _fixture.AssertOutputContainsCount(source, "[Required]", 1);
             _fixture.AssertOutputContainsCount(source, "[ProtoIgnore]", 1);
-
         }
 
         [Fact]
@@ -85,15 +81,10 @@ namespace ProtoAttributor.Tests
 
             //This verifies spacing is correct
             output.Should().Contain(@"
-        /// <summary>
-        /// Gets or sets my property.
-        /// </summary>
-        /// <value>
-        /// My property.
-        /// </value>
+        /// <summary> Comments not wrapped </summary>
+        /// <value> My property. </value>
         [ProtoMember(1)]
         public int MyProperty { get; set; }");
-
         }
 
         [Fact]
@@ -115,7 +106,7 @@ namespace ProtoAttributor.Tests
         [Fact]
         public void AddsAttributesWithCorrectOrderWhenAttributesAlreadyExists()
         {
-            var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestCodeWithAttributes.cs"));
+            var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestCodeWithProtoAttributes.cs"));
             var rewriter = new ProtoAttributeAdder();
 
             var rewrittenRoot = rewriter.Visit(tree.GetRoot());
@@ -155,7 +146,6 @@ namespace ProtoAttributor.Tests
             var output = rewrittenRoot.GetText().ToString();
             var source = output.Split(new string[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
 
-
             output.Should().Contain("ProtoBuf");
             output.Should().Contain("[ProtoContract]");
             output.Should().Contain("[ProtoMember(1)]");
@@ -165,5 +155,4 @@ namespace ProtoAttributor.Tests
             _fixture.AssertOutputContainsCount(source, "[ProtoIgnore]", 2);
         }
     }
-
 }

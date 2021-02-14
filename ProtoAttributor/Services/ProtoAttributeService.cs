@@ -1,4 +1,5 @@
 using Microsoft.CodeAnalysis.CSharp;
+using ProtoAttributor.Parsers.ProtoContracts;
 
 namespace ProtoAttributor.Services
 {

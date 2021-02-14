@@ -1,28 +1,31 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-using ProtoBuf;
+using System.Runtime.Serialization;
 
 namespace ProtoAttributor.Tests.Mocks
 {
     [Serializable]
-    [ProtoContract]
-    [ProtoInclude(100, typeof(string))]
-    [ProtoInclude(101, typeof(string))]
-    public class TestRemoveAttributes
+    [DataContract]
+    [KnownType(typeof(string))]
+    [KnownType(typeof(string))]
+    public class TestRemoveDataAttributes
     {
         [Required]
-        [ProtoMember(10, Name = "test")]
+        [DataMember(Order = 10, Name = "test")]
         public int MyProperty { get; set; }
 
-        [ProtoMember(20)]
+        [DataMember(Order = 20)]
         public int MyProperty2 { get; set; }
 
         [Required]
         public int MyProperty3 { get; set; }
 
-        [ProtoIgnore]
+        [IgnoreDataMember]
         public int MyProperty4 { get; set; }
 
         public int MyProperty5 { get; set; }
+
+        [DataMember(Name = "test12")]
+        public int MyProperty6 { get; set; }
     }
 }

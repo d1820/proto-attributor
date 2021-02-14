@@ -3,8 +3,10 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
+using ProtoAttributor.Parsers;
+using ProtoAttributor.Parsers.ProtoContracts;
 
-namespace ProtoAttributor.Services
+namespace ProtoAttributor.Parsers.ProtoContracts
 {
     public class ProtoAttributeRewriter: BaseProtoRewriter
     {

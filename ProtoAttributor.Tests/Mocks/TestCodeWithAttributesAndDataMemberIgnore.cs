@@ -1,19 +1,21 @@
-using System;
-using Xunit;
-using ProtoBuf;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
 
 namespace ProtoAttributor.Tests
 {
-    [ProtoContract]
-    public class TestCodeWithAttributes
+    [DataContract]
+    public class TestCodeWithAttributesAndDataMemberIgnore
     {
         [Required]
-        [ProtoMember(1)]
+        [DataMember(Order = 1)]
         public int MyProperty { get; set; }
-        [ProtoMember(2)]
+
+        [DataMember(Order = 2)]
         public int MyProperty2 { get; set; }
+
+        [IgnoreDataMember]
         public int MyProperty3 { get; set; }
+
         public int MyProperty4 { get; set; }
     }
 }

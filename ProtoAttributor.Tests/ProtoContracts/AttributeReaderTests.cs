@@ -1,15 +1,13 @@
+using System.IO;
 using FluentAssertions;
 using Microsoft.CodeAnalysis.CSharp;
-using ProtoAttributor.Services;
-using System;
-using System.IO;
+using ProtoAttributor.Parsers.ProtoContracts;
 using Xunit;
 
-namespace ProtoAttributor.Tests
+namespace ProtoAttributor.Tests.ProtoContracts
 {
     public class AttributeReaderTests
     {
-
         public string LoadTestFile(string relativePath)
         {
             return File.ReadAllText(relativePath);
@@ -18,7 +16,7 @@ namespace ProtoAttributor.Tests
         [Fact]
         public void GetsNextIdForProtoMember()
         {
-            var tree = CSharpSyntaxTree.ParseText(LoadTestFile(@"./Mocks/TestCodeWithAttributes.cs"));
+            var tree = CSharpSyntaxTree.ParseText(LoadTestFile(@"./Mocks/TestCodeWithProtoAttributes.cs"));
             var protoReader = new ProtoAttributeReader();
 
             var output = protoReader.GetProtoNextId(tree.GetRoot());
@@ -26,5 +24,4 @@ namespace ProtoAttributor.Tests
             output.Should().Be(3);
         }
     }
-
 }

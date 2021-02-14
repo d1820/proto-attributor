@@ -1,12 +1,10 @@
 using FluentAssertions;
 using Microsoft.CodeAnalysis.CSharp;
-using ProtoAttributor.Services;
-using System;
+using ProtoAttributor.Parsers.ProtoContracts;
 using Xunit;
 
-namespace ProtoAttributor.Tests
+namespace ProtoAttributor.Tests.ProtoContracts
 {
-
     public class ProtoAttributeRemoverTests: IClassFixture<TestFixure>
     {
         private readonly TestFixure _fixture;
@@ -15,7 +13,6 @@ namespace ProtoAttributor.Tests
         {
             _fixture = fixture;
         }
-
 
         [Fact]
         public void AddsAttributesWithCorrectOrderWhenAttributesAlreadyExists()
@@ -39,5 +36,4 @@ namespace ProtoAttributor.Tests
             output.Should().Contain("[Serializable]");
         }
     }
-
 }

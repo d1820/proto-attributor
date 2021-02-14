@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using Microsoft.VisualStudio.Shell;
 using ProtoAttributor.Commands.Context;
+using ProtoAttributor.Parsers.ProtoContracts;
 using ProtoAttributor.Services;
 using Task = System.Threading.Tasks.Task;
 

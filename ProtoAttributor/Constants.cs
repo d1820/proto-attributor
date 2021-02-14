@@ -10,5 +10,16 @@ namespace ProtoAttributor
             public const string USING_STATEMENT = "ProtoBuf";
             public const string BASE_PROP_NAME = "Proto";
         }
+
+        public static class Data
+        {
+            public const string PROPERTY_ATTRIBUTE_NAME = "DataMember";
+            public const string PROPERTY_IGNORE_ATTRIBUTE_NAME = "IgnoreDataMember";
+            public const string CLASS_ATTRIBUTE_NAME = "DataContract";
+            public const string USING_STATEMENT = "System.Runtime.Serialization";
+            public const string BASE_PROP_NAME = "Data";
+            public const string BASE_PROPIGNORE_NAME = "IgnoreData";
+            public const string BASE_KNOWN_TYPE_NAME = "KnownType";
+        }
     }
 }

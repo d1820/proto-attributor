@@ -2,8 +2,9 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using ProtoAttributor.Parsers;
 
-namespace ProtoAttributor.Services
+namespace ProtoAttributor.Parsers.ProtoContracts
 {
     public class ProtoAttributeRemover: CSharpSyntaxRewriter
     {

@@ -1,27 +1,27 @@
-using ProtoBuf;
+using System.Runtime.Serialization;
 
 namespace ProtoAttributor.Tests.Mocks
 {
     // Models returned by MeController actions.
-    [ProtoContract]
-    public class TestProtoIgnore
+    [DataContract]
+    public class TestDataIgnore
     {
-        [ProtoMember(1)]
+        [DataMember(Order=1)]
         public string Hometown { get; set; }
 
-        [ProtoMember(2)]
+        [DataMember(Order = 2)]
         public string Hometown1 { get; set; }
 
-        [ProtoMember(14)]
+        [DataMember(Order = 14)]
         public string Hometown44 { get; set; }
 
-        [ProtoIgnore]
+        [IgnoreDataMember]
         public string Hometown55 { get; set; }
 
-        [ProtoMember(16)]
+        [DataMember(Order=16)]
         public string Hometown66 { get; set; }
 
-        [ProtoIgnore]
+        [IgnoreDataMember]
         public string Hometown99 { get; set; }
     }
 }

@@ -3,8 +3,9 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
+using ProtoAttributor.Parsers;
 
-namespace ProtoAttributor.Services
+namespace ProtoAttributor.Parsers.ProtoContracts
 {
     public abstract class BaseProtoRewriter: CSharpSyntaxRewriter
     {

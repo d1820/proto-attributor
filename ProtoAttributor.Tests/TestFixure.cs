@@ -1,11 +1,7 @@
-﻿using FluentAssertions;
-using Microsoft.CodeAnalysis.CSharp;
-using ProtoAttributor.Services;
-using ProtoBuf;
 using System;
 using System.IO;
 using System.Linq;
-using Xunit;
+using FluentAssertions;
 
 namespace ProtoAttributor.Tests
 {
@@ -22,9 +18,7 @@ namespace ProtoAttributor.Tests
                              where word.IndexOf(searchTerm, StringComparison.InvariantCultureIgnoreCase) > -1
                              select word;
 
-
             matchQuery.Count().Should().Be(numOfTimes);
         }
     }
-
 }
