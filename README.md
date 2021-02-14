@@ -1,8 +1,11 @@
 # ![alt text](./ProtoAttributor/logo.png "ProtoAttributor")
 
-ProtoAttributor is an open source Visual Studio extension that can manage the appropriate attributes on a class to support ProtoBuf. It currently supports ProtoContract, ProtoMember, ProtoIgnore attributes. This extension lets you Add, Reorder, and Remove ProtoBuf attributes from a class.
+ProtoAttributor is an open source Visual Studio extension that can manage the appropriate attributes on a class to support ProtoBuf.
+It currently supports ProtoContract, ProtoMember, ProtoIgnore, DataContract, DataMember, IgnoreDataMemeber attributes. This extension lets you Add, Reorder, and Remove ProtoBuf attributes from a class.
+This works in conjunction with the [protobuf-net](https://github.com/protobuf-net/protobuf-net) 3.0+ Nuget package
 
-One of the challenges with creating proper ProtoBuf contracts is getting the ordering correct and consistent. 
+
+One of the challenges with creating proper ProtoBuf contracts is getting the ordering correct and consistent.
 While small contract classes are easy to manage as classes get larger or lots of nested classes are created it gets harder and harder to manage and maintain these classes.
 This is where ProtoAttributor shines. You can Add, Reorder, Remove ProtoBuf attributes from 1 or many classes.
 
@@ -23,11 +26,29 @@ This is helpful when contracts have not been releases yet and you want to ensure
 
 Removing attributes will not only remove the ProtoMember attributes but also includes any attribute or using that is related to [Proto*] family.
 
-
-
 ## Ways to Use
 
 ProtoAttributor can handle single files already open in Visual Studio from the Tools menu or it can handle entire directories of files from the solution explorer.
+
+## Proto[Attributor] In Action
+
+### Working With ProtoMembers
+
+<video width="320" height="240" controls>
+  <source src="./ProtoAttributor/resources/ProtoContractVideo.mp4" type="video/mp4">
+</video>
+
+### Working With DataMembers
+
+<video width="320" height="240" controls>
+  <source src="./ProtoAttributor/resources/DataContractVideo.mp4" type="video/mp4">
+</video>
+
+### Working With A Single File
+
+<video width="320" height="240" controls>
+  <source src="./ProtoAttributor/resources/SinglePageProtoActions.mp4" type="video/mp4">
+</video>
 
 
 <span style="font-size:10px;">

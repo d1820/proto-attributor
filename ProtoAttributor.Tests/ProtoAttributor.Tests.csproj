@@ -30,6 +30,9 @@
     <Compile Update="Mocks\TestCodeWithDataMemberAttributes.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
+    <Compile Update="Mocks\TestMissingOrderPropertyAndWeirdSpacing.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
     <Compile Update="Mocks\TestIgnoreDataMember.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>

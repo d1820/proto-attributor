@@ -66,11 +66,30 @@ namespace ProtoAttributor.Tests.DataContracts
 
             output.Should().Contain("System.Runtime.Serialization");
             output.Should().Contain("[DataContract]");
-            output.Should().Contain("[DataMember(Order=1)]");
+            output.Should().Contain("[DataMember(Order = 1)]");
             output.Should().Contain("[DataMember(Order = 2)]");
             output.Should().Contain("[DataMember(Order = 3)]");
-            output.Should().Contain("[DataMember(Order=4)]");
+            output.Should().Contain("[DataMember(Order = 4)]");
             _fixture.AssertOutputContainsCount(source, "[IgnoreDataMember]", 2);
+        }
+
+        [Fact]
+        public void RewritesAttributesWithCorrectOrderWhenAttributeExistsWithoutOrderProperty()
+        {
+            var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestMissingOrderPropertyAndWeirdSpacing.cs"));
+            var rewriter = new DataAttributeRewriter();
+            var rewrittenRoot = rewriter.Visit(tree.GetRoot());
+
+            var output = rewrittenRoot.GetText().ToString();
+            var source = output.Split(new string[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+            output.Should().Contain("System.Runtime.Serialization");
+            output.Should().Contain("[DataContract]");
+            output.Should().Contain("[DataMember(Order = 1)]");
+            output.Should().Contain("[DataMember(Order = 2)]");
+            output.Should().Contain(@"[DataMember(Name =""test"",Order = 3)]");
+            output.Should().Contain("[DataMember(Order = 4)]");
+            _fixture.AssertOutputContainsCount(source, "[IgnoreDataMember]", 1);
         }
     }
 }
