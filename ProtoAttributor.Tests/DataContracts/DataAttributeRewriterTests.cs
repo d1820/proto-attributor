@@ -91,5 +91,21 @@ namespace ProtoAttributor.Tests.DataContracts
             output.Should().Contain("[DataMember(Order = 4)]");
             _fixture.AssertOutputContainsCount(source, "[IgnoreDataMember]", 1);
         }
+
+        [Fact]
+        public void RewritesEnumAttributesWhenFileHasDataMemeberIgnores()
+        {
+            var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestEnumWithDataMemberIgnore.cs"));
+            var rewriter = new DataAttributeRewriter();
+            var rewrittenRoot = rewriter.Visit(tree.GetRoot());
+
+            var output = rewrittenRoot.GetText().ToString();
+            var source = output.Split(new string[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+            output.Should().Contain("System.Runtime.Serialization");
+            output.Should().Contain("[DataContract]");
+            _fixture.AssertOutputContainsCount(source, "[IgnoreDataMember]", 2);
+            _fixture.AssertOutputContainsCount(source, "[EnumMember]", 3);
+        }
     }
 }

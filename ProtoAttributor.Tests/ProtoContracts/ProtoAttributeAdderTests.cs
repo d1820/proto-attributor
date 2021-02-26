@@ -154,5 +154,54 @@ namespace ProtoAttributor.Tests.ProtoContracts
             output.Should().Contain("[ProtoMember(16)]");
             _fixture.AssertOutputContainsCount(source, "[ProtoIgnore]", 2);
         }
+
+        [Fact]
+        public void AddsAttributesWhenFileIsEnum()
+        {
+            var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestEnum.cs"));
+            var rewriter = new ProtoAttributeAdder();
+            var rewrittenRoot = rewriter.Visit(tree.GetRoot());
+
+            var output = rewrittenRoot.GetText().ToString();
+            var source = output.Split(new string[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+            output.Should().Contain("ProtoBuf");
+            output.Should().Contain("[ProtoContract]");
+            output.Should().Contain("[ProtoEnum]");
+            _fixture.AssertOutputContainsCount(source, "[ProtoEnum]", 5);
+        }
+
+        [Fact]
+        public void AddsAttributesWhenFileIsEnumWithExistingAttributes()
+        {
+            var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestEnumWithProtoAttributes.cs"));
+            var rewriter = new ProtoAttributeAdder();
+            var rewrittenRoot = rewriter.Visit(tree.GetRoot());
+
+            var output = rewrittenRoot.GetText().ToString();
+            var source = output.Split(new string[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+            output.Should().Contain("ProtoBuf");
+            output.Should().Contain("[ProtoContract]");
+            output.Should().Contain("[ProtoEnum]");
+            _fixture.AssertOutputContainsCount(source, "[ProtoEnum]", 5);
+        }
+
+        [Fact]
+        public void AddsAttributesWhenFileIsEnumWithIgnoreAttributes()
+        {
+            var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestEnumWithProtoIgnore.cs"));
+            var rewriter = new ProtoAttributeAdder();
+            var rewrittenRoot = rewriter.Visit(tree.GetRoot());
+
+            var output = rewrittenRoot.GetText().ToString();
+            var source = output.Split(new string[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+            output.Should().Contain("ProtoBuf");
+            output.Should().Contain("[ProtoContract]");
+            output.Should().Contain("[ProtoEnum]");
+            _fixture.AssertOutputContainsCount(source, "[ProtoEnum]", 3);
+            _fixture.AssertOutputContainsCount(source, "[ProtoIgnore]", 2);
+        }
     }
 }

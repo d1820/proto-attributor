@@ -25,4 +25,19 @@ namespace ProtoAttributor.Tests.Mocks
 
         public int MyProperty5 { get; set; }
     }
+
+    [ProtoContract]
+    public enum TestRemoveEnumWithProtoAttributes
+    {
+        [ProtoEnum]
+        One,
+        [ProtoEnum]
+        Two,
+        [ProtoEnum]
+        Three,
+        [ProtoEnum]
+        Four,
+        [ProtoEnum]
+        Five
+    }
 }
