@@ -45,5 +45,43 @@ namespace ProtoAttributor.Parsers
 
             return node;
         }
+
+        public static EnumDeclarationSyntax Apply(EnumDeclarationSyntax node, Func<EnumDeclarationSyntax, SyntaxTrivia, EnumDeclarationSyntax> builder)
+        {
+            var leadingTrivia = node.GetLeadingTrivia();
+            var trailingTrivia = node.GetTrailingTrivia();
+
+            node = node.WithoutLeadingTrivia();
+            node = node.WithoutTrailingTrivia();
+
+            var wp = leadingTrivia.FirstOrDefault(w => w.Kind() == SyntaxKind.WhitespaceTrivia);
+
+            node = builder?.Invoke(node, wp);
+
+            node = node.WithLeadingTrivia(leadingTrivia);
+
+            node = node.WithTrailingTrivia(trailingTrivia);
+
+            return node;
+        }
+
+        public static EnumMemberDeclarationSyntax Apply(EnumMemberDeclarationSyntax node, Func<EnumMemberDeclarationSyntax, SyntaxTrivia, EnumMemberDeclarationSyntax> builder)
+        {
+            var leadingTrivia = node.GetLeadingTrivia();
+            var trailingTrivia = node.GetTrailingTrivia();
+
+            node = node.WithoutLeadingTrivia();
+            node = node.WithoutTrailingTrivia();
+
+            var wp = leadingTrivia.FirstOrDefault(w => w.Kind() == SyntaxKind.WhitespaceTrivia);
+
+            node = builder?.Invoke(node, wp);
+
+            node = node.WithLeadingTrivia(leadingTrivia);
+
+            node = node.WithTrailingTrivia(trailingTrivia);
+
+            return node;
+        }
     }
 }

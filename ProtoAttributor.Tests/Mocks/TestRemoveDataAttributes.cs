@@ -28,4 +28,19 @@ namespace ProtoAttributor.Tests.Mocks
         [DataMember(Name = "test12")]
         public int MyProperty6 { get; set; }
     }
+
+    [DataContract]
+    public enum TestRemoveEnumWithDataAttributes
+    {
+        [EnumMember]
+        One,
+        [EnumMember]
+        Two,
+        [EnumMember]
+        Three,
+        [EnumMember]
+        Four,
+        [EnumMember]
+        Five
+    }
 }

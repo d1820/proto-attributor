@@ -30,6 +30,21 @@
     <Compile Update="Mocks\TestCodeWithDataMemberAttributes.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
+    <Compile Update="Mocks\TestEnum.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Mocks\TestEnumWithDataAttributes.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Mocks\TestEnumWithDataMemberIgnore.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Mocks\TestEnumWithProtoAttributes.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Mocks\TestEnumWithProtoIgnore.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
     <Compile Update="Mocks\TestMissingOrderPropertyAndWeirdSpacing.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>

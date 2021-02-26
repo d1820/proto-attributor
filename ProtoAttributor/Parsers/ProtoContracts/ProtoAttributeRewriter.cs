@@ -15,6 +15,25 @@ namespace ProtoAttributor.Parsers.ProtoContracts
             return 1;
         }
 
+        public override SyntaxNode VisitEnumMemberDeclaration(EnumMemberDeclarationSyntax node)
+        {
+            var hasMatch = NodeHelper.HasMatch(node.AttributeLists, Constants.Proto.ENUM_MEMBER_NAME, Constants.Proto.PROPERTY_IGNORE_ATTRIBUTE_NAME);
+
+            if (!hasMatch)
+            {
+                var name = SyntaxFactory.ParseName(Constants.Proto.ENUM_MEMBER_NAME);
+                var attribute = SyntaxFactory.Attribute(name); //ProtoEnum()
+
+                node = TriviaMaintainer.Apply(node, (innerNode, wp) =>
+                {
+                    var newAttributes = BuildAttribute(attribute, innerNode.AttributeLists, wp);
+
+                    return innerNode.WithAttributeLists(newAttributes).WithAdditionalAnnotations(Formatter.Annotation);
+                });
+            }
+            return base.VisitEnumMemberDeclaration(node);
+        }
+
         public override SyntaxNode VisitPropertyDeclaration(PropertyDeclarationSyntax node)
         {
             var hasMatch = NodeHelper.HasMatch(node.AttributeLists, Constants.Proto.PROPERTY_ATTRIBUTE_NAME, Constants.Proto.PROPERTY_IGNORE_ATTRIBUTE_NAME);

@@ -42,6 +42,28 @@ namespace ProtoAttributor.Parsers.ProtoContracts
             return base.VisitCompilationUnit(node);
         }
 
+        public override SyntaxNode VisitEnumDeclaration(EnumDeclarationSyntax node)
+        {
+            //each class needs to restat with the
+            _startIndex = CalculateStartingIndex(node);
+            var hasMatch = NodeHelper.HasMatch(node.AttributeLists, Constants.Proto.ENUM_ATTRIBUTE_NAME);
+
+            if (!hasMatch)
+            {
+                var name = SyntaxFactory.ParseName(Constants.Proto.ENUM_ATTRIBUTE_NAME);
+                var attribute = SyntaxFactory.Attribute(name);
+
+                node = TriviaMaintainer.Apply(node, (innerNode, wp) =>
+                {
+                    var newAttributes = BuildAttribute(attribute, innerNode.AttributeLists, wp);
+
+                    return innerNode.WithAttributeLists(newAttributes).WithAdditionalAnnotations(Formatter.Annotation);
+                });
+            }
+
+            return base.VisitEnumDeclaration(node);
+        }
+
         public override SyntaxNode VisitClassDeclaration(ClassDeclarationSyntax node)
         {
             //each class needs to restat with the

@@ -15,7 +15,7 @@ namespace ProtoAttributor.Tests.ProtoContracts
         }
 
         [Fact]
-        public void AddsAttributesWithCorrectOrderWhenAttributesAlreadyExists()
+        public void RemovesProtoAttributesWhenAttributesAlreadyExists()
         {
             var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestRemoveAttributes.cs"));
             var rewriter = new ProtoAttributeRemover();
@@ -27,6 +27,7 @@ namespace ProtoAttributor.Tests.ProtoContracts
             output.Should().NotContain("ProtoBuf");
             output.Should().NotContain("[ProtoContract]");
             output.Should().NotContain("[ProtoInclude]");
+            output.Should().NotContain("[ProtoEnum]");
             output.Should().NotContain("[ProtoIgnore]");
             output.Should().NotContain(@"[ProtoMember(1, Name=""Test"")]");
             output.Should().NotContain("[ProtoMember(2)]");

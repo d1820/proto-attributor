@@ -154,5 +154,55 @@ namespace ProtoAttributor.Tests.DataContracts
             output.Should().Contain("[DataMember(Order = 16)]");
             _fixture.AssertOutputContainsCount(source, "[IgnoreDataMember]", 2);
         }
+
+        [Fact]
+        public void AddsAttributesWhenFileIsEnum()
+        {
+            var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestEnum.cs"));
+            var rewriter = new DataAttributeAdder();
+            var rewrittenRoot = rewriter.Visit(tree.GetRoot());
+
+            var output = rewrittenRoot.GetText().ToString();
+            var source = output.Split(new string[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+            output.Should().Contain("System.Runtime.Serialization");
+            output.Should().Contain("[DataContract]");
+            output.Should().Contain("[EnumMember]");
+            _fixture.AssertOutputContainsCount(source, "[EnumMember]", 5);
+
+        }
+
+        [Fact]
+        public void AddsAttributesWhenFileIsEnumWithExistingAttributes()
+        {
+            var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestEnumWithDataAttributes.cs"));
+            var rewriter = new DataAttributeAdder();
+            var rewrittenRoot = rewriter.Visit(tree.GetRoot());
+
+            var output = rewrittenRoot.GetText().ToString();
+            var source = output.Split(new string[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+            output.Should().Contain("System.Runtime.Serialization");
+            output.Should().Contain("[DataContract]");
+            output.Should().Contain("[EnumMember]");
+            _fixture.AssertOutputContainsCount(source, "[EnumMember]", 5);
+        }
+
+        [Fact]
+        public void AddsAttributesWhenFileIsEnumWithIgnoreAttributes()
+        {
+            var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestEnumWithDataMemberIgnore.cs"));
+            var rewriter = new DataAttributeAdder();
+            var rewrittenRoot = rewriter.Visit(tree.GetRoot());
+
+            var output = rewrittenRoot.GetText().ToString();
+            var source = output.Split(new string[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+            output.Should().Contain("System.Runtime.Serialization");
+            output.Should().Contain("[DataContract]");
+            output.Should().Contain("[EnumMember]");
+            _fixture.AssertOutputContainsCount(source, "[EnumMember]", 3);
+            _fixture.AssertOutputContainsCount(source, "[IgnoreDataMember]", 2);
+        }
     }
 }

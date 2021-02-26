@@ -28,6 +28,7 @@ namespace ProtoAttributor.Tests.DataContracts
             output.Should().NotContain("[DataContract]");
             output.Should().NotContain("[KnownType");
             output.Should().NotContain("[IgnoreDataMember]");
+            output.Should().NotContain("[EnumMember]");
             output.Should().NotContain(@"[DataMember(Order = 1, Name=""Test"")]");
             output.Should().NotContain("[DataMember(Order = 2)]");
             output.Should().NotContain(@"DataMember(Name = ""test12"")");

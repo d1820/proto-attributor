@@ -1,7 +1,10 @@
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
+using ProtoBuf;
 
 namespace ProtoAttributor.Tests.Mocks
 {
+    [DataContract]
     public class TestClassPlain
     {
         [Required]

@@ -72,5 +72,21 @@ namespace ProtoAttributor.Tests.ProtoContracts
             output.Should().Contain("[ProtoMember(4)]");
             _fixture.AssertOutputContainsCount(source, "[ProtoIgnore]", 2);
         }
+
+        [Fact]
+        public void RewritesEnumAttributesFileHasProtoIgnores()
+        {
+            var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestEnumWithProtoIgnore.cs"));
+            var rewriter = new ProtoAttributeRewriter();
+            var rewrittenRoot = rewriter.Visit(tree.GetRoot());
+
+            var output = rewrittenRoot.GetText().ToString();
+            var source = output.Split(new string[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+            output.Should().Contain("ProtoBuf");
+            output.Should().Contain("[ProtoContract]");
+            _fixture.AssertOutputContainsCount(source, "[ProtoIgnore]", 2);
+            _fixture.AssertOutputContainsCount(source, "[ProtoEnum]", 3);
+        }
     }
 }
