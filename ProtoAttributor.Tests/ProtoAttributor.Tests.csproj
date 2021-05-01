@@ -30,6 +30,9 @@
     <Compile Update="Mocks\TestCodeWithDataMemberAttributes.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
+    <Compile Update="Mocks\TestCodeWithDataMemberAttributesMissingOrderProperties.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
     <Compile Update="Mocks\TestEnum.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>

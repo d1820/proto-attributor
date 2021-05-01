@@ -67,14 +67,14 @@ namespace ProtoAttributor.Parsers.DataContracts
                         var modifiedAttributeList = attributeList.Attributes;
                         foreach (var attributeSyntax in attributeSyntaxes)
                         {
-                            var attributeArguementSyntax = attributeSyntax.ArgumentList.Arguments.FirstOrDefault(f => f.NameEquals.Name.Identifier.ValueText.Equals("Order"));
+                            var attributeArguementSyntax = attributeSyntax.ArgumentList?.Arguments.FirstOrDefault(f => f.NameEquals.Name.Identifier.ValueText.Equals("Order"));
 
                             var newToken = SyntaxFactory.Literal(_startIndex);
                             var spaceTrivia = SyntaxFactory.TriviaList(SyntaxFactory.Space);
                             var newExpression = SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, newToken);
                             var equalsToken = SyntaxFactory.Token(SyntaxFactory.TriviaList(), SyntaxKind.EqualsToken, spaceTrivia);
                             SeparatedSyntaxList<AttributeArgumentSyntax> newSeparatedArgList;
-                            if (attributeArguementSyntax?.Expression.Kind() == SyntaxKind.NumericLiteralExpression)
+                            if (attributeArguementSyntax?.Expression?.Kind() == SyntaxKind.NumericLiteralExpression)
                             {
                                 var oldToken = attributeArguementSyntax.Expression.ChildTokens().FirstOrDefault(f => f.Kind() == SyntaxKind.NumericLiteralToken);
                                 if (oldToken == default)
@@ -93,9 +93,22 @@ namespace ProtoAttributor.Parsers.DataContracts
                                 var newIdentifierNameSyntax = SyntaxFactory.IdentifierName("Order").WithTrailingTrivia(spaceTrivia);
                                 var newName = SyntaxFactory.NameEquals(newIdentifierNameSyntax, equalsToken);
                                 var newAttributeArguementSyntax = SyntaxFactory.AttributeArgument(newName, null, newExpression);
-                                newSeparatedArgList = attributeSyntax.ArgumentList.Arguments.Add(newAttributeArguementSyntax);
+                                if (attributeSyntax.ArgumentList == null)
+                                {
+                                    var arguments = SyntaxFactory.AttributeArgumentList();
+                                    newSeparatedArgList = arguments.Arguments.Add(newAttributeArguementSyntax);
+                                }
+                                else
+                                {
+                                    newSeparatedArgList = attributeSyntax.ArgumentList.Arguments.Add(newAttributeArguementSyntax);
+                                }
                             }
-                            var newAttributeArgumentListSyntax = attributeSyntax.ArgumentList.WithArguments(newSeparatedArgList);
+                            var newAttributeArgumentListSyntax = attributeSyntax.ArgumentList?.WithArguments(newSeparatedArgList);
+                            if (newAttributeArgumentListSyntax == null)
+                            {
+                                newAttributeArgumentListSyntax = attributeSyntax.WithArgumentList(SyntaxFactory.AttributeArgumentList(newSeparatedArgList)).ArgumentList;
+                            }
+
                             var newAttributeSyntax = attributeSyntax.Update(attributeSyntax.Name, newAttributeArgumentListSyntax);
                             modifiedAttributeList = modifiedAttributeList.Replace(attributeSyntax, newAttributeSyntax);
                             _startIndex++;
