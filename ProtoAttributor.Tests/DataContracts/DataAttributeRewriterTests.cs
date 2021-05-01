@@ -107,5 +107,20 @@ namespace ProtoAttributor.Tests.DataContracts
             _fixture.AssertOutputContainsCount(source, "[IgnoreDataMember]", 2);
             _fixture.AssertOutputContainsCount(source, "[EnumMember]", 3);
         }
+
+        [Fact]
+        public void RewritesAttributesWithOrderPropertyWhenMissing()
+        {
+            var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestCodeWithDataMemberAttributesMissingOrderProperties.cs"));
+            var rewriter = new DataAttributeRewriter();
+            var rewrittenRoot = rewriter.Visit(tree.GetRoot());
+
+            var output = rewrittenRoot.GetText().ToString();
+            var source = output.Split(new string[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+            output.Should().Contain("System.Runtime.Serialization");
+            output.Should().Contain("[DataContract]");
+            _fixture.AssertOutputContainsCount(source, "Order", 5); //includes 1 for the name of class
+        }
     }
 }
