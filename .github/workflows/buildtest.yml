@@ -1,9 +1,6 @@
-name: BuildTest
+name: GatedBuildTest
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
       - main
@@ -52,5 +49,5 @@ jobs:
       uses: actions/upload-artifact@master
       with:
         name: VSIX-${{ matrix.VsTargetVersion }}
-        path: 'ProtoAttributor\bin\VS${{ matrix.VsTargetVersion }}\Release\ProtoAttributor{{ matrix.VsTargetVersion }}.vsix'  
+        path: 'ProtoAttributor\bin\VS${{ matrix.VsTargetVersion }}\Release\ProtoAttributor${{ matrix.VsTargetVersion }}.vsix'  
 
