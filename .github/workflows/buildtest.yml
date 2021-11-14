@@ -16,4 +16,38 @@ env:
   Version: '1.4.${{ github.run_number }}'
 jobs:
   build-extension:
-    uses: d1820/proto-attributor/.github/workflows/dependabot-automerge.yml@SHA
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        VsTargetVersion: ['2019', '2022']
+    env: 
+        VsixManifestPath: Manifests\VS${{ matrix.VsTargetVersion }}\source.extension.vsixmanifest
+        VsTargetVersion: 'VS${{ matrix.VsTargetVersion }}'
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2   
+    - name: Setup .NET Core 5
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '5.0'   
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v1.0.2
+    - name: Restore NuGet Packages
+      run: nuget restore $env:SolutionPath
+    - name: Set version for Visual Studio Extension
+      uses: cezarypiatek/VsixVersionAction@1.0
+      with:
+        version: ${{ env.Version }} 
+        vsix-manifest-file: ${{ env.VsixManifestPath }}
+    - name: Build extension
+      run: msbuild $env:SolutionPath /t:Rebuild
+      env: 
+        DeployExtension: False
+    - name: Test extension
+      run: dotnet test --no-build --verbosity normal $env:SolutionPath
+    - name: Upload VSIX artifact
+      uses: actions/upload-artifact@master
+      with:
+        name: VSIX-${{ matrix.VsTargetVersion }}
+        path: 'ProtoAttributor\bin\VS${{ matrix.VsTargetVersion }}\Release\ProtoAttributor${{ matrix.VsTargetVersion }}.vsix'  
+
