@@ -34,16 +34,16 @@ ProtoAttributor can handle single files already open in Visual Studio from the T
 
 ### Working With ProtoMembers
 
-![alt ProtoContractVideo](./ProtoAttributor/resources/ProtoContractVideo.gif "ProtoContractVideo")
+![alt ProtoContractVideo](./ProtoAttributor/Resources/ProtoContractVideo.gif "ProtoContractVideo")
 
 ### Working With DataMembers
 
-![alt DataContractVideo](./ProtoAttributor/resources/DataContractVideo.gif "DataContractVideo")
+![alt DataContractVideo](./ProtoAttributor/Resources/DataContractVideo.gif "DataContractVideo")
 
 
 ### Working With A Single File
 
-![alt SinglePageProtoActions](./ProtoAttributor/resources/SinglePageProtoActions.gif "SinglePageProtoActions")
+![alt SinglePageProtoActions](./ProtoAttributor/Resources/SinglePageProtoActions.gif "SinglePageProtoActions")
 
 
 
