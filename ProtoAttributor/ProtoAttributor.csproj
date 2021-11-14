@@ -61,7 +61,7 @@
       <PropertyGroup>
         <!--<TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>-->
         <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-        <AssemblyName>ProtoAttributor</AssemblyName>
+        <AssemblyName>ProtoAttributor2019</AssemblyName>
       </PropertyGroup>
       <ItemGroup>
         <None Include="..\Manifests\vs2019\source.extension.vsixmanifest" Link="source.extension.vsixmanifest">
