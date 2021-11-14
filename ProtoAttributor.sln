@@ -27,6 +27,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "vs2022", "vs2022", "{F2631D
 		Manifests\vs2022\source.extension.vsixmanifest = Manifests\vs2022\source.extension.vsixmanifest
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{95455455-C546-4BE9-A3E9-57CD29050882}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{A13BD3A5-8144-4560-BBDD-00B8D267CF5A}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\buildtest.yml = .github\workflows\buildtest.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,6 +55,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{539431F8-79AD-447C-A720-1DE69521BBB6} = {7D0C4464-A2B6-445E-A5B3-65B56D486D5D}
 		{F2631D48-BF7F-4DF2-B9BC-6F698DF98F3F} = {7D0C4464-A2B6-445E-A5B3-65B56D486D5D}
+		{A13BD3A5-8144-4560-BBDD-00B8D267CF5A} = {95455455-C546-4BE9-A3E9-57CD29050882}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {20134AA9-B1A5-4C73-8A27-57F7BE492B4C}
