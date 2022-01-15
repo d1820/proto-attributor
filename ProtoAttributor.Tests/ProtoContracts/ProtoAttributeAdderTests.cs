@@ -16,6 +16,47 @@ namespace ProtoAttributor.Tests.ProtoContracts
         }
 
         [Fact]
+        public void AddsAttributesForProtBuf_WhenClassWithNoBracketNamespace()
+        {
+            var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestClassWithNoBracketNamespace.cs"));
+            var rewriter = new ProtoAttributeAdder();
+
+            var rewrittenRoot = rewriter.Visit(tree.GetRoot());
+
+            var output = rewrittenRoot.GetText().ToString();
+
+            var source = output.Split(new string[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+            output.Should().Contain("using ProtoBuf;");
+            output.Should().Contain("[ProtoContract]");
+            output.Should().Contain("[ProtoMember(1)]");
+            output.Should().Contain("[ProtoMember(2)]");
+
+            _fixture.AssertOutputContainsCount(source, "ProtoMember", 2);
+        }
+
+
+        [Fact]
+        public void AddsAttributesForProtBuf_WhenClassWithNoUsings()
+        {
+            var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestClassNoUsings.cs"));
+            var rewriter = new ProtoAttributeAdder();
+
+            var rewrittenRoot = rewriter.Visit(tree.GetRoot());
+
+            var output = rewrittenRoot.GetText().ToString();
+
+            var source = output.Split(new string[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+            output.Should().Contain("using ProtoBuf;");
+            output.Should().Contain("[ProtoContract]");
+            output.Should().Contain("[ProtoMember(1)]");
+            output.Should().Contain("[ProtoMember(2)]");
+
+            _fixture.AssertOutputContainsCount(source, "ProtoMember", 2);
+        }
+
+        [Fact]
         public void AddsAttributesForProtBuf()
         {
             var tree = CSharpSyntaxTree.ParseText(_fixture.LoadTestFile(@"./Mocks/TestClassPlain.cs"));
