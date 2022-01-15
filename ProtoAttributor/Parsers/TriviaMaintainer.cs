@@ -36,6 +36,10 @@ namespace ProtoAttributor.Parsers
             node = node.WithoutTrailingTrivia();
 
             var wp = leadingTrivia.FirstOrDefault(w => w.Kind() == SyntaxKind.WhitespaceTrivia);
+            if (wp == default)
+            {
+                wp = SyntaxFactory.Whitespace(String.Empty);
+            }
 
             node = builder?.Invoke(node, wp);
 
