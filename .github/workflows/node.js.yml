@@ -36,7 +36,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - name: Change to vscode folder
-      run: cd vscode
+      run: cd ..\..\vscode
     - run: npm ci
     - run: npm run pretest --if-present
     - run: npm run test-jest-coverage
