@@ -64,3 +64,72 @@ namespace Sample
   }
 }
 `;
+
+export const protoEnumExpected = `using System;
+using ProtoBuf;
+
+namespace Sample
+{
+
+  [ProtoContract]
+  public enum MyEnum
+  {
+      [OtherAttribute]
+      [ProtoEnum]
+      One,
+      [ProtoEnum]
+      Two,
+      ///<summary>
+      /// Test
+      ///</summary>
+      [ProtoEnum]
+      Three
+  }
+}
+`;
+
+export const protoReorderExisting = `using System;
+using ProtoBuf;
+namespace Sample;
+
+[ProtoContract]
+public class ProtoTesterFileScoped
+{
+    private string _test;
+
+    [ProtoMember(2)]
+    public int MyProperty { get; set; }
+
+    [ProtoMember(23)]
+    public int MyProperty1 { get; set; }
+
+    [ProtoMember(34)]
+    public DateTime? NullDateTime { get; set; }
+
+    [ProtoMember(100)]
+    public int? NullInt { get; set; }
+}
+`;
+
+export const protoReorderExistingExpected = `using System;
+using ProtoBuf;
+namespace Sample;
+
+[ProtoContract]
+public class ProtoTesterFileScoped
+{
+    private string _test;
+
+    [ProtoMember(1)]
+    public int MyProperty { get; set; }
+
+    [ProtoMember(2)]
+    public int MyProperty1 { get; set; }
+
+    [ProtoMember(3)]
+    public DateTime? NullDateTime { get; set; }
+
+    [ProtoMember(4)]
+    public int? NullInt { get; set; }
+}
+`;

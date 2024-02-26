@@ -4,7 +4,7 @@ import * as vscode from 'vscode';
 import { getWorkspaceFolder, isTextEditorOpen, isWorkspaceLoaded } from './utils/workspace-util';
 import { IWindow } from './interfaces/window.interface';
 import { SignatureType, getAllPublicMembers, getLineEndingFromDoc } from './utils/csharp-util';
-import { handleClassAttributes, addUsingsToDocument, applyEditsAsync, getNextIndex, handleEnumAttributes, handlePropertyAttributes } from './proto-attributor-csharp';
+import { handleClassAttributes, addUsingsToDocument, applyEditsAsync, getNextIndex, handleEnumAttributes, handlePropertyAttributes, getAllAttributes, handlePropertyAttributeReorder, removeUsingsFromDocument, removeClassAttributeFromDocument, removePropertyAttributeFromDocument } from './proto-attributor-csharp';
 import { Data, Proto } from './utils/constants';
 
 
@@ -43,9 +43,7 @@ function registerAddCommands(context: vscode.ExtensionContext)
   {
     if (editor && editor.document.languageId === 'csharp')
     {
-      // Show a quick pick to execute subcommands
       const chosenSubcommand = await vscode.window.showQuickPick(subcommandOptions);
-      // Execute the chosen subcommand
       if (chosenSubcommand)
       {
         let text = editor.document.getText();
@@ -101,7 +99,6 @@ function registerAddCommands(context: vscode.ExtensionContext)
           }
           return;
         }
-        //do data contract add
         text = addUsingsToDocument(eol, text, [`using ${Data.USING_STATEMENT};`]);
         const fileMembers = getAllPublicMembers(text, editor.document);
         let nextIndex = getNextIndex(text, Data.PROPERTY_ATTRIBUTE_NAME);
@@ -163,18 +160,77 @@ function registerReorderCommands(context: vscode.ExtensionContext)
   {
     if (editor && editor.document.languageId === 'csharp')
     {
-      // Show a quick pick to execute subcommands
       const chosenSubcommand = await vscode.window.showQuickPick(subcommandOptions);
-
-      // Execute the chosen subcommand
       if (chosenSubcommand)
       {
         let text = editor.document.getText();
         const eol = getLineEndingFromDoc(editor.document);
         if (chosenSubcommand === protoSubCommandText)
         {
+          text = addUsingsToDocument(eol, text, [`using ${Proto.USING_STATEMENT};`]);
+          const fileMembers = getAllPublicMembers(text, editor.document);
+          fileMembers.forEach(fm =>
+          {
+            switch (fm.signatureType)
+            {
+              case SignatureType.Class:
+                {
+                  text = handleClassAttributes(fm, eol, text, Proto.CLASS_ATTRIBUTE_NAME, `[${Proto.CLASS_ATTRIBUTE_NAME}]`);
+                  break;
+                }
+              case SignatureType.FullProperty:
+              case SignatureType.LambaProperty:
+                {
+                  text = handlePropertyAttributeReorder(text, Proto.PROPERTY_ATTRIBUTE_NAME);
+                  break;
+                }
+              case SignatureType.Enum:
+              case SignatureType.Method:
+              case SignatureType.Unknown:
+                {
+                  break;
+                }
+            }
+          });
 
+          const success = await applyEditsAsync(editor.document.fileName, text);
+          if (!success)
+          {
+            vscode.window.showErrorMessage(`Unable to reorder proto attributes. Please reorder manually`);
+          }
           return;
+        }
+
+        text = addUsingsToDocument(eol, text, [`using ${Data.USING_STATEMENT};`]);
+        const fileMembers = getAllPublicMembers(text, editor.document);
+        fileMembers.forEach(fm =>
+        {
+          switch (fm.signatureType)
+          {
+            case SignatureType.Class:
+              {
+                text = handleClassAttributes(fm, eol, text, Data.CLASS_ATTRIBUTE_NAME, `[${Data.CLASS_ATTRIBUTE_NAME}]`);
+                break;
+              }
+            case SignatureType.FullProperty:
+            case SignatureType.LambaProperty:
+              {
+                text = handlePropertyAttributeReorder(text, Data.PROPERTY_ATTRIBUTE_NAME);
+                break;
+              }
+            case SignatureType.Enum:
+            case SignatureType.Method:
+            case SignatureType.Unknown:
+              {
+                break;
+              }
+          }
+        });
+
+        const success = await applyEditsAsync(editor.document.fileName, text);
+        if (!success)
+        {
+          vscode.window.showErrorMessage(`Unable to reorder data contract attributes. Please reorder manually`);
         }
       }
     }
@@ -192,22 +248,36 @@ function registerRemoveCommands(context: vscode.ExtensionContext)
   {
     if (editor && editor.document.languageId === 'csharp')
     {
-      // Show a quick pick to execute subcommands
       const chosenSubcommand = await vscode.window.showQuickPick(subcommandOptions);
-
-      // Execute the chosen subcommand
       if (chosenSubcommand)
       {
         let text = editor.document.getText();
         const eol = getLineEndingFromDoc(editor.document);
         if (chosenSubcommand === protoSubCommandText)
         {
-
+          text = removeUsingsFromDocument(eol, text, [`using ${Proto.USING_STATEMENT};`]);
+          text = removeClassAttributeFromDocument(eol, text, Proto.CLASS_ATTRIBUTE_NAME);
+          text = removePropertyAttributeFromDocument(eol, text, Proto.PROPERTY_ATTRIBUTE_NAME);
+          text = removePropertyAttributeFromDocument(eol, text, Proto.PROPERTY_IGNORE_ATTRIBUTE_NAME);
+          const success = await applyEditsAsync(editor.document.fileName, text);
+          if (!success)
+          {
+            vscode.window.showErrorMessage(`Unable to remove proto attributes. Please remove manually`);
+          }
           return;
         }
+        text = removeUsingsFromDocument(eol, text, [`using ${Data.USING_STATEMENT};`]);
+        text = removeClassAttributeFromDocument(eol, text, Data.CLASS_ATTRIBUTE_NAME);
+        text = removePropertyAttributeFromDocument(eol, text, Data.PROPERTY_ATTRIBUTE_NAME);
+        text = removePropertyAttributeFromDocument(eol, text, Data.PROPERTY_IGNORE_ATTRIBUTE_NAME);
+        const success = await applyEditsAsync(editor.document.fileName, text);
+        if (!success)
+        {
+          vscode.window.showErrorMessage(`Unable to remove proto attributes. Please remove manually`);
+        }
+        return;
       }
     }
-
     else
     {
       vscode.window.showErrorMessage(`Unsupported action. Language ${editor.document.languageId} not supported.`);

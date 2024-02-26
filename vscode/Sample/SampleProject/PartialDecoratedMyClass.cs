@@ -9,6 +9,12 @@ using SampleProject;
 namespace Sample
 {
     [ProtoContract]
+    public class DiffName
+    {
+
+    }
+
+    [ProtoContract]
     public class PartialMyClass
     {
         private string _fullProperty;
@@ -47,11 +53,13 @@ namespace Sample
         [ProtoMember(4)]
         public int MyPropertyA { get; set; }
 
-        [ProtoMember(13)]
+        [ProtoMember(5)]
         public int MyPropertyB { get; set; }
 
+        [ProtoMember(6)]
         public int MyPropertyC { get; set; }
 
+        [ProtoMember(7)]
         public int MyPropertyD { get; set; }
 
         public async Task<int> GetNewIdAsync<TNewType>(string name,

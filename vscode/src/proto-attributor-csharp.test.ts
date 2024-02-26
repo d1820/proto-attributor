@@ -1,5 +1,5 @@
-import { getNextIndex, hasAttribute } from './proto-attributor-csharp';
-import { noProtoExisting, protoExisting } from './test/proto-test-class';
+import { getNextIndex, handlePropertyAttributeReorder, hasAttribute } from './proto-attributor-csharp';
+import { noProtoExisting, protoExisting, protoReorderExisting, protoReorderExistingExpected } from './test/proto-test-class';
 import { dataContractExisting, noDataContractExisting } from './test/data-test-class';
 import { Data, Proto } from './utils/constants';
 
@@ -65,6 +65,16 @@ describe('Proto Attributor CSharp', () =>
 
   });
 
+  describe('handlePropertyAttributeReorder', () =>
+  {
+    it('should reorder', () =>
+    {
+      const result = handlePropertyAttributeReorder(protoReorderExisting, Proto.PROPERTY_ATTRIBUTE_NAME);
+
+      // Assert
+      expect(result).toEqual(protoReorderExistingExpected);
+    });
+  });
 });
 
 

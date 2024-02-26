@@ -2,7 +2,7 @@ import { Range, Uri, WorkspaceEdit, workspace } from "vscode";
 import { SignatureLineResult, getUsingStatementsFromText, replaceUsingStatementsFromText, getBeginningOfLineIndent, getEnumBody, SignatureType } from "./utils/csharp-util";
 
 
-export async function applyEditsAsync (filePath: string, newFileContent: string): Promise<boolean>
+export async function applyEditsAsync(filePath: string, newFileContent: string): Promise<boolean>
 {
   const edit = new WorkspaceEdit();
   const uri = Uri.file(filePath);
@@ -14,19 +14,19 @@ export async function applyEditsAsync (filePath: string, newFileContent: string)
   return await workspace.applyEdit(edit);
 };
 
-export function getEditorDefaultIndent (): number
+export function getEditorDefaultIndent(): number
 {
   const editorConfig = workspace.getConfiguration('editor');
   return editorConfig.get<number>('tabSize', 4); // Default to 4 spaces
 };
 
-export function hasAttribute (text: string, attr: string): boolean
+export function hasAttribute(text: string, attr: string): boolean
 {
   const regEx = new RegExp(`\\[${attr}.*?\\]`, 'gm');
   return regEx.test(text);
 };
 
-export function hasAttributeInLines (lines: string[] | null, attr: string): boolean
+export function hasAttributeInLines(lines: string[] | null, attr: string): boolean
 {
   if (!lines)
   {
@@ -45,7 +45,14 @@ export function hasAttributeInLines (lines: string[] | null, attr: string): bool
   return match;
 };
 
-export function getNextIndex (text: string, attr: string)
+export function getAllAttributes(text: string, attr: string)
+{
+  const regEx = new RegExp(`\\[${attr}\\(.*?(\\d*)\\)\\]`, 'gm');
+  const matches = [...text.matchAll(regEx)];
+  return matches;
+};
+
+export function getNextIndex(text: string, attr: string)
 {
   const regEx = new RegExp(`\\[${attr}\\(.*?(\\d*)\\)\\]`, 'gm');
   const matches = [...text.matchAll(regEx)];
@@ -56,7 +63,7 @@ export function getNextIndex (text: string, attr: string)
   return maxIndex;
 };
 
-export function addAttributeToDocument (
+export function addAttributeToDocument(
   eol: string,
   text: string,
   sig: SignatureLineResult,
@@ -72,7 +79,7 @@ export function addAttributeToDocument (
   return text.replace(sig.signature, `${adjAttr}${eol}${adjSig}`);
 };
 
-export function addUsingsToDocument (
+export function addUsingsToDocument(
   eol: string,
   documentFileContent: string,
   usings: string[]): string
@@ -87,6 +94,51 @@ export function addUsingsToDocument (
   let combinedUsings = [...usings, ...existingDocumentUsings];
   combinedUsings = [...new Set(combinedUsings)]; //distinct
   documentFileContent = replaceUsingStatementsFromText(documentFileContent, combinedUsings, eol);
+  return documentFileContent;
+};
+
+export function removeUsingsFromDocument(
+  eol: string,
+  documentFileContent: string,
+  usings: string[]): string
+{
+
+  if (!documentFileContent)
+  {
+    return documentFileContent;
+  }
+  usings.forEach(using =>
+  {
+    documentFileContent = documentFileContent.replace(`${using}${eol}`, '');
+  });
+  return documentFileContent;
+};
+
+export function removeClassAttributeFromDocument(
+  eol: string,
+  documentFileContent: string,
+  attrName: string): string
+{
+  if (!documentFileContent)
+  {
+    return documentFileContent;
+  }
+  const regEx = new RegExp(`^ *\\[${attrName}\\]${eol}`, 'gm');
+  documentFileContent = documentFileContent.replace(regEx, '');
+  return documentFileContent;
+};
+
+export function removePropertyAttributeFromDocument(
+  eol: string,
+  documentFileContent: string,
+  attrName: string): string
+{
+  if (!documentFileContent)
+  {
+    return documentFileContent;
+  }
+  const regEx = new RegExp(`^ *\\[${attrName}.*\\]${eol}`, 'gm');
+  documentFileContent = documentFileContent.replace(regEx, '');
   return documentFileContent;
 };
 
@@ -126,7 +178,7 @@ export function handleEnumAttributes(fm: SignatureLineResult, eol: string, text:
 }
 
 export function handlePropertyAttributes(fm: SignatureLineResult, eol: string, text: string,
-  attrName: string, attr: string, ignoreAttrName: string, addedCallback: ()=> void): string
+  attrName: string, attr: string, ignoreAttrName: string, addedCallback: () => void): string
 {
   if (!hasAttributeInLines(fm.leadingTrivia, attrName) && !hasAttributeInLines(fm.leadingTrivia, ignoreAttrName))
   {
@@ -134,6 +186,20 @@ export function handlePropertyAttributes(fm: SignatureLineResult, eol: string, t
     text = addAttributeToDocument(eol, text, fm, attr);
     addedCallback();
   }
+  return text;
+}
+
+export function handlePropertyAttributeReorder(text: string, attrName: string): string
+{
+  const matches = getAllAttributes(text, attrName);
+  let nextIndex = 1;
+  matches.forEach(match =>
+  {
+    const originalAttr = match[0];
+    const newAttr = match[0].replace(match[1], nextIndex.toString());
+    text = text.replace(originalAttr, newAttr);
+    nextIndex++;
+  });
   return text;
 }
 
