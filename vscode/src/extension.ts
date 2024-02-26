@@ -4,7 +4,7 @@ import * as vscode from 'vscode';
 import { getWorkspaceFolder, isTextEditorOpen, isWorkspaceLoaded } from './utils/workspace-util';
 import { IWindow } from './interfaces/window.interface';
 import { SignatureType, getAllPublicMembers, getLineEndingFromDoc } from './utils/csharp-util';
-import { handleClassAttributes, addUsingsToDocument, applyEditsAsync, getNextIndex, handleEnumAttributes, handlePropertyAttributes, getAllAttributes, handlePropertyAttributeReorder, removeUsingsFromDocument, removeClassAttributeFromDocument, removePropertyAttributeFromDocument } from './proto-attributor-csharp';
+import { handleClassAttributes, addUsingsToDocument, applyEditsAsync, getNextIndex, handleEnumAttributes, handlePropertyAttributes, handlePropertyAttributeReorder, removeUsingsFromDocument, removeClassAttributeFromDocument, removePropertyAttributeFromDocument } from './proto-attributor-csharp';
 import { Data, Proto } from './utils/constants';
 
 

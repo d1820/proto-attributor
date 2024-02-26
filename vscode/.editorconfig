@@ -570,6 +570,7 @@ dotnet_diagnostic.IDE0200.severity = warning
 # IDE2000: Disallow multiple blank lines
 dotnet_diagnostic.IDE2000.severity = warning
 
+dotnet_diagnostic.CS0249.severity = silent
 
 dotnet_diagnostic.IDE1006.severity = error
 
