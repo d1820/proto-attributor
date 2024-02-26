@@ -30,13 +30,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4.1.1
+    - name: Change to vscode folder
+      run: cd ..\..\vscode
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4.0.2
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - name: Change to vscode folder
-      run: cd ..\..\vscode
     - run: npm ci
     - run: npm run pretest --if-present
     - run: npm run test-jest-coverage
