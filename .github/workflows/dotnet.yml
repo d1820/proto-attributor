@@ -69,7 +69,9 @@ jobs:
     - name: Build extension
       run: msbuild $env:SolutionPath /t:Rebuild /p:configuration="Release" /p:DeployExtension=false /p:ZipPackageCompressionLevel=normal
 
-
+    - name: List Everything
+      run: ls -a
+      
     - name: Test extension
       run: dotnet test --no-build --verbosity normal $env:SolutionPath
 
