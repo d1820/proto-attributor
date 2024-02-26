@@ -29,7 +29,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        VsTargetVersion: ['2019', '2022']
+        VsTargetVersion: ['2022']
     env:
         VsixManifestPath: visual-studio\Manifests\VS${{ matrix.VsTargetVersion }}\source.extension.vsixmanifest
         VsTargetVersion: 'VS${{ matrix.VsTargetVersion }}'
