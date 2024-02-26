@@ -39,9 +39,6 @@ jobs:
       with:
         fetch-depth: 0 # Get all history to allow automatic versioning using MinVer
 
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v2
 
@@ -68,7 +65,12 @@ jobs:
 
     - name: Build extension
       run: msbuild $env:SolutionPath /t:Rebuild /p:configuration="Release" /p:DeployExtension=false /p:ZipPackageCompressionLevel=normal
-      
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '8.x'
+
     - name: Test extension
       run: dotnet test --no-build --verbosity normal $env:SolutionPath
 
