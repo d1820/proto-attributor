@@ -11,7 +11,7 @@
     "url": "https://github.com/d1820/proto-attributor.git",
     "type": "git"
   },
-  "homepage": "https://github.com/d1820/proto-attributor/blob/main/README.md",
+  "homepage": "https://github.com/d1820/proto-attributor/blob/main/vscode/README.md",
   "icon": "./ProtoAttributor.png",
   "galleryBanner": {
     "color": "#2596be",

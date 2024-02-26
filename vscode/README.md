@@ -7,7 +7,7 @@
 
 
 ProtoAttributor is an open source Visual Studio extension that can manage the appropriate attributes on a class to support ProtoBuf.
-It currently supports ProtoContract, ProtoMember, ProtoIgnore, DataContract, DataMember, IgnoreDataMemeber attributes. This extension lets you Add, Reorder, and Remove ProtoBuf attributes from a class.
+It currently supports ProtoContract, ProtoMember, ProtoIgnore, DataContract, DataMember, IgnoreDataMember attributes. This extension lets you Add, Reorder, and Remove ProtoBuf attributes from a class.
 This works in conjunction with the [protobuf-net](https://github.com/protobuf-net/protobuf-net) 3.0+ Nuget package
 
 
