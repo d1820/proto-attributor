@@ -11,6 +11,8 @@ on:
       - '**/.gitignore'
       - '**/.editorconfig'
       - '**/workflows/dotnet.yml'
+      - '**/workflows/node.js.yml'
+      - '**/vscode/**'
   pull_request:
     branches:
       - main
@@ -19,7 +21,7 @@ env:
   DOTNET_NOLOGO: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
-  SolutionPath: ProtoAttributor.sln
+  SolutionPath: 'visual-studio\ProtoAttributor.sln'
   Version: '1.2.${{ github.run_number }}'
   BaseVersion: '1.2.0.0'
 jobs:
@@ -29,13 +31,13 @@ jobs:
       matrix:
         VsTargetVersion: ['2019', '2022']
     env:
-        VsixManifestPath: Manifests\VS${{ matrix.VsTargetVersion }}\source.extension.vsixmanifest
+        VsixManifestPath: visual-studio\Manifests\VS${{ matrix.VsTargetVersion }}\source.extension.vsixmanifest
         VsTargetVersion: 'VS${{ matrix.VsTargetVersion }}'
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4.1.1
       with:
-       fetch-depth: 0 # Get all history to allow automatic versioning using MinVer
+        fetch-depth: 0 # Get all history to allow automatic versioning using MinVer
 
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
@@ -57,9 +59,9 @@ jobs:
 
     - name: Update assembly version
       run: |
-        (Get-Content -Path ProtoAttributor\Settings\VsixOptions.cs) |
+        (Get-Content -Path visual-studio\ProtoAttributor\Settings\VsixOptions.cs) |
           ForEach-Object {$_ -Replace '${{ env.BaseVersion }}', '${{ env.Version }}'} |
-            Set-Content -Path ProtoAttributor\Settings\VsixOptions.cs
+            Set-Content -Path visual-studio\ProtoAttributor\Settings\VsixOptions.cs
 
     - name: Restore NuGet Packages
       run: nuget restore $env:SolutionPath
@@ -75,5 +77,5 @@ jobs:
       uses:  actions/upload-artifact@v4.3.1
       with:
         name: ProtoAttributor-${{ matrix.VsTargetVersion }}.vsix
-        path: 'ProtoAttributor\bin\VS${{ matrix.VsTargetVersion }}\Release\ProtoAttributor${{ matrix.VsTargetVersion }}.vsix'
+        path: 'visual-studio\ProtoAttributor\bin\VS${{ matrix.VsTargetVersion }}\Release\ProtoAttributor${{ matrix.VsTargetVersion }}.vsix'
 

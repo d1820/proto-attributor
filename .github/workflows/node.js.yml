@@ -4,8 +4,18 @@
 name: ProtoAttributor CI
 
 on:
+  workflow_dispatch:
+
   push:
     branches: [ "main" ]
+    paths-ignore:
+      - '**/Readme.md'
+      - '**/GifInstruction/'
+      - '**/.gitignore'
+      - '**/.editorconfig'
+      - '**/workflows/dotnet.yml'
+      - '**/workflows/node.js.yml'
+      - '**/visual-studio/**'
   pull_request:
     branches: [ "main" ]
 
