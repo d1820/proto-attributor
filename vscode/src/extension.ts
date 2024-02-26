@@ -1,15 +1,20 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { getWorkspaceFolder } from './utils/workspace-util';
-import * as csharp from './proto-attributor-csharp';
+import { getWorkspaceFolder, isTextEditorOpen, isWorkspaceLoaded } from './utils/workspace-util';
 import { IWindow } from './interfaces/window.interface';
-import { SignatureLineResult, SignatureType, addLineBetweenMembers, checkIfAlreadyPulledToInterface, formatTextWithProperNewLines, getLineEnding, getMemberBodyByBrackets, getMemberBodyBySemiColon, getMemberName, getUsingStatements } from './utils/csharp-util';
+import { SignatureType, getAllPublicMembers, getLineEndingFromDoc } from './utils/csharp-util';
+import { handleClassAttributes, addUsingsToDocument, applyEditsAsync, getNextIndex, handleEnumAttributes, handlePropertyAttributes } from './proto-attributor-csharp';
+import { Data, Proto } from './utils/constants';
 
 
 const addCommand = 'protoattributor.add';
 const reorderCommand = 'protoattributor.reorder';
-const removeCommand = 'protoattributor.reove';
+const removeCommand = 'protoattributor.remove';
+const currentWindow = vscode.window as IWindow;
+const protoSubCommandText = 'Proto Attributes';
+const dataContractSubCommandText = 'Data Contact Attributes';
+const subcommandOptions = [protoSubCommandText, dataContractSubCommandText];
 //let allCommands: any = null;
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -18,180 +23,196 @@ export async function activate(context: vscode.ExtensionContext)
   var wsf = vscode.workspace.workspaceFolders;
   const workspaceRoot: string = getWorkspaceFolder(wsf as vscode.WorkspaceFolder[]);
 
-  let disposable = vscode.commands.registerTextEditorCommand(addCommand, async (editor: vscode.TextEditor) =>
+  if (!isWorkspaceLoaded(workspaceRoot, currentWindow))
+  {
+    return;
+  };
+  if (!isTextEditorOpen(currentWindow))
+  {
+    return;
+  };
+
+  context.subscriptions.push(registerAddCommands(context));
+  context.subscriptions.push(registerReorderCommands(context));
+  context.subscriptions.push(registerRemoveCommands(context));
+}
+
+function registerAddCommands(context: vscode.ExtensionContext)
+{
+  return vscode.commands.registerTextEditorCommand(addCommand, async (editor: vscode.TextEditor) =>
   {
     if (editor && editor.document.languageId === 'csharp')
     {
-      // let subCommands = await csharp.getSubCommandsAsync(workspaceRoot, vscode.window as IWindow);
-      // const signatureResult = csharp.getSignatureToPull(editor, '(public|protected)');
-      // if (signatureResult?.accessor === 'protected')
-      // {
-      //   //filter out Interfaces
-      //   subCommands = subCommands.filter(f => !f.startsWith('I'));
-      // }
-      // buildSubCommands(subCommands, context);
+      // Show a quick pick to execute subcommands
+      const chosenSubcommand = await vscode.window.showQuickPick(subcommandOptions);
+      // Execute the chosen subcommand
+      if (chosenSubcommand)
+      {
+        let text = editor.document.getText();
+        const eol = getLineEndingFromDoc(editor.document);
+        if (chosenSubcommand === protoSubCommandText)
+        {
+          text = addUsingsToDocument(eol, text, [`using ${Proto.USING_STATEMENT};`]);
+          const fileMembers = getAllPublicMembers(text, editor.document);
+          let nextIndex = getNextIndex(text, Proto.PROPERTY_ATTRIBUTE_NAME);
+          fileMembers.forEach(fm =>
+          {
+            switch (fm.signatureType)
+            {
+              case SignatureType.Class:
+                {
+                  text = handleClassAttributes(fm, eol, text, Proto.CLASS_ATTRIBUTE_NAME, `[${Proto.CLASS_ATTRIBUTE_NAME}]`);
+                  break;
+                }
+              case SignatureType.Enum:
+                {
+                  text = handleEnumAttributes(fm, eol, text,
+                    Proto.ENUM_ATTRIBUTE_NAME,
+                    `[${Proto.ENUM_ATTRIBUTE_NAME}]`,
+                    Proto.ENUM_MEMBER_NAME,
+                    `[${Proto.ENUM_MEMBER_NAME}]`);
+                  break;
+                }
+              case SignatureType.FullProperty:
+              case SignatureType.LambaProperty:
+                {
+                  text = handlePropertyAttributes(fm, eol, text,
+                    Proto.PROPERTY_ATTRIBUTE_NAME,
+                    `[${Proto.PROPERTY_ATTRIBUTE_NAME}(${nextIndex})]`,
+                    Proto.PROPERTY_IGNORE_ATTRIBUTE_NAME,
+                    () =>
+                    {
+                      nextIndex++;
+                    });
+                  break;
+                }
+              case SignatureType.Method:
+              case SignatureType.Unknown:
+                {
+                  break;
+                }
+            }
+          });
+
+          const success = await applyEditsAsync(editor.document.fileName, text);
+          if (!success)
+          {
+            vscode.window.showErrorMessage(`Unable to add proto attributes. Please add manually`);
+          }
+          return;
+        }
+        //do data contract add
+        text = addUsingsToDocument(eol, text, [`using ${Data.USING_STATEMENT};`]);
+        const fileMembers = getAllPublicMembers(text, editor.document);
+        let nextIndex = getNextIndex(text, Data.PROPERTY_ATTRIBUTE_NAME);
+        fileMembers.forEach(fm =>
+        {
+          switch (fm.signatureType)
+          {
+            case SignatureType.Class:
+              {
+                text = handleClassAttributes(fm, eol, text, Data.CLASS_ATTRIBUTE_NAME, `[${Data.CLASS_ATTRIBUTE_NAME}]`);
+                break;
+              }
+            case SignatureType.Enum:
+              {
+                text = handleEnumAttributes(fm, eol, text,
+                  Data.ENUM_ATTRIBUTE_NAME,
+                  `[${Data.ENUM_ATTRIBUTE_NAME}]`,
+                  Data.ENUM_MEMBER_NAME,
+                  `[${Data.ENUM_MEMBER_NAME}]`);
+                break;
+              }
+            case SignatureType.FullProperty:
+            case SignatureType.LambaProperty:
+              {
+                text = handlePropertyAttributes(fm, eol, text,
+                  Data.PROPERTY_ATTRIBUTE_NAME,
+                  `[${Data.PROPERTY_ATTRIBUTE_NAME}(Order = ${nextIndex})]`,
+                  Data.PROPERTY_IGNORE_ATTRIBUTE_NAME,
+                  () =>
+                  {
+                    nextIndex++;
+                  });
+                break;
+              }
+            case SignatureType.Method:
+            case SignatureType.Unknown:
+              {
+                break;
+              }
+          }
+        });
+        const success = await applyEditsAsync(editor.document.fileName, text);
+        if (!success)
+        {
+          vscode.window.showErrorMessage(`Unable to add data contract attributes. Please add manually`);
+        }
+      }
     }
     else
     {
-      vscode.window.showErrorMessage(`Unsupported pull. Language ${editor.document.languageId} not supported.`);
+      vscode.window.showErrorMessage(`Unsupported action. Language ${editor.document.languageId} not supported.`);
     }
   });
-
-  context.subscriptions.push(disposable);
 }
 
-const isSubcommandRegisteredAsync = async (subcommand: string): Promise<boolean> =>
+function registerReorderCommands(context: vscode.ExtensionContext)
 {
-  const allCommands = await vscode.commands.getCommands(true);
-  return allCommands.includes(subcommand);
-};
+  return vscode.commands.registerTextEditorCommand(reorderCommand, async (editor: vscode.TextEditor) =>
+  {
+    if (editor && editor.document.languageId === 'csharp')
+    {
+      // Show a quick pick to execute subcommands
+      const chosenSubcommand = await vscode.window.showQuickPick(subcommandOptions);
 
-// const buildSubCommands = async (subcommands: string[], context: vscode.ExtensionContext) =>
-// {
-//   // Register each subcommand
-//   subcommands.forEach(async subcommand =>
-//   {
-//     const subCommandName = `${extensionName}.${subcommand}`;
-//     const isRegistered = await isSubcommandRegisteredAsync(subCommandName);
-//     if (!isRegistered)
-//     {
-//       const disposable = vscode.commands.registerTextEditorCommand(subCommandName, async (editor: vscode.TextEditor) =>
-//       {
-//         const signatureResult = csharp.getSignatureToPull(editor, '(public|protected)');
-//         let methodBodySignature: SignatureLineResult | null = null;
+      // Execute the chosen subcommand
+      if (chosenSubcommand)
+      {
+        let text = editor.document.getText();
+        const eol = getLineEndingFromDoc(editor.document);
+        if (chosenSubcommand === protoSubCommandText)
+        {
 
-//         //check if eligible for pull
-//         if (!signatureResult?.signature || signatureResult.signatureType === SignatureType.Unknown)
-//         {
-//           vscode.window.showErrorMessage(`Unsupported pull. Unable to determine what to pull. 'public' properties and 'public' or 'protected' methods are only supported. Please copy manually`);
-//           return;
-//         }
+          return;
+        }
+      }
+    }
 
-//         //read file contents
-//         const files = await vscode.workspace.findFiles(`**/${subcommand}.cs`, '**/node_modules/**');
-//         if (files.length > 1)
-//         {
-//           vscode.window.showErrorMessage(`More then one file found matching ${subcommand}. Please copy manually`);
-//           return;
-//         }
-//         if (files.length === 0)
-//         {
-//           vscode.window.showErrorMessage(`No files found matching ${subcommand}. Please copy manually`);
-//           return;
-//         }
-//         const eol = getLineEnding(editor);
-//         const selectedFileDocument = await vscode.workspace.openTextDocument(files[0].path);
-//         let selectedFileDocumentContent = selectedFileDocument.getText();
-//         if (!selectedFileDocumentContent)
-//         {
-//           vscode.window.showErrorMessage(`Unable to parse file ${subcommand}. Please copy manually`);
-//           return;
-//         }
+    else
+    {
+      vscode.window.showErrorMessage(`Unsupported action. Language ${editor.document.languageId} not supported.`);
+    }
+  });
+}
 
-//         if (checkIfAlreadyPulledToInterface(selectedFileDocumentContent, signatureResult, eol))
-//         {
-//           vscode.window.showWarningMessage(`Member already in ${subcommand}. Skipping pull`);
-//           return;
-//         }
-//         else
-//         {
-//           if (!subcommand.startsWith("I")) //base class
-//           {
-//             let currentLine = editor.document.lineAt(signatureResult.lineMatchStartsOn).text;
-//             if (currentLine.indexOf("=>") > -1)
-//             {
-//               const body = getMemberBodyBySemiColon(editor, signatureResult);
-//               methodBodySignature = new SignatureLineResult(body, signatureResult.signatureType, signatureResult.lineMatchStartsOn, signatureResult.accessor);
-//               methodBodySignature.preSignatureContent = signatureResult.preSignatureContent;
-//               selectedFileDocumentContent = csharp.addMemberToDocument(subcommand, methodBodySignature, eol, selectedFileDocumentContent, false);
-
-//             }
-//             else
-//             {
-//               const body = getMemberBodyByBrackets(editor, signatureResult);
-//               methodBodySignature = new SignatureLineResult(body, signatureResult.signatureType, signatureResult.lineMatchStartsOn, signatureResult.accessor);
-//               methodBodySignature.preSignatureContent = signatureResult.preSignatureContent;
-//               selectedFileDocumentContent = csharp.addMemberToDocument(subcommand, methodBodySignature, eol, selectedFileDocumentContent, false);
-//             }
-//           }
-//           else
-//           {
-//             if (signatureResult.accessor === 'protected')
-//             {
-//               vscode.window.showErrorMessage(`Unsupported pull. Protected members can not be pulled to an inteface. Please copy method manually`);
-//               return;
-//             }
-//             selectedFileDocumentContent = csharp.addMemberToDocument(subcommand, signatureResult, eol, selectedFileDocumentContent, true);
-//           }
-
-//           if (selectedFileDocumentContent)
-//           {
-//             const currentDocumentUsings = getUsingStatements(editor, eol);
-//             selectedFileDocumentContent = csharp.addUsingsToDocument(eol, selectedFileDocumentContent, currentDocumentUsings);
-//             selectedFileDocumentContent = formatTextWithProperNewLines(selectedFileDocumentContent, eol);
-//             selectedFileDocumentContent = addLineBetweenMembers(selectedFileDocumentContent,eol);
-//             const success = await csharp.applyEditsAsync(files[0].path, selectedFileDocumentContent);
-//             if (!success)
-//             {
-//               vscode.window.showErrorMessage(`Unable to update ${subcommand}. Please copy manually`);
-//               return;
-//             }
-
-//             const wasSaved = await selectedFileDocument.save();
-//             if (!wasSaved)
-//             {
-//               vscode.window.showWarningMessage(`Unable to save updates to ${subcommand}. Please save file manually`);
-//               return;
-//             }
-//             if (!subcommand.startsWith("I") && methodBodySignature?.signature)
-//             {
-//               //remove if from current file
-//               const activeFileUrl = editor.document.uri.path;
-//               const currentFileDocument = await vscode.workspace.openTextDocument(activeFileUrl);
-//               const success = await removeFromCurrentEditorAsync(currentFileDocument, methodBodySignature, eol, activeFileUrl);
-//               if (!success)
-//               {
-//                 vscode.window.showErrorMessage(`Unable to remove ${methodBodySignature.signatureType}. Please remove manually`);
-//                 return;
-//               }
-//               const wasSaved = await currentFileDocument.save();
-//               if (!wasSaved)
-//               {
-//                 vscode.window.showErrorMessage(`Unable to remove ${methodBodySignature.signatureType}. Please remove manually`);
-//                 return;
-//               }
-//             }
-//             const memberName = getMemberName(signatureResult!.signature);
-//             vscode.window.showInformationMessage(`${memberName} pulled to ${subcommand}`);
-//           }
-//           else
-//           {
-//             vscode.window.showErrorMessage(`Unable to parse file ${subcommand}. Please copy manually`);
-//           }
-//         }
-//       });
-
-//       context.subscriptions.push(disposable);
-//     }
-//   });
-//   // Show a quick pick to execute subcommands
-//   const chosenSubcommand = await vscode.window.showQuickPick(subcommands);
-
-//   // Execute the chosen subcommand
-//   if (chosenSubcommand)
-//   {
-//     vscode.commands.executeCommand(`${extensionName}.${chosenSubcommand}`);
-//   }
-// };
-
-async function removeFromCurrentEditorAsync(currentFileDocument: vscode.TextDocument, methodBodySignature: SignatureLineResult, eol: string, activeFileUrl: string)
+function registerRemoveCommands(context: vscode.ExtensionContext)
 {
-  let currentFileDocumentContent = currentFileDocument.getText();
-  currentFileDocumentContent = currentFileDocumentContent.replace(methodBodySignature.signature + eol, '');
-  currentFileDocumentContent = formatTextWithProperNewLines(currentFileDocumentContent, eol);
-  currentFileDocumentContent = addLineBetweenMembers(currentFileDocumentContent,eol);
-  const success = await csharp.applyEditsAsync(activeFileUrl, currentFileDocumentContent);
-  return success;
+  return vscode.commands.registerTextEditorCommand(removeCommand, async (editor: vscode.TextEditor) =>
+  {
+    if (editor && editor.document.languageId === 'csharp')
+    {
+      // Show a quick pick to execute subcommands
+      const chosenSubcommand = await vscode.window.showQuickPick(subcommandOptions);
+
+      // Execute the chosen subcommand
+      if (chosenSubcommand)
+      {
+        let text = editor.document.getText();
+        const eol = getLineEndingFromDoc(editor.document);
+        if (chosenSubcommand === protoSubCommandText)
+        {
+
+          return;
+        }
+      }
+    }
+
+    else
+    {
+      vscode.window.showErrorMessage(`Unsupported action. Language ${editor.document.languageId} not supported.`);
+    }
+  });
 }
 
 // This method is called when your extension is deactivated

@@ -1,98 +1,8 @@
-import { Range, TextEditor, Uri, WorkspaceEdit, workspace } from "vscode";
-import { IWindow } from "./interfaces/window.interface";
-import { getClassName, getInheritedNames, getNamespace, SignatureType, SignatureLineResult, getUsingStatementsFromText, replaceUsingStatementsFromText, getBeginningOfLineIndent, isValidAccessorLine, getFullSignatureOfLine, isTerminating, cleanString, cleanAccessor } from "./utils/csharp-util";
-import { isTextEditorOpen, isTextInEditor, isWorkspaceLoaded } from "./utils/workspace-util";
+import { Range, Uri, WorkspaceEdit, workspace } from "vscode";
+import { SignatureLineResult, getUsingStatementsFromText, replaceUsingStatementsFromText, getBeginningOfLineIndent, getEnumBody, SignatureType } from "./utils/csharp-util";
 
 
-export class InheritedMemberTracker
-{
-  names: string[] = [];
-  constructor()
-  {
-  }
-}
-export const getSubCommandsAsync = async (workspaceRoot: string, window: IWindow): Promise<string[]> =>
-{
-  if (!isWorkspaceLoaded(workspaceRoot, window))
-  {
-    return [];
-  };
-  if (!isTextEditorOpen(window))
-  {
-    return [];
-  };
-
-  const editor = window.activeTextEditor;
-  const text = editor.document.getText();
-  const namespace = getNamespace(text, window);
-  const className = getClassName(text, window);
-  if (!isTextInEditor(text, window) || !namespace || !className)
-  {
-    return [];
-  };
-
-  let inheritedNames = getInheritedNames(text, true);
-
-  const tracker = new InheritedMemberTracker();
-
-  const promises = inheritedNames.map(fileName =>
-    openFileAndReadInheritedNamesAsync(fileName, tracker)
-  );
-  const pr = await Promise.all(promises);
-  pr.forEach(result =>
-  {
-    tracker.names.push(...result);
-  });
-
-  tracker.names.push(...inheritedNames);
-  tracker.names =tracker.names.sort();
-  return [...new Set(tracker.names)];
-};
-
-const openFileAndReadInheritedNamesAsync = async (fileName: string, tracker: InheritedMemberTracker): Promise<string[]> =>
-{
-  const files = await workspace.findFiles(`**/${fileName}.cs`, '**/node_modules/**');
-  if (files.length > 1 || files.length === 0)
-  {
-    return [];
-  }
-  const document = await workspace.openTextDocument(files[0].path);
-  const text = document.getText();
-  const inheritedNames = getInheritedNames(text, true);
-  if (inheritedNames.length > 0)
-  {
-    const promises = inheritedNames.map(fileName =>
-      openFileAndReadInheritedNamesAsync(fileName, tracker)
-    );
-    const pr = await Promise.all(promises);
-    pr.forEach(result =>
-    {
-      tracker.names.push(...result);
-    });
-  }
-  return inheritedNames;
-};
-
-export const getSignatureToPull = (editor: TextEditor, accessor: string): SignatureLineResult | null =>
-{
-  const signature = getSignatureText(editor, accessor);
-
-  if (signature?.signature)
-  {
-    if (signature.signatureType === SignatureType.Method)
-    {
-      return SignatureLineResult.createFromSignatureLineResult(`${signature.signature};`, signature);
-    }
-    if (signature.signatureType === SignatureType.FullProperty)
-    {
-      return SignatureLineResult.createFromSignatureLineResult(`${signature.signature} { get; set; }`, signature);
-    }
-    return SignatureLineResult.createFromSignatureLineResult(`${signature.signature} { get; }`, signature);
-  }
-  return null;
-};
-
-export const applyEditsAsync = async (filePath: string, newFileContent: string): Promise<boolean> =>
+export async function applyEditsAsync (filePath: string, newFileContent: string): Promise<boolean>
 {
   const edit = new WorkspaceEdit();
   const uri = Uri.file(filePath);
@@ -104,66 +14,68 @@ export const applyEditsAsync = async (filePath: string, newFileContent: string):
   return await workspace.applyEdit(edit);
 };
 
-export const getEditorDefaultIndent = (): number =>
+export function getEditorDefaultIndent (): number
 {
   const editorConfig = workspace.getConfiguration('editor');
   return editorConfig.get<number>('tabSize', 4); // Default to 4 spaces
 };
 
-export const addMemberToDocument = (subcommand: string,
-  signatureResult: SignatureLineResult,
-  eol: string,
-  documentFileContent: string,
-  isInterface: boolean): string =>
+export function hasAttribute (text: string, attr: string): boolean
 {
-
-  if (!signatureResult.signature)
-  {
-    return documentFileContent;
-  }
-  let regEx;
-  if (isInterface)
-  {
-    regEx = new RegExp(`(.*public\\s*interface\\s*${subcommand}.*[\\s]*{)`);
-  }
-  else
-  {
-    regEx = new RegExp(`(.*class\\s*${subcommand}.*[\\s]*{)`);
-  }
-
-  const documentMatchedMember = documentFileContent!.match(regEx);
-
-  if (documentMatchedMember)
-  {
-    const originalText = documentMatchedMember[1]; //group from regex
-    //get the indent count
-    const beginningIndent = getBeginningOfLineIndent(originalText);
-    let totalLength = signatureResult.signature.length;
-    const indent = getEditorDefaultIndent();
-    let newText;
-    if (isInterface)
-    {
-      totalLength = totalLength + beginningIndent + indent;
-      newText = `${originalText}${eol}${signatureResult.signature.padStart(totalLength, ' ')}${eol}`;
-    }
-    else
-    {
-      newText = `${originalText}${eol}${signatureResult.signature}${eol}`;
-    }
-
-    documentFileContent = documentFileContent!.replace(regEx, newText);
-    return documentFileContent;
-  }
-  else
-  {
-    return documentFileContent;
-  }
+  const regEx = new RegExp(`\\[${attr}.*?\\]`, 'gm');
+  return regEx.test(text);
 };
 
-export const addUsingsToDocument = (
+export function hasAttributeInLines (lines: string[] | null, attr: string): boolean
+{
+  if (!lines)
+  {
+    return false;
+  }
+  const regEx = new RegExp(`\\[${attr}.*?\\]`, 'gm');
+  let match = false;
+  lines.forEach(line =>
+  {
+    if (regEx.test(line))
+    {
+      match = true;
+      return;
+    }
+  });
+  return match;
+};
+
+export function getNextIndex (text: string, attr: string)
+{
+  const regEx = new RegExp(`\\[${attr}\\(.*?(\\d*)\\)\\]`, 'gm');
+  const matches = [...text.matchAll(regEx)];
+  let maxIndex = 0;
+  var vals = matches.map(m => parseInt(m[1])) || [];
+  vals.sort((a, b) => a - b);
+  maxIndex = (vals.pop() || 0) + 1;
+  return maxIndex;
+};
+
+export function addAttributeToDocument (
+  eol: string,
+  text: string,
+  sig: SignatureLineResult,
+  attr: string): string
+{
+  if (!sig.signature)
+  {
+    return text;
+  }
+  let indent = getBeginningOfLineIndent(sig.signature);
+  const adjAttr = ''.padStart(indent, ' ') + attr;
+  const adjSig = ''.padStart(sig.defaultLineIndent, ' ') + sig.signature;
+  return text.replace(sig.signature, `${adjAttr}${eol}${adjSig}`);
+};
+
+export function addUsingsToDocument (
   eol: string,
   documentFileContent: string,
-  usings: string[]): string =>
+  usings: string[]): string
 {
 
   if (!documentFileContent)
@@ -178,52 +90,50 @@ export const addUsingsToDocument = (
   return documentFileContent;
 };
 
-export const getSignatureText = (editor: TextEditor, accessor: string): SignatureLineResult | null =>
+export function handleClassAttributes(fm: SignatureLineResult, eol: string, text: string, attrName: string, attr: string): string
 {
-  let signatureResult: SignatureLineResult | null = null;
-  if (editor)
+  if (!hasAttributeInLines(fm.leadingTrivia, attrName))
   {
-    // Get the position of the cursor
-    const cursorPosition = editor.selection.active;
-    let line = cursorPosition.line;
-    let currentLine = editor.document.lineAt(line).text;
-    const originalSelectedLine = currentLine;
-    let accessMatch = isValidAccessorLine(currentLine, accessor);
-    if (accessMatch)
-    {
-      signatureResult = getFullSignatureOfLine(accessor, editor, line);
-    }
-    else
-    {
-      while (!accessMatch && !isTerminating(currentLine))
-      {
-        if (line < 1)
-        {
-          break;
-        }
-        //we start reading up lines to get the starting line
-        line = line - 1;
-        currentLine = editor.document.lineAt(line).text;
-        accessMatch = isValidAccessorLine(currentLine, accessor);
-        if (accessMatch)
-        {
-          signatureResult = getFullSignatureOfLine(accessor, editor, line);
-          break;
-        }
-      }
-    }
-    if (signatureResult?.signature)
-    {
-      signatureResult.signature = cleanString(signatureResult.signature);
-      signatureResult.signature = cleanAccessor(accessor, signatureResult.signature!);
-      signatureResult.originalSelectedLine = originalSelectedLine;
-    }
+    //add it
+    text = addAttributeToDocument(eol, text, fm, attr);
   }
-  return signatureResult;
-  // if (checkForMethod)
-  // {
-  //   return isMethod(signatureResult?.signature) ? signatureResult : null;
-  // }
-  // return isMethod(signatureResult?.signature) ? null : signatureResult;
-};
+  return text;
+}
+
+export function handleEnumAttributes(fm: SignatureLineResult, eol: string, text: string,
+  attrName: string, attr: string,
+  attrMemberName: string,
+  attrMember: string): string
+{
+  if (!hasAttributeInLines(fm.leadingTrivia, attrName))
+  {
+    //add it
+    text = addAttributeToDocument(eol, text, fm, attr);
+  }
+  //need to read in the enum lines and then attribute them
+  var enumLines = getEnumBody(text); // this will contain other attributes and comments
+  enumLines.forEach(line =>
+  {
+    const enumLineParts = line.split(eol).filter(f => f.trim().length > 0);
+    if (!hasAttributeInLines(enumLineParts, attrMemberName))
+    {
+      const lastLine = enumLineParts.pop();
+      const sig = new SignatureLineResult(lastLine!, SignatureType.Enum, 0);
+      text = addAttributeToDocument(eol, text, sig, attrMember);
+    }
+  });
+  return text;
+}
+
+export function handlePropertyAttributes(fm: SignatureLineResult, eol: string, text: string,
+  attrName: string, attr: string, ignoreAttrName: string, addedCallback: ()=> void): string
+{
+  if (!hasAttributeInLines(fm.leadingTrivia, attrName) && !hasAttributeInLines(fm.leadingTrivia, ignoreAttrName))
+  {
+    //add it
+    text = addAttributeToDocument(eol, text, fm, attr);
+    addedCallback();
+  }
+  return text;
+}
 

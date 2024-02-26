@@ -7,7 +7,7 @@ using SampleProject;
 
 namespace Sample
 {
-    public class MyClass
+    public class DataMyClass
     {
         private string _fullProperty;
 

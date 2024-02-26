@@ -1,3 +1,4 @@
+using ProtoBuf;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -7,7 +8,8 @@ using SampleProject;
 
 namespace Sample
 {
-    public class MyClass
+    [ProtoContract]
+    public class PartialMyClass
     {
         private string _fullProperty;
 
@@ -15,15 +17,18 @@ namespace Sample
         /// <summary>
         /// Test Comments
         /// </summary>
+        [ProtoMember(1)]
         public int MyPropertyLamda => 5;
 
         [Required]
+        [ProtoMember(2)]
         public string FullProperty
         {
             get => _fullProperty;
             set => _fullProperty = value;
         }
 
+        [ProtoMember(3)]
         public string FullPropertyAlt
         {
             get
@@ -39,8 +44,10 @@ namespace Sample
         /// Test Comments
         /// </summary>
         [Required]
+        [ProtoMember(4)]
         public int MyPropertyA { get; set; }
 
+        [ProtoMember(13)]
         public int MyPropertyB { get; set; }
 
         public int MyPropertyC { get; set; }

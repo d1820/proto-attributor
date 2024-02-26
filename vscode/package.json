@@ -29,15 +29,15 @@
     "commands": [
       {
         "command": "protoattributor.add",
-        "title": "Add Attributes"
+        "title": "ProtoAttributor: Add"
       },
       {
         "command": "protoattributor.reorder",
-        "title": "Reorder Attributes"
+        "title": "ProtoAttributor: Reorder"
       },
       {
         "command": "protoattributor.remove",
-        "title": "Remove Attributes"
+        "title": "ProtoAttributor: Remove"
       }
     ]
   },
