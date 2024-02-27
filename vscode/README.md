@@ -7,7 +7,7 @@
 ![Visual Studio Marketplace Installs](https://img.shields.io/visual-studio-marketplace/i/DanTurco.protoattributor-vscode)
 
 
-ProtoAttributor is an open source Visual Studio extension that can manage the appropriate attributes on a class to support ProtoBuf.
+ProtoAttributor is an open source Visual Studio Code extension that can manage the appropriate attributes on a class to support ProtoBuf.
 It currently supports ProtoContract, ProtoMember, ProtoIgnore, DataContract, DataMember, IgnoreDataMember attributes. This extension lets you Add, Reorder, and Remove ProtoBuf attributes from a class.
 This works in conjunction with the [protobuf-net](https://github.com/protobuf-net/protobuf-net) 3.0+ Nuget package
 
@@ -34,7 +34,7 @@ Removing attributes will not only remove the ProtoMember/DataMember attributes b
 
 ## Ways to Use
 
-ProtoAttributor can handle single files already open in Visual Studio from the Tools menu or it can handle entire directories of files from the solution explorer.
+ProtoAttributor can handle single files already open in Visual Studio Code from the F1 menu actions.
 
 ## Proto[Attributor] In Action
 
