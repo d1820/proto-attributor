@@ -2,7 +2,7 @@
 
 
 ![GitHub CI](https://img.shields.io/github/actions/workflow/status/d1820/proto-attributor/dotnet.yml)
-![GitHub License](https://img.shields.io/github/license/d1820/proto-attributor?logo=github&logoColor=green)
+![GitHub License](https://img.shields.io/github/license/d1820/proto-attributor)
 ![Visual Studio Marketplace Version (including pre-releases)](https://img.shields.io/visual-studio-marketplace/v/DanTurco.protoattributor-vscode)
 ![Visual Studio Marketplace Installs](https://img.shields.io/visual-studio-marketplace/i/DanTurco.protoattributor-vscode)
 
