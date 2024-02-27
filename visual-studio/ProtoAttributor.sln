@@ -12,7 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 		.gitignore = .gitignore
 		BuildNotes.md = BuildNotes.md
-		README.md = README.md
+		..\LICENSE.txt = ..\LICENSE.txt
+		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Manifests", "Manifests", "{7D0C4464-A2B6-445E-A5B3-65B56D486D5D}"

@@ -1,9 +1,9 @@
-# ![alt text](./ProtoAttributor/logo.png "ProtoAttributor")
+![ProtoAttributor](https://github.com/d1820/proto-attributor/blob/main/visual-studio/ProtoAttributor/logo.png?raw=true)
 
 ![GitHub CI](https://img.shields.io/github/actions/workflow/status/d1820/proto-attributor/dotnet.yml)
 ![GitHub License](https://img.shields.io/github/license/d1820/proto-attributor?logo=github&logoColor=green)
-![Visual Studio Marketplace Version (including pre-releases)](https://img.shields.io/visual-studio-marketplace/v/DanTurco.proto-attributor)
-![Visual Studio Marketplace Installs](https://img.shields.io/visual-studio-marketplace/i/DanTurco.proto-attributor)
+![Visual Studio Marketplace Version (including pre-releases)](https://img.shields.io/visual-studio-marketplace/v/DanTurco.ProtoAttributor2022)
+![Visual Studio Marketplace Installs](https://img.shields.io/visual-studio-marketplace/i/DanTurco.ProtoAttributor2022)
 
 
 ProtoAttributor is an open source Visual Studio extension that can manage the appropriate attributes on a class to support ProtoBuf.
@@ -15,7 +15,7 @@ One of the challenges with creating proper ProtoBuf contracts is getting the ord
 While small contract classes are easy to manage as classes get larger or lots of nested classes are created it gets harder and harder to manage and maintain these classes.
 This is where ProtoAttributor shines. You can Add, Reorder, Remove ProtoBuf attributes from 1 or many classes.
 
-![alt text](./ProtoAttributor/ProtoImagePreview.jpg "Preview")
+![Preview](https://github.com/d1820/proto-attributor/blob/main/visual-studio/ProtoAttributor/ProtoImagePreview.jpg?raw=true)
 
 ## Adding Attributes
 
@@ -40,16 +40,16 @@ ProtoAttributor can handle single files already open in Visual Studio from the T
 
 ### Working With ProtoMembers
 
-![alt ProtoContractVideo](./ProtoAttributor/Resources/ProtoContractVideo.gif "ProtoContractVideo")
+![alt ProtoContractVideo](https://github.com/d1820/proto-attributor/blob/main/visual-studio/ProtoAttributor/Resources/ProtoContractVideo.gif?raw=true)
 
 ### Working With DataMembers
 
-![alt DataContractVideo](./ProtoAttributor/Resources/DataContractVideo.gif "DataContractVideo")
+![alt DataContractVideo](https://github.com/d1820/proto-attributor/blob/main/visual-studio/ProtoAttributor/Resources/DataContractVideo.gif?raw=true)
 
 
 ### Working With A Single File
 
-![alt SinglePageProtoActions](./ProtoAttributor/Resources/SinglePageProtoActions.gif "SinglePageProtoActions")
+![alt SinglePageProtoActions](https://github.com/d1820/proto-attributor/blob/main/visual-studio/ProtoAttributor/Resources/SinglePageProtoActions.gif?raw=true)
 
 
 
