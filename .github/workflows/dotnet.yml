@@ -71,11 +71,8 @@ jobs:
       with:
         dotnet-version: '8.x'
 
-    - name: List Files
-      run: tree /f ${{ github.workspace }}
-
     - name: Test extension
-      run: dotnet test --no-build --verbosity -c="Release" normal $env:SolutionPath
+      run: dotnet test --no-build -c="Release" --verbosity=normal $env:SolutionPath
 
     - name: Upload VSIX artifact
       uses:  actions/upload-artifact@v4.3.1
