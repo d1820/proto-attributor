@@ -71,6 +71,9 @@ jobs:
       with:
         dotnet-version: '8.x'
 
+    - name: List Files
+      run: dir /s /b ${{ github.workspace }}
+
     - name: Test extension
       run: dotnet test --no-build --verbosity normal $env:SolutionPath
 
