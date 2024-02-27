@@ -1,0 +1,82 @@
+name: GatedBuildTest
+
+on:
+  workflow_dispatch:
+
+  push:
+    branches: [ "main" ]
+    paths-ignore:
+      - '**/Readme.md'
+      - '**/GifInstruction/'
+      - '**/.gitignore'
+      - '**/.editorconfig'
+      - '**/workflows/dotnet.yml'
+      - '**/workflows/node.js.yml'
+      - '**/vscode/**'
+  pull_request:
+    branches:
+      - main
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  SolutionPath: 'visual-studio\ProtoAttributor.sln'
+  Version: '1.2.${{ github.run_number }}'
+  BaseVersion: '1.2.0.0'
+jobs:
+  build-extension:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        VsTargetVersion: ['2022']
+    env:
+        VsixManifestPath: visual-studio\Manifests\VS${{ matrix.VsTargetVersion }}\source.extension.vsixmanifest
+        VsTargetVersion: 'VS${{ matrix.VsTargetVersion }}'
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4.1.1
+      with:
+        fetch-depth: 0 # Get all history to allow automatic versioning using MinVer
+
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Setup NuGet.exe
+      # You may pin to the exact commit or the version.
+      # uses: NuGet/setup-nuget@296fd3ccf8528660c91106efefe2364482f86d6f
+      uses: NuGet/setup-nuget@v2.0.0
+
+
+    - name: Set version for Visual Studio Extension
+      uses: cezarypiatek/VsixVersionAction@1.2
+      with:
+        version: ${{ env.Version }}
+        vsix-manifest-file: ${{ env.VsixManifestPath }}
+
+    - name: Update assembly version
+      run: |
+        (Get-Content -Path visual-studio\ProtoAttributor\Settings\VsixOptions.cs) |
+          ForEach-Object {$_ -Replace '${{ env.BaseVersion }}', '${{ env.Version }}'} |
+            Set-Content -Path visual-studio\ProtoAttributor\Settings\VsixOptions.cs
+
+    - name: Restore NuGet Packages
+      run: nuget restore $env:SolutionPath
+
+    - name: Build extension
+      run: msbuild $env:SolutionPath /t:Rebuild /p:configuration="Release" /p:DeployExtension=false /p:ZipPackageCompressionLevel=normal
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '8.x'
+
+    - name: Test extension
+      run: dotnet test --no-build -c="Release" --verbosity=normal $env:SolutionPath
+
+    - name: Upload VSIX artifact
+      uses:  actions/upload-artifact@v4.3.1
+      with:
+        name: ProtoAttributor-${{ matrix.VsTargetVersion }}.vsix
+        path: 'visual-studio\ProtoAttributor\bin\VS${{ matrix.VsTargetVersion }}\Release\ProtoAttributor${{ matrix.VsTargetVersion }}.vsix'
+

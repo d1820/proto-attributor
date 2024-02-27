@@ -1,7 +1,13 @@
 # ![alt text](./ProtoAttributor/logo.png "ProtoAttributor")
 
+![GitHub CI](https://img.shields.io/github/actions/workflow/status/d1820/proto-attributor/dotnet.yml)
+![GitHub License](https://img.shields.io/github/license/d1820/proto-attributor?logo=github&logoColor=green)
+![Visual Studio Marketplace Version (including pre-releases)](https://img.shields.io/visual-studio-marketplace/v/DanTurco.proto-attributor)
+![Visual Studio Marketplace Installs](https://img.shields.io/visual-studio-marketplace/i/DanTurco.proto-attributor)
+
+
 ProtoAttributor is an open source Visual Studio extension that can manage the appropriate attributes on a class to support ProtoBuf.
-It currently supports ProtoContract, ProtoMember, ProtoIgnore, DataContract, DataMember, IgnoreDataMemeber attributes. This extension lets you Add, Reorder, and Remove ProtoBuf attributes from a class.
+It currently supports ProtoContract, ProtoMember, ProtoIgnore, DataContract, DataMember, IgnoreDataMember attributes. This extension lets you Add, Reorder, and Remove ProtoBuf attributes from a class.
 This works in conjunction with the [protobuf-net](https://github.com/protobuf-net/protobuf-net) 3.0+ Nuget package
 
 
