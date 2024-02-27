@@ -3,7 +3,7 @@
   "publisher": "DanTurco",
   "displayName": "Proto Attributor C#",
   "description": "A Visual Studio Code Extension that can manage the appropriate attributes on a class to support ProtoBuf. It currently supports ProtoContract, ProtoMember, ProtoIgnore attributes. This extension lets you Add, Reorder, and Remove ProtoBuf attributes from a class.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "engines": {
     "vscode": "^1.85.0"
   },
@@ -14,8 +14,8 @@
   "homepage": "https://github.com/d1820/proto-attributor/blob/main/vscode/README.md",
   "icon": "./ProtoAttributor.png",
   "galleryBanner": {
-    "color": "#2596be",
-    "theme": "light"
+    "color": "#003d52",
+    "theme": "dark"
   },
   "bugs": {
     "url": "https://github.com/d1820/proto-attributor/issues"

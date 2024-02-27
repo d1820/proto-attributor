@@ -40,22 +40,27 @@ ProtoAttributor can handle single files already open in Visual Studio from the T
 
 ### Adding Proto Attributes
 
-
+![Add Proto](https://github.com/d1820/proto-attributor/blob/main/vscode/GifInstruction/add-proto.gif?raw=true)
 
 ### Reordering Proto Attributes
 
+![Reorder Proto](https://github.com/d1820/proto-attributor/blob/main/vscode/GifInstruction/reorder-proto.gif?raw=true)
 
 ### Removing Proto Attributes
 
+![Remove Proto](https://github.com/d1820/proto-attributor/blob/main/vscode/GifInstruction/remove-proto.gif?raw=true)
 
 ### Adding Data Contract Attributes
 
+![Add DataContract](https://github.com/d1820/proto-attributor/blob/main/vscode/GifInstruction/add-data.gif?raw=true)
 
 ### Reordering Data Contract Attributes
 
+![Reorder DataContract](https://github.com/d1820/proto-attributor/blob/main/vscode/GifInstruction/reorder-data.gif?raw=true)
 
 ### Removing Data Contract Attributes
 
+![Remove DataContract](https://github.com/d1820/proto-attributor/blob/main/vscode/GifInstruction/remove-data.gif?raw=true)
 
 
 <span style="font-size:10px;">
