@@ -1,5 +1,5 @@
 using System;
-using FluentAssertions;
+using Shouldly;
 using Microsoft.CodeAnalysis.CSharp;
 using ProtoAttributor.Parsers.ProtoContracts;
 using Xunit;
@@ -27,10 +27,10 @@ namespace ProtoAttributor.Tests.ProtoContracts
 
             var source = output.Split(new string[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
 
-            output.Should().Contain("using ProtoBuf;");
-            output.Should().Contain("[ProtoContract]");
-            output.Should().Contain("[ProtoMember(1)]");
-            output.Should().Contain("[ProtoMember(2)]");
+            output.ShouldContain("using ProtoBuf;");
+            output.ShouldContain("[ProtoContract]");
+            output.ShouldContain("[ProtoMember(1)]");
+            output.ShouldContain("[ProtoMember(2)]");
 
             _fixture.AssertOutputContainsCount(source, "ProtoMember", 2);
         }
@@ -47,10 +47,10 @@ namespace ProtoAttributor.Tests.ProtoContracts
 
             var source = output.Split(new string[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
 
-            output.Should().Contain("using ProtoBuf;");
-            output.Should().Contain("[ProtoContract]");
-            output.Should().Contain("[ProtoMember(1)]");
-            output.Should().Contain("[ProtoMember(2)]");
+            output.ShouldContain("using ProtoBuf;");
+            output.ShouldContain("[ProtoContract]");
+            output.ShouldContain("[ProtoMember(1)]");
+            output.ShouldContain("[ProtoMember(2)]");
 
             _fixture.AssertOutputContainsCount(source, "ProtoMember", 2);
         }
@@ -67,11 +67,11 @@ namespace ProtoAttributor.Tests.ProtoContracts
 
             var source = output.Split(new string[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
 
-            output.Should().Contain("ProtoBuf");
-            output.Should().Contain("[ProtoContract]");
-            output.Should().Contain("[Required]");
-            output.Should().Contain("[ProtoMember(1)]");
-            output.Should().Contain("[ProtoMember(2)]");
+            output.ShouldContain("ProtoBuf");
+            output.ShouldContain("[ProtoContract]");
+            output.ShouldContain("[Required]");
+            output.ShouldContain("[ProtoMember(1)]");
+            output.ShouldContain("[ProtoMember(2)]");
 
             _fixture.AssertOutputContainsCount(source, "ProtoMember", 2);
             _fixture.AssertOutputContainsCount(source, "Required", 1);
@@ -88,12 +88,12 @@ namespace ProtoAttributor.Tests.ProtoContracts
 
             var source = output.Split(new string[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
 
-            output.Should().Contain("ProtoBuf");
-            output.Should().Contain("[ProtoContract]");
-            output.Should().Contain("[Required]");
-            output.Should().Contain("[ProtoMember(1)]");
-            output.Should().Contain("[ProtoMember(2)]");
-            output.Should().Contain("[ProtoMember(3)]");
+            output.ShouldContain("ProtoBuf");
+            output.ShouldContain("[ProtoContract]");
+            output.ShouldContain("[Required]");
+            output.ShouldContain("[ProtoMember(1)]");
+            output.ShouldContain("[ProtoMember(2)]");
+            output.ShouldContain("[ProtoMember(3)]");
 
             _fixture.AssertOutputContainsCount(source, "[ProtoMember", 3);
             _fixture.AssertOutputContainsCount(source, "[Required]", 1);
@@ -110,17 +110,17 @@ namespace ProtoAttributor.Tests.ProtoContracts
 
             var output = rewrittenRoot.GetText().ToString();
 
-            output.Should().Contain("ProtoBuf");
-            output.Should().Contain("[ProtoContract]");
-            output.Should().Contain("[ProtoMember(1)]");
-            output.Should().Contain("[ProtoMember(2)]");
+            output.ShouldContain("ProtoBuf");
+            output.ShouldContain("[ProtoContract]");
+            output.ShouldContain("[ProtoMember(1)]");
+            output.ShouldContain("[ProtoMember(2)]");
 
-            output.Should().Contain("        /// </value>");
-            output.Should().Contain("        [ProtoMember(1)]");
-            output.Should().Contain("        public int MyProperty { get; set; }");
+            output.ShouldContain("        /// </value>");
+            output.ShouldContain("        [ProtoMember(1)]");
+            output.ShouldContain("        public int MyProperty { get; set; }");
 
             //This verifies spacing is correct
-            output.Should().Contain(@"
+            output.ShouldContain(@"
         /// <summary> Comments not wrapped </summary>
         /// <value> My property. </value>
         [ProtoMember(1)]
@@ -137,10 +137,10 @@ namespace ProtoAttributor.Tests.ProtoContracts
 
             var output = rewrittenRoot.GetText().ToString();
 
-            output.Should().Contain("ProtoBuf");
-            output.Should().Contain("[ProtoContract]");
-            output.Should().Contain("[ProtoMember(1)]");
-            output.Should().Contain("[ProtoMember(2)]");
+            output.ShouldContain("ProtoBuf");
+            output.ShouldContain("[ProtoContract]");
+            output.ShouldContain("[ProtoMember(1)]");
+            output.ShouldContain("[ProtoMember(2)]");
         }
 
         [Fact]
@@ -153,12 +153,12 @@ namespace ProtoAttributor.Tests.ProtoContracts
 
             var output = rewrittenRoot.GetText().ToString();
 
-            output.Should().Contain("ProtoBuf");
-            output.Should().Contain("[ProtoContract]");
-            output.Should().Contain("[ProtoMember(1)]");
-            output.Should().Contain("[ProtoMember(2)]");
-            output.Should().Contain("[ProtoMember(3)]");
-            output.Should().Contain("[ProtoMember(4)]");
+            output.ShouldContain("ProtoBuf");
+            output.ShouldContain("[ProtoContract]");
+            output.ShouldContain("[ProtoMember(1)]");
+            output.ShouldContain("[ProtoMember(2)]");
+            output.ShouldContain("[ProtoMember(3)]");
+            output.ShouldContain("[ProtoMember(4)]");
         }
 
         [Fact]
@@ -170,10 +170,10 @@ namespace ProtoAttributor.Tests.ProtoContracts
 
             var output = rewrittenRoot.GetText().ToString();
 
-            output.Should().Contain("ProtoBuf");
-            output.Should().Contain("[ProtoContract]");
-            output.Should().Contain("[ProtoMember(1)]");
-            output.Should().Contain("[ProtoMember(2)]");
+            output.ShouldContain("ProtoBuf");
+            output.ShouldContain("[ProtoContract]");
+            output.ShouldContain("[ProtoMember(1)]");
+            output.ShouldContain("[ProtoMember(2)]");
         }
 
         [Fact]
@@ -186,12 +186,12 @@ namespace ProtoAttributor.Tests.ProtoContracts
             var output = rewrittenRoot.GetText().ToString();
             var source = output.Split(new string[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
 
-            output.Should().Contain("ProtoBuf");
-            output.Should().Contain("[ProtoContract]");
-            output.Should().Contain("[ProtoMember(1)]");
-            output.Should().Contain("[ProtoMember(2)]");
-            output.Should().Contain("[ProtoMember(14)]");
-            output.Should().Contain("[ProtoMember(16)]");
+            output.ShouldContain("ProtoBuf");
+            output.ShouldContain("[ProtoContract]");
+            output.ShouldContain("[ProtoMember(1)]");
+            output.ShouldContain("[ProtoMember(2)]");
+            output.ShouldContain("[ProtoMember(14)]");
+            output.ShouldContain("[ProtoMember(16)]");
             _fixture.AssertOutputContainsCount(source, "[ProtoIgnore]", 2);
         }
 
@@ -205,9 +205,9 @@ namespace ProtoAttributor.Tests.ProtoContracts
             var output = rewrittenRoot.GetText().ToString();
             var source = output.Split(new string[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
 
-            output.Should().Contain("ProtoBuf");
-            output.Should().Contain("[ProtoContract]");
-            output.Should().Contain("[ProtoEnum]");
+            output.ShouldContain("ProtoBuf");
+            output.ShouldContain("[ProtoContract]");
+            output.ShouldContain("[ProtoEnum]");
             _fixture.AssertOutputContainsCount(source, "[ProtoEnum]", 5);
         }
 
@@ -221,9 +221,9 @@ namespace ProtoAttributor.Tests.ProtoContracts
             var output = rewrittenRoot.GetText().ToString();
             var source = output.Split(new string[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
 
-            output.Should().Contain("ProtoBuf");
-            output.Should().Contain("[ProtoContract]");
-            output.Should().Contain("[ProtoEnum]");
+            output.ShouldContain("ProtoBuf");
+            output.ShouldContain("[ProtoContract]");
+            output.ShouldContain("[ProtoEnum]");
             _fixture.AssertOutputContainsCount(source, "[ProtoEnum]", 5);
         }
 
@@ -237,9 +237,9 @@ namespace ProtoAttributor.Tests.ProtoContracts
             var output = rewrittenRoot.GetText().ToString();
             var source = output.Split(new string[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
 
-            output.Should().Contain("ProtoBuf");
-            output.Should().Contain("[ProtoContract]");
-            output.Should().Contain("[ProtoEnum]");
+            output.ShouldContain("ProtoBuf");
+            output.ShouldContain("[ProtoContract]");
+            output.ShouldContain("[ProtoEnum]");
             _fixture.AssertOutputContainsCount(source, "[ProtoEnum]", 3);
             _fixture.AssertOutputContainsCount(source, "[ProtoIgnore]", 2);
         }

@@ -1,5 +1,5 @@
 using System;
-using FluentAssertions;
+using Shouldly;
 using Microsoft.CodeAnalysis.CSharp;
 using ProtoAttributor.Parsers.DataContracts;
 using Xunit;
@@ -46,12 +46,12 @@ namespace ProtoAttributor.Tests.DataContracts
 
             var output = rewrittenRoot.GetText().ToString();
 
-            output.Should().Contain("System.Runtime.Serialization");
-            output.Should().Contain("[DataContract]");
-            output.Should().Contain(@"[DataMember(Order = 1, Name=""Test"")]");
-            output.Should().Contain("[DataMember(Order = 2)]");
-            output.Should().Contain("[DataMember(Order = 3)]");
-            output.Should().Contain("[DataMember(Order = 4)]");
+            output.ShouldContain("System.Runtime.Serialization");
+            output.ShouldContain("[DataContract]");
+            output.ShouldContain(@"[DataMember(Order = 1, Name=""Test"")]");
+            output.ShouldContain("[DataMember(Order = 2)]");
+            output.ShouldContain("[DataMember(Order = 3)]");
+            output.ShouldContain("[DataMember(Order = 4)]");
         }
 
         [Fact]
@@ -64,12 +64,12 @@ namespace ProtoAttributor.Tests.DataContracts
             var output = rewrittenRoot.GetText().ToString();
             var source = output.Split(new string[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
 
-            output.Should().Contain("System.Runtime.Serialization");
-            output.Should().Contain("[DataContract]");
-            output.Should().Contain("[DataMember(Order = 1)]");
-            output.Should().Contain("[DataMember(Order = 2)]");
-            output.Should().Contain("[DataMember(Order = 3)]");
-            output.Should().Contain("[DataMember(Order = 4)]");
+            output.ShouldContain("System.Runtime.Serialization");
+            output.ShouldContain("[DataContract]");
+            output.ShouldContain("[DataMember(Order = 1)]");
+            output.ShouldContain("[DataMember(Order = 2)]");
+            output.ShouldContain("[DataMember(Order = 3)]");
+            output.ShouldContain("[DataMember(Order = 4)]");
             _fixture.AssertOutputContainsCount(source, "[IgnoreDataMember]", 2);
         }
 
@@ -83,12 +83,12 @@ namespace ProtoAttributor.Tests.DataContracts
             var output = rewrittenRoot.GetText().ToString();
             var source = output.Split(new string[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
 
-            output.Should().Contain("System.Runtime.Serialization");
-            output.Should().Contain("[DataContract]");
-            output.Should().Contain("[DataMember(Order = 1)]");
-            output.Should().Contain("[DataMember(Order = 2)]");
-            output.Should().Contain(@"[DataMember(Name =""test"",Order = 3)]");
-            output.Should().Contain("[DataMember(Order = 4)]");
+            output.ShouldContain("System.Runtime.Serialization");
+            output.ShouldContain("[DataContract]");
+            output.ShouldContain("[DataMember(Order = 1)]");
+            output.ShouldContain("[DataMember(Order = 2)]");
+            output.ShouldContain(@"[DataMember(Name =""test"",Order = 3)]");
+            output.ShouldContain("[DataMember(Order = 4)]");
             _fixture.AssertOutputContainsCount(source, "[IgnoreDataMember]", 1);
         }
 
@@ -102,8 +102,8 @@ namespace ProtoAttributor.Tests.DataContracts
             var output = rewrittenRoot.GetText().ToString();
             var source = output.Split(new string[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
 
-            output.Should().Contain("System.Runtime.Serialization");
-            output.Should().Contain("[DataContract]");
+            output.ShouldContain("System.Runtime.Serialization");
+            output.ShouldContain("[DataContract]");
             _fixture.AssertOutputContainsCount(source, "[IgnoreDataMember]", 2);
             _fixture.AssertOutputContainsCount(source, "[EnumMember]", 3);
         }
@@ -118,8 +118,8 @@ namespace ProtoAttributor.Tests.DataContracts
             var output = rewrittenRoot.GetText().ToString();
             var source = output.Split(new string[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
 
-            output.Should().Contain("System.Runtime.Serialization");
-            output.Should().Contain("[DataContract]");
+            output.ShouldContain("System.Runtime.Serialization");
+            output.ShouldContain("[DataContract]");
             _fixture.AssertOutputContainsCount(source, "Order", 5); //includes 1 for the name of class
         }
     }

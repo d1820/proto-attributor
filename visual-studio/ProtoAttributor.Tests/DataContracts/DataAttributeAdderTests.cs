@@ -1,5 +1,5 @@
 using System;
-using FluentAssertions;
+using Shouldly;
 using Microsoft.CodeAnalysis.CSharp;
 using ProtoAttributor.Parsers.DataContracts;
 using Xunit;
@@ -27,11 +27,11 @@ namespace ProtoAttributor.Tests.DataContracts
 
             var source = output.Split(new string[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
 
-            output.Should().Contain("System.Runtime.Serialization");
-            output.Should().Contain("[DataContract]");
-            output.Should().Contain("[Required]");
-            output.Should().Contain("[DataMember(Order = 1)]");
-            output.Should().Contain("[DataMember(Order = 2)]");
+            output.ShouldContain("System.Runtime.Serialization");
+            output.ShouldContain("[DataContract]");
+            output.ShouldContain("[Required]");
+            output.ShouldContain("[DataMember(Order = 1)]");
+            output.ShouldContain("[DataMember(Order = 2)]");
 
             _fixture.AssertOutputContainsCount(source, "DataMember", 2);
             _fixture.AssertOutputContainsCount(source, "Required", 1);
@@ -48,12 +48,12 @@ namespace ProtoAttributor.Tests.DataContracts
 
             var source = output.Split(new string[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
 
-            output.Should().Contain("System.Runtime.Serialization");
-            output.Should().Contain("[DataContract]");
-            output.Should().Contain("[Required]");
-            output.Should().Contain("[DataMember(Order = 1)]");
-            output.Should().Contain("[DataMember(Order = 2)]");
-            output.Should().Contain("[DataMember(Order = 3)]");
+            output.ShouldContain("System.Runtime.Serialization");
+            output.ShouldContain("[DataContract]");
+            output.ShouldContain("[Required]");
+            output.ShouldContain("[DataMember(Order = 1)]");
+            output.ShouldContain("[DataMember(Order = 2)]");
+            output.ShouldContain("[DataMember(Order = 3)]");
 
             _fixture.AssertOutputContainsCount(source, "[DataMember", 3);
             _fixture.AssertOutputContainsCount(source, "[Required]", 1);
@@ -70,17 +70,17 @@ namespace ProtoAttributor.Tests.DataContracts
 
             var output = rewrittenRoot.GetText().ToString();
 
-            output.Should().Contain("System.Runtime.Serialization");
-            output.Should().Contain("[DataContract]");
-            output.Should().Contain("[DataMember(Order = 1)]");
-            output.Should().Contain("[DataMember(Order = 2)]");
+            output.ShouldContain("System.Runtime.Serialization");
+            output.ShouldContain("[DataContract]");
+            output.ShouldContain("[DataMember(Order = 1)]");
+            output.ShouldContain("[DataMember(Order = 2)]");
 
-            output.Should().Contain("        /// </value>");
-            output.Should().Contain("        [DataMember(Order = 1)]");
-            output.Should().Contain("        public int MyProperty { get; set; }");
+            output.ShouldContain("        /// </value>");
+            output.ShouldContain("        [DataMember(Order = 1)]");
+            output.ShouldContain("        public int MyProperty { get; set; }");
 
             //This verifies spacing is correct
-            output.Should().Contain(@"
+            output.ShouldContain(@"
         /// <summary> Comments not wrapped </summary>
         /// <value> My property. </value>
         [DataMember(Order = 1)]
@@ -97,10 +97,10 @@ namespace ProtoAttributor.Tests.DataContracts
 
             var output = rewrittenRoot.GetText().ToString();
 
-            output.Should().Contain("System.Runtime.Serialization");
-            output.Should().Contain("[DataContract]");
-            output.Should().Contain("[DataMember(Order = 1)]");
-            output.Should().Contain("[DataMember(Order = 2)]");
+            output.ShouldContain("System.Runtime.Serialization");
+            output.ShouldContain("[DataContract]");
+            output.ShouldContain("[DataMember(Order = 1)]");
+            output.ShouldContain("[DataMember(Order = 2)]");
         }
 
         [Fact]
@@ -113,12 +113,12 @@ namespace ProtoAttributor.Tests.DataContracts
 
             var output = rewrittenRoot.GetText().ToString();
 
-            output.Should().Contain("System.Runtime.Serialization");
-            output.Should().Contain("[DataContract]");
-            output.Should().Contain("[DataMember(Order = 1)]");
-            output.Should().Contain("[DataMember(Order = 2)]");
-            output.Should().Contain("[DataMember(Order = 3)]");
-            output.Should().Contain("[DataMember(Name = \"Test\")]");
+            output.ShouldContain("System.Runtime.Serialization");
+            output.ShouldContain("[DataContract]");
+            output.ShouldContain("[DataMember(Order = 1)]");
+            output.ShouldContain("[DataMember(Order = 2)]");
+            output.ShouldContain("[DataMember(Order = 3)]");
+            output.ShouldContain("[DataMember(Name = \"Test\")]");
         }
 
         [Fact]
@@ -130,10 +130,10 @@ namespace ProtoAttributor.Tests.DataContracts
 
             var output = rewrittenRoot.GetText().ToString();
 
-            output.Should().Contain("System.Runtime.Serialization");
-            output.Should().Contain("[DataContract]");
-            output.Should().Contain("[DataMember(Order = 1)]");
-            output.Should().Contain("[DataMember(Order = 2)]");
+            output.ShouldContain("System.Runtime.Serialization");
+            output.ShouldContain("[DataContract]");
+            output.ShouldContain("[DataMember(Order = 1)]");
+            output.ShouldContain("[DataMember(Order = 2)]");
         }
 
         [Fact]
@@ -146,12 +146,12 @@ namespace ProtoAttributor.Tests.DataContracts
             var output = rewrittenRoot.GetText().ToString();
             var source = output.Split(new string[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
 
-            output.Should().Contain("System.Runtime.Serialization");
-            output.Should().Contain("[DataContract]");
-            output.Should().Contain("[DataMember(Order = 1)]");
-            output.Should().Contain("[DataMember(Order = 2)]");
-            output.Should().Contain("[DataMember(Order = 14)]");
-            output.Should().Contain("[DataMember(Order = 16)]");
+            output.ShouldContain("System.Runtime.Serialization");
+            output.ShouldContain("[DataContract]");
+            output.ShouldContain("[DataMember(Order = 1)]");
+            output.ShouldContain("[DataMember(Order = 2)]");
+            output.ShouldContain("[DataMember(Order = 14)]");
+            output.ShouldContain("[DataMember(Order = 16)]");
             _fixture.AssertOutputContainsCount(source, "[IgnoreDataMember]", 2);
         }
 
@@ -165,9 +165,9 @@ namespace ProtoAttributor.Tests.DataContracts
             var output = rewrittenRoot.GetText().ToString();
             var source = output.Split(new string[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
 
-            output.Should().Contain("System.Runtime.Serialization");
-            output.Should().Contain("[DataContract]");
-            output.Should().Contain("[EnumMember]");
+            output.ShouldContain("System.Runtime.Serialization");
+            output.ShouldContain("[DataContract]");
+            output.ShouldContain("[EnumMember]");
             _fixture.AssertOutputContainsCount(source, "[EnumMember]", 5);
 
         }
@@ -182,9 +182,9 @@ namespace ProtoAttributor.Tests.DataContracts
             var output = rewrittenRoot.GetText().ToString();
             var source = output.Split(new string[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
 
-            output.Should().Contain("System.Runtime.Serialization");
-            output.Should().Contain("[DataContract]");
-            output.Should().Contain("[EnumMember]");
+            output.ShouldContain("System.Runtime.Serialization");
+            output.ShouldContain("[DataContract]");
+            output.ShouldContain("[EnumMember]");
             _fixture.AssertOutputContainsCount(source, "[EnumMember]", 5);
         }
 
@@ -198,9 +198,9 @@ namespace ProtoAttributor.Tests.DataContracts
             var output = rewrittenRoot.GetText().ToString();
             var source = output.Split(new string[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
 
-            output.Should().Contain("System.Runtime.Serialization");
-            output.Should().Contain("[DataContract]");
-            output.Should().Contain("[EnumMember]");
+            output.ShouldContain("System.Runtime.Serialization");
+            output.ShouldContain("[DataContract]");
+            output.ShouldContain("[EnumMember]");
             _fixture.AssertOutputContainsCount(source, "[EnumMember]", 3);
             _fixture.AssertOutputContainsCount(source, "[IgnoreDataMember]", 2);
         }

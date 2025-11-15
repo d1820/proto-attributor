@@ -1,4 +1,4 @@
-using FluentAssertions;
+using Shouldly;
 using Microsoft.CodeAnalysis.CSharp;
 using ProtoAttributor.Parsers.DataContracts;
 using Xunit;
@@ -24,18 +24,18 @@ namespace ProtoAttributor.Tests.DataContracts
 
             var output = rewrittenRoot.GetText().ToString();
 
-            output.Should().NotContain("System.Runtime.Serialization");
-            output.Should().NotContain("[DataContract]");
-            output.Should().NotContain("[KnownType");
-            output.Should().NotContain("[IgnoreDataMember]");
-            output.Should().NotContain("[EnumMember]");
-            output.Should().NotContain(@"[DataMember(Order = 1, Name=""Test"")]");
-            output.Should().NotContain("[DataMember(Order = 2)]");
-            output.Should().NotContain(@"DataMember(Name = ""test12"")");
+            output.ShouldNotContain("System.Runtime.Serialization");
+            output.ShouldNotContain("[DataContract]");
+            output.ShouldNotContain("[KnownType");
+            output.ShouldNotContain("[IgnoreDataMember]");
+            output.ShouldNotContain("[EnumMember]");
+            output.ShouldNotContain(@"[DataMember(Order = 1, Name=""Test"")]");
+            output.ShouldNotContain("[DataMember(Order = 2)]");
+            output.ShouldNotContain(@"DataMember(Name = ""test12"")");
 
-            output.Should().Contain("[Required]");
+            output.ShouldContain("[Required]");
 
-            output.Should().Contain("[Serializable]");
+            output.ShouldContain("[Serializable]");
         }
     }
 }

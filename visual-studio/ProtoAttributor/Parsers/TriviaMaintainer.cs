@@ -16,7 +16,7 @@ namespace ProtoAttributor.Parsers
             node = node.WithoutLeadingTrivia();
             node = node.WithoutTrailingTrivia();
 
-            var wp = leadingTrivia.FirstOrDefault(w => w.Kind() == SyntaxKind.WhitespaceTrivia);
+            var wp = leadingTrivia.FirstOrDefault(w => w.IsKind(SyntaxKind.WhitespaceTrivia));
 
             node = builder?.Invoke(node, wp);
 
@@ -35,7 +35,7 @@ namespace ProtoAttributor.Parsers
             node = node.WithoutLeadingTrivia();
             node = node.WithoutTrailingTrivia();
 
-            var wp = leadingTrivia.FirstOrDefault(w => w.Kind() == SyntaxKind.WhitespaceTrivia);
+            var wp = leadingTrivia.FirstOrDefault(w => w.IsKind(SyntaxKind.WhitespaceTrivia));
             if (wp == default)
             {
                 wp = SyntaxFactory.Whitespace(String.Empty);
@@ -58,7 +58,7 @@ namespace ProtoAttributor.Parsers
             node = node.WithoutLeadingTrivia();
             node = node.WithoutTrailingTrivia();
 
-            var wp = leadingTrivia.FirstOrDefault(w => w.Kind() == SyntaxKind.WhitespaceTrivia);
+            var wp = leadingTrivia.FirstOrDefault(w => w.IsKind(SyntaxKind.WhitespaceTrivia));
 
             node = builder?.Invoke(node, wp);
 
@@ -77,7 +77,7 @@ namespace ProtoAttributor.Parsers
             node = node.WithoutLeadingTrivia();
             node = node.WithoutTrailingTrivia();
 
-            var wp = leadingTrivia.FirstOrDefault(w => w.Kind() == SyntaxKind.WhitespaceTrivia);
+            var wp = leadingTrivia.FirstOrDefault(w => w.IsKind(SyntaxKind.WhitespaceTrivia));
 
             node = builder?.Invoke(node, wp);
 

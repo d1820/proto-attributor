@@ -1,4 +1,4 @@
-using FluentAssertions;
+using Shouldly;
 using Microsoft.CodeAnalysis.CSharp;
 using ProtoAttributor.Parsers.ProtoContracts;
 using Xunit;
@@ -24,17 +24,17 @@ namespace ProtoAttributor.Tests.ProtoContracts
 
             var output = rewrittenRoot.GetText().ToString();
 
-            output.Should().NotContain("ProtoBuf");
-            output.Should().NotContain("[ProtoContract]");
-            output.Should().NotContain("[ProtoInclude]");
-            output.Should().NotContain("[ProtoEnum]");
-            output.Should().NotContain("[ProtoIgnore]");
-            output.Should().NotContain(@"[ProtoMember(1, Name=""Test"")]");
-            output.Should().NotContain("[ProtoMember(2)]");
+            output.ShouldNotContain("ProtoBuf");
+            output.ShouldNotContain("[ProtoContract]");
+            output.ShouldNotContain("[ProtoInclude]");
+            output.ShouldNotContain("[ProtoEnum]");
+            output.ShouldNotContain("[ProtoIgnore]");
+            output.ShouldNotContain(@"[ProtoMember(1, Name=""Test"")]");
+            output.ShouldNotContain("[ProtoMember(2)]");
 
-            output.Should().Contain("[Required]");
+            output.ShouldContain("[Required]");
 
-            output.Should().Contain("[Serializable]");
+            output.ShouldContain("[Serializable]");
         }
     }
 }

@@ -75,7 +75,7 @@ namespace ProtoAttributor.Parsers.DataContracts
                             SeparatedSyntaxList<AttributeArgumentSyntax> newSeparatedArgList;
                             if (attributeArguementSyntax?.Expression?.Kind() == SyntaxKind.NumericLiteralExpression)
                             {
-                                var oldToken = attributeArguementSyntax.Expression.ChildTokens().FirstOrDefault(f => f.Kind() == SyntaxKind.NumericLiteralToken);
+                                var oldToken = attributeArguementSyntax.Expression.ChildTokens().FirstOrDefault(f => f.IsKind(SyntaxKind.NumericLiteralToken));
                                 if (oldToken == default)
                                 {
                                     continue;
