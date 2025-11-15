@@ -1,5 +1,5 @@
 using System;
-using FluentAssertions;
+using Shouldly;
 using Microsoft.CodeAnalysis.CSharp;
 using ProtoAttributor.Parsers.ProtoContracts;
 using Xunit;
@@ -46,12 +46,12 @@ namespace ProtoAttributor.Tests.ProtoContracts
 
             var output = rewrittenRoot.GetText().ToString();
 
-            output.Should().Contain("ProtoBuf");
-            output.Should().Contain("[ProtoContract]");
-            output.Should().Contain(@"[ProtoMember(1, Name=""Test"")]");
-            output.Should().Contain("[ProtoMember(2)]");
-            output.Should().Contain("[ProtoMember(3)]");
-            output.Should().Contain("[ProtoMember(4)]");
+            output.ShouldContain("ProtoBuf");
+            output.ShouldContain("[ProtoContract]");
+            output.ShouldContain(@"[ProtoMember(1, Name=""Test"")]");
+            output.ShouldContain("[ProtoMember(2)]");
+            output.ShouldContain("[ProtoMember(3)]");
+            output.ShouldContain("[ProtoMember(4)]");
         }
 
         [Fact]
@@ -64,12 +64,12 @@ namespace ProtoAttributor.Tests.ProtoContracts
             var output = rewrittenRoot.GetText().ToString();
             var source = output.Split(new string[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
 
-            output.Should().Contain("ProtoBuf");
-            output.Should().Contain("[ProtoContract]");
-            output.Should().Contain("[ProtoMember(1)]");
-            output.Should().Contain("[ProtoMember(2)]");
-            output.Should().Contain("[ProtoMember(3)]");
-            output.Should().Contain("[ProtoMember(4)]");
+            output.ShouldContain("ProtoBuf");
+            output.ShouldContain("[ProtoContract]");
+            output.ShouldContain("[ProtoMember(1)]");
+            output.ShouldContain("[ProtoMember(2)]");
+            output.ShouldContain("[ProtoMember(3)]");
+            output.ShouldContain("[ProtoMember(4)]");
             _fixture.AssertOutputContainsCount(source, "[ProtoIgnore]", 2);
         }
 
@@ -83,8 +83,8 @@ namespace ProtoAttributor.Tests.ProtoContracts
             var output = rewrittenRoot.GetText().ToString();
             var source = output.Split(new string[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
 
-            output.Should().Contain("ProtoBuf");
-            output.Should().Contain("[ProtoContract]");
+            output.ShouldContain("ProtoBuf");
+            output.ShouldContain("[ProtoContract]");
             _fixture.AssertOutputContainsCount(source, "[ProtoIgnore]", 2);
             _fixture.AssertOutputContainsCount(source, "[ProtoEnum]", 3);
         }

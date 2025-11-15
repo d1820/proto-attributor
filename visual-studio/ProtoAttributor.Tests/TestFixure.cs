@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
-using FluentAssertions;
+using Shouldly;
 
 namespace ProtoAttributor.Tests
 {
@@ -18,7 +18,7 @@ namespace ProtoAttributor.Tests
                              where word.IndexOf(searchTerm, StringComparison.InvariantCultureIgnoreCase) > -1
                              select word;
 
-            matchQuery.Count().Should().Be(numOfTimes);
+            matchQuery.Count().ShouldBe(numOfTimes);
         }
     }
 }

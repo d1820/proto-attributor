@@ -1,5 +1,5 @@
 using System.IO;
-using FluentAssertions;
+using Shouldly;
 using Microsoft.CodeAnalysis.CSharp;
 using ProtoAttributor.Parsers.DataContracts;
 using Xunit;
@@ -21,7 +21,7 @@ namespace ProtoAttributor.Tests.DataContracts
 
             var output = protoReader.GetDataMemberNextId(tree.GetRoot());
 
-            output.Should().Be(3);
+            output.ShouldBe(3);
         }
     }
 }

@@ -41,7 +41,7 @@ namespace ProtoAttributor.Parsers.DataContracts
                         var argument = item.ArgumentList.Arguments.FirstOrDefault(f=>f.NameEquals.Name.Identifier.ValueText.Equals("Order"));
                         if(argument != null && argument.Expression.Kind() == SyntaxKind.NumericLiteralExpression)
                         {
-                            var tokenValue = argument.Expression.ChildTokens().FirstOrDefault(f => f.Kind() == SyntaxKind.NumericLiteralToken);
+                            var tokenValue = argument.Expression.ChildTokens().FirstOrDefault(f => f.IsKind(SyntaxKind.NumericLiteralToken));
                             if(tokenValue != null)
                             {
                                 var order = Convert.ToInt32( tokenValue.Value);
