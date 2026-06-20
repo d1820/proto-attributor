@@ -35,10 +35,8 @@ jobs:
       - name: Run tests
         run: npm run test-jest
 
-      - name: Stamp version with run number
-        run: |
-          MAJOR_MINOR=$(node -p "require('./package.json').version" | cut -d. -f1-2)
-          npm version "${MAJOR_MINOR}.${{ github.run_number }}" --no-git-tag-version
+      - name: Stamp version from release tag
+        run: npm version "${GITHUB_REF_NAME#v}" --no-git-tag-version
 
       - name: Publish to VS Code Marketplace
         run: npx @vscode/vsce publish -p ${{ secrets.VSCE_PAT }}
@@ -52,13 +50,18 @@ jobs:
       VsixManifestPath: visual-studio\Manifests\VS${{ matrix.VsTargetVersion }}\source.extension.vsixmanifest
       VsTargetVersion: 'VS${{ matrix.VsTargetVersion }}'
       VsixPath: visual-studio\ProtoAttributor\bin\VS${{ matrix.VsTargetVersion }}\Release\ProtoAttributor${{ matrix.VsTargetVersion }}.vsix
-      Version: '1.2.${{ github.run_number }}'
       BaseVersion: '1.2.0.0'
 
     steps:
       - uses: actions/checkout@v4.1.1
         with:
           fetch-depth: 0
+
+      - name: Set version from release tag
+        shell: pwsh
+        run: |
+          $tag = "${{ github.ref_name }}" -replace '^v', ''
+          echo "Version=$tag.0" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
