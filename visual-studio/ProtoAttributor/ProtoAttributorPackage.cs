@@ -35,7 +35,7 @@ namespace ProtoAttributor
     public sealed class ProtoAttributorPackage: AsyncPackage
     {
         /// <summary> ProtoAttributorPackage GUID string. </summary>
-        
+
 
         #region Package Members
 
@@ -56,7 +56,10 @@ namespace ProtoAttributor
             var protoCallback = new AsyncServiceCreatorCallback(async (IAsyncServiceContainer container, CancellationToken ct, Type serviceType) =>
             {
                 if (typeof(IProtoAttributeService) == serviceType)
+                {
                     return new ProtoAttributeService(this, new ProtoAttributeAdder(), new ProtoAttributeRemover(), new ProtoAttributeRewriter());
+                }
+
                 return null;
             });
 
@@ -65,7 +68,10 @@ namespace ProtoAttributor
             var datAnnoCallback = new AsyncServiceCreatorCallback(async (IAsyncServiceContainer container, CancellationToken ct, Type serviceType) =>
             {
                 if (typeof(IDataAnnoAttributeService) == serviceType)
+                {
                     return new DataAnnoAttributeService(this, new DataAttributeAdder(), new DataAttributeRemover(), new DataAttributeRewriter());
+                }
+
                 return null;
             });
             AddService(typeof(IDataAnnoAttributeService), datAnnoCallback, true);
