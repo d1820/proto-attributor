@@ -1,0 +1,20 @@
+{
+  "categories": [
+    "Tools",
+    "Coding",
+    "Documentation"
+  ],
+  "tags": [
+    "Auto Document",
+    "Coding",
+    "Documentation",
+    "Performance",
+    "XML Comments"
+  ],
+  "priceCategory": "free",
+  "publisher": "DanTurco",
+  "private": false,
+  "qna": false,
+  "repo": "https://github.com/d1820/proto-attributor",
+  "issueTracker": "https://github.com/d1820/proto-attributor/issues"
+}

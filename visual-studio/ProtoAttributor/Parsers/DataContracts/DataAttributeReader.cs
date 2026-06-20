@@ -38,7 +38,7 @@ namespace ProtoAttributor.Parsers.DataContracts
 
                     foreach (var item in attrs)
                     {
-                        var argument = item.ArgumentList.Arguments.FirstOrDefault(f=>f.NameEquals.Name.Identifier.ValueText.Equals("Order"));
+                        var argument = item.ArgumentList?.Arguments.FirstOrDefault(f => f.NameEquals?.Name.Identifier.ValueText.Equals("Order") == true);
                         if(argument != null && argument.Expression.Kind() == SyntaxKind.NumericLiteralExpression)
                         {
                             var tokenValue = argument.Expression.ChildTokens().FirstOrDefault(f => f.IsKind(SyntaxKind.NumericLiteralToken));

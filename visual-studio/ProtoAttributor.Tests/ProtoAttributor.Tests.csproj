@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ProtoAttributor\ProtoAttributor.csproj" />
+    <ProjectReference Include="..\ProtoAttributor.Core\ProtoAttributor.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

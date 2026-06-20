@@ -1,7 +1,9 @@
 .vscode/**
 .vscode-test/**
+.claude/**
 src/**
 .github/**
+__mocks__/**
 .gitignore
 .yarnrc
 vsc-extension-quickstart.md
@@ -12,3 +14,9 @@ vsc-extension-quickstart.md
 **/.vscode-test.*
 **/Sample/**
 **/GifInstruction/**
+jest.config.js
+out/**/*.test.js
+out/test/**
+out/utils/*.test.js
+coverage/**
+*.stackdump
