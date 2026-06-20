@@ -1,3 +1,4 @@
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -40,6 +41,11 @@ namespace ProtoAttributor.Parsers.DataContracts
 
         public override SyntaxNode VisitPropertyDeclaration(PropertyDeclarationSyntax node)
         {
+            if (node.Modifiers.Any(m => m.IsKind(SyntaxKind.StaticKeyword)) || node.ExpressionBody != null)
+            {
+                return base.VisitPropertyDeclaration(node);
+            }
+
             var hasMatch = NodeHelper.HasMatch(node.AttributeLists, Constants.Data.PROPERTY_ATTRIBUTE_NAME, Constants.Data.PROPERTY_IGNORE_ATTRIBUTE_NAME);
 
             if (!hasMatch)

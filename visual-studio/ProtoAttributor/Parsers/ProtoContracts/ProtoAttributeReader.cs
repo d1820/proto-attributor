@@ -8,12 +8,25 @@ namespace ProtoAttributor.Parsers.ProtoContracts
     public class ProtoAttributeReader: CSharpSyntaxWalker
     {
         private int _highestOrder;
+        private int _classDepth;
 
         public int GetProtoNextId(SyntaxNode node)
         {
             _highestOrder = 0;
+            _classDepth = 0;
             base.Visit(node);
             return _highestOrder + 1;
+        }
+
+        public override void VisitClassDeclaration(ClassDeclarationSyntax node)
+        {
+            _classDepth++;
+            if (_classDepth == 1)
+            {
+                base.VisitClassDeclaration(node);
+            }
+
+            _classDepth--;
         }
 
         public override void VisitPropertyDeclaration(PropertyDeclarationSyntax node)
@@ -33,7 +46,12 @@ namespace ProtoAttributor.Parsers.ProtoContracts
 
                     foreach (var item in attrs)
                     {
-                        var value = item.ArgumentList.Arguments.FirstOrDefault();
+                        var value = item.ArgumentList?.Arguments.FirstOrDefault();
+                        if (value == null)
+                        {
+                            continue;
+                        }
+
                         int.TryParse(value.GetText().ToString(), out var order);
                         if (order > _highestOrder)
                         {

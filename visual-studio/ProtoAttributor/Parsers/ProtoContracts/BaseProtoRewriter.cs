@@ -64,7 +64,7 @@ namespace ProtoAttributor.Parsers.ProtoContracts
 
         public override SyntaxNode VisitClassDeclaration(ClassDeclarationSyntax node)
         {
-            //each class needs to restat with the
+            var savedIndex = StartIndex;
             StartIndex = CalculateStartingIndex(node);
             var hasMatch = NodeHelper.HasMatch(node.AttributeLists, Constants.Proto.CLASS_ATTRIBUTE_NAME);
 
@@ -81,7 +81,9 @@ namespace ProtoAttributor.Parsers.ProtoContracts
                 });
             }
 
-            return base.VisitClassDeclaration(node);
+            var result = base.VisitClassDeclaration(node);
+            StartIndex = savedIndex;
+            return result;
         }
     }
 }

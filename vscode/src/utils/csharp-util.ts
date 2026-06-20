@@ -34,9 +34,9 @@ export const getEnumBody = (text: string): string[] =>
 {
   const regEx = new RegExp('public enum[^\\}]*\\{([^\\}]*)\\}', 'gm');
   const body = regEx.exec(text);
-  if (body!.length>1)
+  if (body && body.length > 1)
   {
-    return body![1].split(',');
+    return body[1].split(',');
   }
   return [];
 
@@ -47,7 +47,7 @@ export const getLeadingTrivia = (document: TextDocument, finalSig: SignatureLine
   let preSignatureStartingLine = finalSig.lineMatchStartsOn - 1; //start at the line just above the signature
   let preSignatureText = [];
   let preSignatureLine: string | null = '';
-  while (true)
+  while (preSignatureStartingLine >= 0)
   {
     preSignatureLine = (document.lineAt(preSignatureStartingLine).text || '').trim();
 
