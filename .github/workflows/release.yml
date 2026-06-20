@@ -36,7 +36,7 @@ jobs:
         run: npm run test-jest
 
       - name: Stamp version from release tag
-        run: npm version "${GITHUB_REF_NAME#v}" --no-git-tag-version
+        run: npm pkg set version="${GITHUB_REF_NAME#v}"
 
       - name: Publish to VS Code Marketplace
         run: npx @vscode/vsce publish -p ${{ secrets.VSCE_PAT }}
