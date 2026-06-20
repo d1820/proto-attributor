@@ -1,6 +1,5 @@
 import { EndOfLine, TextDocument, TextEditor } from 'vscode';
 import { IWindow } from '../interfaces/window.interface';
-import { match } from 'assert';
 
 export type PublicProtected = 'public' | 'protected';
 
@@ -103,7 +102,6 @@ export const getAllPublicMembers = (text: string, document: TextDocument): Signa
     sig.defaultLineIndent = getBeginningOfLineIndent(textLines[lineNumber]);
     members.push(sig);
   });
-  console.log(members);
   return members;
 };
 
