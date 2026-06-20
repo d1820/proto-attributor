@@ -80,22 +80,3 @@ jobs:
         name: ProtoAttributor-${{ matrix.VsTargetVersion }}.vsix
         path: ${{ env.VsixPath }}
 
-    - name: Find VsixPublisher
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      id: find-publisher
-      shell: pwsh
-      run: |
-        $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
-        $vsPath = & $vswhere -latest -products * -property installationPath
-        $publisherPath = Join-Path $vsPath "VSSDK\VisualStudioIntegration\Tools\Bin\VsixPublisher.exe"
-        if (-not (Test-Path $publisherPath)) { throw "VsixPublisher.exe not found at $publisherPath" }
-        echo "VSIX_PUBLISHER=$publisherPath" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-
-    - name: Publish VS extension to Marketplace
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      shell: pwsh
-      run: |
-        & "$env:VSIX_PUBLISHER" publish `
-          -payload "${{ env.VsixPath }}" `
-          -publishManifest "visual-studio\publishManifest.json" `
-          -personalAccessToken "${{ secrets.VS_MARKETPLACE_PAT }}"
