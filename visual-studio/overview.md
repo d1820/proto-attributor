@@ -1,0 +1,1 @@
+ProtoAttributor is an open source Visual Studio extension that can manage the appropriate attributes on a class to support ProtoBuf. It currently supports ProtoContract, ProtoMember, ProtoIgnore, DataContract, DataMember, IgnoreDataMemeber attributes.
