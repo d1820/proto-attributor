@@ -108,6 +108,13 @@ jobs:
           if (-not (Test-Path $publisherPath)) { throw "VsixPublisher.exe not found at $publisherPath" }
           echo "VSIX_PUBLISHER=$publisherPath" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
+      - name: Login to VS Marketplace
+        shell: pwsh
+        run: |
+          & "$env:VSIX_PUBLISHER" login `
+            -publisherName "DanTurco" `
+            -personalAccessToken "${{ secrets.VS_MARKETPLACE_PAT }}"
+
       - name: Publish VS extension to Marketplace
         shell: pwsh
         run: |
