@@ -53,7 +53,7 @@ jobs:
     env:
       VsixManifestPath: visual-studio\Manifests\VS${{ matrix.VsTargetVersion }}\source.extension.vsixmanifest
       VsTargetVersion: 'VS${{ matrix.VsTargetVersion }}'
-      VsixPath: visual-studio\ProtoAttributor\bin\VS${{ matrix.VsTargetVersion }}\Release\ProtoAttributor${{ matrix.VsTargetVersion }}.vsix
+      VsixPath: visual-studio\ProtoAttributor\bin\Release\ProtoAttributor${{ matrix.VsTargetVersion }}.vsix
       BaseVersion: '1.2.0.0'
 
     steps:
