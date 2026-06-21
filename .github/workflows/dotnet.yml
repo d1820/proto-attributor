@@ -33,7 +33,6 @@ jobs:
         VsTargetVersion: ['2022']
     env:
       VsixManifestPath: visual-studio\Manifests\VS${{ matrix.VsTargetVersion }}\source.extension.vsixmanifest
-      VsTargetVersion: 'VS${{ matrix.VsTargetVersion }}'
       VsixPath: visual-studio\ProtoAttributor\bin\Release\ProtoAttributor${{ matrix.VsTargetVersion }}.vsix
 
     steps:
