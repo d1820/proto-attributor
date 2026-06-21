@@ -8,17 +8,9 @@
     "internalName": "ProtoAttributor2022"
   },
   "overview": "overview.md",
-  "tags": [
-    "ProtoBuf",
-    "Coding",
-    "Serialization",
-    "Contracts",
-    "DataContract"
-  ],
   "priceCategory": "free",
   "publisher": "DanTurco",
   "private": false,
   "qna": false,
-  "repo": "https://github.com/d1820/proto-attributor",
-  "issueTracker": "https://github.com/d1820/proto-attributor/issues"
+  "repo": "https://github.com/d1820/proto-attributor"
 }
