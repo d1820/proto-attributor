@@ -113,7 +113,7 @@ jobs:
         run: |
           & "$env:VSIX_PUBLISHER" login `
             -publisherName "DanTurco" `
-            -personalAccessToken "${{ secrets.VS_MARKETPLACE_PAT }}"
+            -personalAccessToken "${{ secrets.VS_PUBLISHER_ACCESS_TOKEN }}"
 
       - name: Publish VS extension to Marketplace
         shell: pwsh
@@ -121,4 +121,4 @@ jobs:
           & "$env:VSIX_PUBLISHER" publish `
             -payload "${{ env.VsixPath }}" `
             -publishManifest "visual-studio\publishManifest.json" `
-            -personalAccessToken "${{ secrets.VS_MARKETPLACE_PAT }}"
+            -personalAccessToken "${{ secrets.VS_PUBLISHER_ACCESS_TOKEN }}"
